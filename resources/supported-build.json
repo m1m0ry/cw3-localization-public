@@ -1,0 +1,27 @@
+{
+  "game": "Creeper World 3 Arc Eternal",
+  "version": "2.12 Steam",
+  "steam_build": "22453699",
+  "unity_version": "5.2.3f1",
+  "exe_sha256": "e738a7ee12e2eafb48366e84f8cd089c4433d2a2223954f3642a1c71ce80e456",
+  "legacy_patch": {
+    "revision": "open-font-v11",
+    "hashes": {
+      "CW3_Data/Managed/Assembly-CSharp.dll": "ed88fdc14b67a12300104738a850506219c39e2a522b74d7f3e49d62a060fc53",
+      "CW3_Data/level1": "27b476f133718061888c759709f05afae6430640007e1bdbf6710ff52e3efb39",
+      "CW3_Data/level2": "bb06d3f3ce49a376a4485c7a19a6e6eb8b8df54b8a867c62b8817e12c2814c1e",
+      "CW3_Data/level3": "6ec0ebba42119ae1438243ad68422d33d18a15228a7f12dc552a98874c4ef8b8",
+      "CW3_Data/level4": "4342d2d050411aa64ab9319a01e81613527c82e330b2c18333e6abedc00963e9",
+      "CW3_Data/level5": "0df8d828988c5b9a383319174f591869321733244cd013e9e7ba1cce7331b48e",
+      "CW3_Data/level6": "1f1779954ec049271e40434193d4176d33289eb895658728c9ba311c400598d0",
+      "CW3_Data/mainData": "2a9e97ee5b2e9c1a9989c34bf41ffdd37e3162ac8be670bb06dff14b78b40a6b",
+      "CW3_Data/resources.assets": "abda8a5568032bcb6183eabbd7c54687046b347096d52f8c74d7b8b977317616",
+      "CW3_Data/sharedassets0.assets": "e55cc8fcc18c71f5f75920b32a4597a725841e825092411326cd3f6f3590ee46",
+      "CW3_Data/sharedassets2.assets": "204f11fbf2fbc576b75e93d92002040da574ccd37d5140107dfc2bbcb58a694f",
+      "CW3_Data/sharedassets4.assets": "7046f94e18352eeffe70cc853e49029d916c74536dcbd34715965baa50a3828b",
+      "CW3_Data/sharedassets6.assets": "c208c048334e597db27d3718aeae2bb114ec1bd5bbdcd818939fc0c75154386d",
+      "CW3_Data/Managed/CW3Rendering.dll": "0253a8fde0ce0049d4f1fe07b182f5e6a8d0a76fcda5de1f4577f579d38c892f",
+      "CW3_Data/Managed/CW3Display.dll": "ee712928fe0f661acd7db9705dcf8ab62edf9c26623d653ba0de46d77146ba8a"
+    }
+  }
+}

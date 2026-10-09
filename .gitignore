@@ -1,0 +1,24 @@
+# Local configuration, credentials and build inputs
+config.local.json
+local-only/
+.env*
+*.key
+*.pem
+__pycache__/
+*.pyc
+*.dll
+*.exe
+*.assets
+*.ttf
+*.otf
+*.ttc
+*.delta.gz
+*.zip
+*.tar.gz
+*.cw3
+*.dat
+*.log
+.DS_Store
+
+# OFL-only generated subset, accompanied by its license
+!fonts/CW3SansSC-Regular.ttf

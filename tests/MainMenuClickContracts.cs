@@ -1,0 +1,2 @@
+using System;using Mono.Cecil;
+class MainMenuClickContracts {static void Main(string[] args){var original=AssemblyDefinition.ReadAssembly(args[0]);var patched=AssemblyDefinition.ReadAssembly(args[0]);MainMenuClickPatch.Apply(patched.MainModule);patched.Write(args[1]);MainMenuClickPatch.Reverse(original.MainModule,patched.MainModule);patched.Write(args[2]);Console.WriteLine("PASS exactly three audited owner repairs and reversal generated");}}

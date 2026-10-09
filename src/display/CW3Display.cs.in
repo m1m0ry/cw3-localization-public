@@ -1,0 +1,16 @@
+using UnityEngine;
+// Only the three plain-text rendering reads are mapped. UILabel.text, its backing
+// mText, popup selection and every gameplay comparison retain their original value.
+public static class CW3Display {
+ public static string ForLabel(string text,object value){
+  Component label=value as Component;if(label==null||text==null)return text;
+  switch(label.name){
+   case "UnitDeactivateButtonLabel":if(text=="ACTIVATE")return {{text.63b374e8d84d967e}};if(text=="DEACTIVATE")return {{text.4da1839c612154ca}};break;
+   case "UnitDisarmButtonLabel":if(text=="ARM")return {{text.bd08ffebeaa89d56}};if(text=="DISARM")return {{text.791afba48d68c010}};break;
+   case "UnitStopResupplyButtonLabel":if(text=="RESUPPLY")return {{text.1c1c796fc1ed36a6}};if(text=="STOP RESUPPLY")return {{text.5f4ba2c5bbe4a3d4}};break;
+   case "MapTitleLabel":if(text.StartsWith("Arc Eternal : "))return {{text.b33c1c3e1a5be568}}+text.Substring(14);break;
+  }
+  if(text=="Current")for(Transform t=label.transform;t!=null;t=t.parent)if(t.name=="MenuWindowResList"||t.name=="Drop-down List")return {{text.8e506022a417b175}};
+  return text;
+ }
+}

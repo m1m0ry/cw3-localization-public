@@ -1,0 +1,9 @@
+{
+  "game": "/path/to/Creeper World 3",
+  "original": "local-only/original",
+  "package": "local-only/independent-next",
+  "build": "local-only/independent-next/files",
+  "crossover": "/path/to/CrossOver.app/Contents/SharedSupport/CrossOver",
+  "mono_version": "wine-mono-10.4.1",
+  "bottle": "Steam"
+}

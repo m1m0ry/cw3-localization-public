@@ -1,0 +1,11 @@
+CW3 简体中文补丁 v12
+适用 Windows Steam 2.12 / build 22453699。CrossOver 26.2 已验证；原生 Windows 未完整实测，不支持原生 Mac 版。
+
+安装：完全退出游戏，解压后运行「安装或恢复.cmd」（Windows）或「安装或恢复.command」（CrossOver）。需要 Python 3.10+，无需额外包。安装器校验文件、备份原版，并提供恢复入口；保留 .cw3-zh-backup。
+旧补丁先用旧入口恢复原版，将旧 .cw3-zh-backup 另存到游戏目录外，再安装。
+
+手工覆盖：先备份 CW3_Data，将包内 CW3_Data 和 CW3Localization 合并覆盖到游戏目录，保留其他文件，不要整体删除文件夹。手工安装的恢复也需手工还原自己的备份，并删除新增的 CW3_Data/Managed/CW3Rendering.dll、CW3_Data/Managed/CW3Runtime.dll，以及 CW3Localization 下的 zh-CN.json、font.ttf、OFL.txt；恢复前另存自改词典和字体。
+
+译文：只改 CW3Localization/zh-CN.json 的 translation，保留其他字段、标签和占位符；退出后替换，重启生效。安装和恢复不改存档。
+漏译采集：创建 CW3Localization/discover.enabled 并重启即开启，删除后重启关闭；候选写入同目录 candidates.json，需人工审核，不自动翻译或上传。
+文件哈希见 manifest.json，字体许可见 OFL.txt。

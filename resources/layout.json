@@ -1,0 +1,172 @@
+{
+  "original_hashes": {
+    "CW3_Data/Managed/Assembly-CSharp.dll": "36cfba7d5e8408a78d5a16c2bbf5b6f59403c16375cbbf03f39cbfe53a0b9e2e",
+    "CW3_Data/level1": "fcc12230a9d6b56ac4c272f2de089c871f4e0b7e99d366c03382c0a6e4432746",
+    "CW3_Data/level2": "646bbcc6acdc67c5dd14925122f250aee987e3f809c1ce6c1323928477370ce0",
+    "CW3_Data/level3": "7761186361d03db6614e961990cb2603451516fa910766938930819d3b76917e",
+    "CW3_Data/level4": "8cd7e627264e7a7d6862c120558ead2a1569ba22a06a9dfe131cc1a011dd5322",
+    "CW3_Data/level5": "e4f6adf76aefea9c0ac4814681695206e2e36d6c333db31c03981f996e8b0aa0",
+    "CW3_Data/level6": "fa4e1fa53f7fb54441b603f57053dacce8c11833cb99f546382a78c1b8c3d097",
+    "CW3_Data/mainData": "fa02ee90995c70f5dc1fa3b14d54317783c492958bd0d54510a0b496f7ff705d",
+    "CW3_Data/resources.assets": "2135165db9ecf5a8100b0dc5abaa49ce22e9dfd141f2cebd15a33cadbe95c108",
+    "CW3_Data/sharedassets0.assets": "cce3b6b101687c6e07aa50260b8f124dc40da0c56866ce9c991046ee76761dbf",
+    "CW3_Data/sharedassets2.assets": "56dd4aea9ae0d8855c2db300914715a6de49e3b6b69ac867543095d9efdf7300",
+    "CW3_Data/sharedassets4.assets": "367adcd4cf64c096d06bef47c96f671aa1a43cd2477fbde6fb394125f26a65a0",
+    "CW3_Data/sharedassets6.assets": "2a2eab25610355c411fde00c2a40df6a91f92589d67611e4ebced9efaa42e193"
+  },
+  "fixed_edits": [
+    {
+      "file": "CW3_Data/level2",
+      "object_id": 269,
+      "kind": "fields",
+      "fields": {
+        "m_LocalPosition": {
+          "before": {
+            "x": -216.0,
+            "y": -5.0,
+            "z": 0.0
+          },
+          "after": {
+            "x": -216.0,
+            "y": -12.0,
+            "z": 0.0
+          }
+        }
+      },
+      "reason": "Verified text inset or render queue"
+    },
+    {
+      "file": "CW3_Data/level3",
+      "object_id": 3674,
+      "kind": "fields",
+      "fields": {
+        "m_LocalPosition": {
+          "before": {
+            "x": -216.0,
+            "y": -5.0,
+            "z": 0.0
+          },
+          "after": {
+            "x": -216.0,
+            "y": -12.0,
+            "z": 0.0
+          }
+        }
+      },
+      "reason": "Verified text inset or render queue"
+    },
+    {
+      "file": "CW3_Data/sharedassets0.assets",
+      "object_id": 5,
+      "kind": "fields",
+      "fields": {
+        "m_CustomRenderQueue": {
+          "before": 3000,
+          "after": 3001
+        }
+      },
+      "reason": "Verified text inset or render queue"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 288,
+      "kind": "raw_fixed",
+      "source_sha256": "965801a8f3541b13f0b2b6a9c1ee27475e06766c50aa23b6da68b822140ef0ea",
+      "edits": [
+        {
+          "offset": 36,
+          "before": "0b",
+          "after": "00"
+        },
+        {
+          "offset": 4396,
+          "before": "1c01",
+          "after": "0000"
+        },
+        {
+          "offset": 4424,
+          "before": "00",
+          "after": "02"
+        },
+        {
+          "offset": 4428,
+          "before": "0000",
+          "after": "f402"
+        },
+        {
+          "offset": 4436,
+          "before": "10",
+          "after": "14"
+        }
+      ],
+      "reason": "Audited NGUI dynamic font binding; no translated text"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 289,
+      "kind": "raw_fixed",
+      "source_sha256": "e99cc870b83789127a3f41fea125f8794263697dbf55d1e3e42ccaf83d4e93e7",
+      "edits": [
+        {
+          "offset": 36,
+          "before": "0b",
+          "after": "00"
+        },
+        {
+          "offset": 4148,
+          "before": "1c01",
+          "after": "0000"
+        },
+        {
+          "offset": 4176,
+          "before": "00",
+          "after": "02"
+        },
+        {
+          "offset": 4180,
+          "before": "0000",
+          "after": "f402"
+        },
+        {
+          "offset": 4188,
+          "before": "10",
+          "after": "1c"
+        }
+      ],
+      "reason": "Audited NGUI dynamic font binding; no translated text"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 290,
+      "kind": "raw_fixed",
+      "source_sha256": "270fd2120110bdb386bc5e01746ecc0f8f02b3811279c2dbb1dcec22ada6609b",
+      "edits": [
+        {
+          "offset": 36,
+          "before": "0b",
+          "after": "00"
+        },
+        {
+          "offset": 3904,
+          "before": "1c01",
+          "after": "0000"
+        },
+        {
+          "offset": 3932,
+          "before": "00",
+          "after": "02"
+        },
+        {
+          "offset": 3936,
+          "before": "0000",
+          "after": "f402"
+        }
+      ],
+      "reason": "Audited NGUI dynamic font binding; no translated text"
+    }
+  ],
+  "font_objects": [
+    755,
+    756
+  ]
+}
