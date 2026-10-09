@@ -19,6 +19,8 @@ def main():
         target=out/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
         assert sha(target)==row['after'],name
     manifest=dict(format=2,name='CW3 简体中文补丁',version=build['patch_version'],runtime_files=['CW3Localization/zh-CN.json','CW3Localization/font.ttf'],exe_sha256=supported['exe_sha256'],target='Windows Steam 2.12 / build 22453699 / Unity 5.2.3f1',required_originals=build.get('required_originals',{}),files=build['files'])
+    for key in ('source_repo','source_commit','source_dirty','build_inputs_sha256'):
+        if key in build:manifest[key]=build[key]
     (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     for source,dest in [('tools/player_install.py','install.py'),('player/安装或恢复.command','安装或恢复.command'),('player/安装或恢复.cmd','安装或恢复.cmd'),('fonts/OFL.txt','OFL.txt'),('LICENSE','LICENSE'),('NOTICE.md','NOTICE.md')]:shutil.copy2(ROOT/source,out/dest)
     (out/'使用说明.txt').write_text((ROOT/'player/使用说明-v12.txt').read_text().replace(' v12\n',' '+manifest['version']+'\n',1))

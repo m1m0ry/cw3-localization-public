@@ -1,5 +1,7 @@
 # CW3 工程规则
 
+- 本仓库是唯一源码、译文和构建逻辑主线。日常修改与 PR 在此完成；私有 `m1m0ry/cw3-localization` 只维护固定原版输入、源码 revision 门禁及手动构建 workflow，不同步维护另一份源码。云端构建入口见 `docs/build.md`。
+
 - 目标为 Windows Steam 2.12 / build 22453699（Unity 5.2.3f1）。不修改原生 Mac 版或其他游戏。
 - 使用 `config.local.json` 定位安装和构建输入，不在源码中硬编码个人路径。原版、备份、缓存、日志、密钥和存档不提交 Git。
 - 采用译文唯一来源是 `translations/zh-CN.json`。使用 `tools/workflow.py check` 校验、`tools/independent.py` 构建，不手改生成的 TSV、C# 映射或游戏二进制作为译文来源。
