@@ -35,7 +35,12 @@ public static partial class CW3Runtime {
  public static void Boot(){Load();if(pump!=null)return;var go=new GameObject("CW3LocalizationRuntime");UnityEngine.Object.DontDestroyOnLoad(go);pump=go.AddComponent<CW3RuntimePump>();}
  static string PathOf(Component c){string path="";for(Transform t=c.transform;t!=null;t=t.parent){string n=t.name;if(n.EndsWith("(Clone)",StringComparison.Ordinal))n=n.Substring(0,n.Length-7);path=n+(path.Length==0?"":"/"+path);}return path;}
  static string ForComponent(string text,Component c,string kind){Load();List<Hashtable> list;if(text==null||c==null)return text;if(!sources.TryGetValue(text,out list)){ObserveComponent(text,c,kind,null,"unbound_source");return text;}string path=PathOf(c);Hashtable wildcard=null;foreach(var d in list)if(S(d,"kind")==kind){string p=S(d,"path"),scene=S(d,"scene");if((scene==Application.loadedLevelName||(scene=="Splash"&&Application.loadedLevel==0))&&path==p)return ComponentText(S(d,"id"),text,c);if(scene=="*"&&(path==p||path.EndsWith("/"+p,StringComparison.Ordinal)))wildcard=d;}if(wildcard!=null)return ComponentText(S(wildcard,"id"),text,c);ObserveComponent(text,c,kind,path,"unbound_context");return text;}
- static void PrepareStyledLabel(Component label){string raw=Get(label,"text") as string;string display=DisplayLabel(raw,label);TextStyles.Label(label,display,PathOf(label));CaptionLayout.PrepareStyled(label,display,TextStyles.Percent(label),TextStyles.LabelPixelUnit(label));TextStyles.Fitted(label);}
+ static void PrepareStyledLabel(Component label){
+  string raw=Get(label,"text") as string,display=DisplayLabel(raw,label),path=PathOf(label);TextStyles.Label(label,display,path);
+  if(!CaptionLayout.PrepareStyled(label,display,TextStyles.Percent(label),TextStyles.LabelPixelUnit(label))){
+   TextStyles.BodyFallback(label,display,path);CaptionLayout.PrepareStyled(label,display,TextStyles.Percent(label),0);
+  }TextStyles.Fitted(label);
+ }
  public static void PrepareLabel(object value){Load();Component label=value as Component;if(label==null)return;try{PrepareStyledLabel(label);}catch(Exception e){Debug.LogWarning("CW3Localization layout fallback: "+e.GetType().Name);}}
  public static bool LayoutButton(string text,GUILayoutOption[] options){return LayoutStyledButton(text,GUI.skin.button,options);}
  public static bool LayoutStyledButton(string text,GUIStyle style,GUILayoutOption[] options){Load();style=TextStyles.Gui(style,text,TextStylePolicy.Ui);if(translated.Contains(text??""))try{options=CaptionLayout.ButtonOptions(text,style,options);}catch(Exception e){Debug.LogWarning("CW3Localization button layout fallback: "+e.Message);}return GUILayout.Button(text,style,options);}

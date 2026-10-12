@@ -24,7 +24,7 @@ namespace UnityEngine {
  public class GUIStyle {public string name;public Font font;public int fontSize;public bool wordWrap;public int padding;public GUIStyle(){}public GUIStyle(GUIStyle value){name=value.name;font=value.font;fontSize=value.fontSize;wordWrap=value.wordWrap;padding=value.padding;}public Vector2 CalcSize(GUIContent content){return new Vector2(content.text.Length*(fontSize>0?fontSize:13),13);}}
 }
 public class UIFont:UnityEngine.Component {public object mUVRect,mFont;public int mSpacingX,mSpacingY;public float mPixelSize;public UnityEngine.FontStyle mDynamicFontStyle;public UnityEngine.Font dynamicFont{get;set;}public int dynamicFontSize{get;set;}
- public string WrapText(string text,float width,int lines,bool encoding,CaptionSymbols symbols){int count=Math.Max(1,(int)width);var rows=new List<string>();for(int i=0;i<text.Length;i+=count)rows.Add(text.Substring(i,Math.Min(count,text.Length-i)));return String.Join("\n",rows.ToArray());}
+ public string WrapText(string text,float width,int lines,bool encoding,CaptionSymbols symbols){int count=Math.Max(1,(int)width);var rows=new List<string>();foreach(string paragraph in text.Split('\n')){if(paragraph.Length==0)rows.Add("");else for(int i=0;i<paragraph.Length;i+=count)rows.Add(paragraph.Substring(i,Math.Min(count,paragraph.Length-i)));}return String.Join("\n",rows.ToArray());}
  public UnityEngine.Vector2 CalculatePrintedSize(string text,bool encoding,CaptionSymbols symbols){string[] rows=text.Split('\n');int width=0;foreach(string row in rows)width=Math.Max(width,row.Length);return new UnityEngine.Vector2(width,rows.Length);}
 }
 public enum CaptionSymbols {None}
@@ -34,6 +34,7 @@ internal static class FontFile {internal static string Family(string path,string
 internal static class LocalFonts {internal static string Add(string folder,string id){return "missing";}internal static UnityEngine.Font FontFor(string id){return null;}internal static byte[] Coverage(string id){return new byte[8192];}internal static int PixelUnit(string id){return 0;}internal static bool Owns(UnityEngine.Font f){return false;}internal static void KeepAtlas(UnityEngine.Font f){}internal static void Shutdown(){}internal static Hashtable Status(){return new Hashtable();}}
 
 class TextStyleContracts {
+ const string Opening="斯卡斯……醒醒。\n斯卡斯！……\n\n斯卡斯加德·阿布拉克西斯指挥官！";
  static void Need(bool condition,string message){if(!condition)throw new Exception(message);}
  static Label Make(string name,UIFont native){var label=new Label{gameObject=new UnityEngine.GameObject(name),name=name,font=native};return label;}
  static void Reject(string value){bool failed=false;try{TextStylePolicy.Parse(value);}catch(FormatException){failed=true;}Need(failed,"reject invalid style");}
@@ -51,7 +52,7 @@ class TextStyleContracts {
   Directory.CreateDirectory(Path.Combine(temp,"fonts"));
   foreach(string file in new[]{"font.ttf","serif.ttf","fonts/pixel.ttf","sharedassets0.assets","mainData"})File.WriteAllText(Path.Combine(temp,file),file);
   CW3StyleFonts.SansHash=Hash(Path.Combine(temp,"font.ttf"));CW3StyleFonts.SerifHash=Hash(Path.Combine(temp,"serif.ttf"));string pixelHash=Hash(Path.Combine(temp,"fonts/pixel.ttf"));CW3StyleFonts.AssetsHash=Hash(Path.Combine(temp,"sharedassets0.assets"));
-  CW3StyleFonts.SansCoverage=Cmap("中雪龘");CW3StyleFonts.SerifCoverage=Cmap("中");string pixelCoverage=Cmap("中");
+  CW3StyleFonts.SansCoverage=Cmap("中雪龘"+Opening);CW3StyleFonts.SerifCoverage=Cmap("中");string pixelCoverage=Cmap("中"+Opening);
   var sans=new UnityEngine.Font{name="CW3Style_sans_"+CW3StyleFonts.SansHash.Substring(0,12)};var serif=new UnityEngine.Font{name="CW3Style_serif_"+CW3StyleFonts.SerifHash.Substring(0,12)};var pixel=new UnityEngine.Font{name="CW3Style_pixel_custom_"+pixelHash.Substring(0,12)};
   UnityEngine.Resources.values.Add("cw3-localization/fonts/sans",sans);UnityEngine.Resources.values.Add("cw3-localization/fonts/serif",serif);UnityEngine.Resources.values.Add("cw3-localization/fonts/pixel_custom",pixel);
   Func<string,string,string,int,string> face=(file,hash,cmap,unit)=>"{\"file\":\""+file+"\",\"sha256\":\""+hash+"\",\"family\":\"Fixture\",\"coverage\":\""+cmap+"\",\"pixel_size\":"+unit+",\"probe_char\":20013,\"probe_advance\":20}";
@@ -109,6 +110,66 @@ class TextStyleContracts {
    if(!explicitUnit){fitted.text="雪";prepareTitle(fitted);Need(fitted.font.dynamicFont==sans&&TextStyles.LabelPixelUnit(fitted)==0&&fitted.transform.localScale.y==24,"nonpixel glyph fallback retains legacy title fitting");}
    TextStyles.ReleaseLabel(fitted.GetInstanceID());
   }
-  Console.WriteLine("PASS pixel title layout/live-size integration, semantic policy, defaults, native isolation/reuse, stable scales, per-control glyph fallback, pixel menu, GUI copies and input metrics");
+  BodyContracts(native,sans,flags);
+  Console.WriteLine("PASS pixel title/body layout/live-size integration, semantic policy, defaults, native isolation/reuse, stable scales, per-control glyph fallback, pixel menu, GUI copies and input metrics");
+ }
+ static Label Body(UIFont native){
+  var body=Make("MessageText",native);body.text=Opening;body.lineWidth=561;body.maxLineCount=5;
+  body.transform.localPosition=new UnityEngine.Vector3(-216,-12,0);
+  var dialog=new UnityEngine.Transform{name="MessageDialog"};body.transform.parent=dialog;
+  var next=new UnityEngine.Transform{localPosition=new UnityEngine.Vector3(315,-116,0)};
+  next.children.Add("Background",new UnityEngine.Transform{localScale=new UnityEngine.Vector3(60,20,1)});dialog.children.Add("NextButton",next);
+  return body;
+ }
+ static void PrepareBody(UnityEngine.Component component){
+  var body=(Label)component;const string path="UI/MessageDialog/MessageText";
+  TextStyles.Label(body,body.text,path);
+  if(!CaptionLayout.PrepareStyled(body,body.text,TextStyles.Percent(body),TextStyles.LabelPixelUnit(body))){
+   TextStyles.BodyFallback(body,body.text,path);CaptionLayout.PrepareStyled(body,body.text,TextStyles.Percent(body),0);
+  }TextStyles.Fitted(body);
+ }
+ static void BodyFits(Label body){
+  float size=body.transform.localScale.y;
+  string wrapped=body.font.WrapText(body.text,561/size,0,false,CaptionSymbols.None);
+  Need(body.font.CalculatePrintedSize(wrapped,false,CaptionSymbols.None).y*size<=90.1f&&size>=12,"body remains readable above the fixed button row");
+  Need(body.transform.localPosition==new UnityEngine.Vector3(-216,-12,0)&&body.lineWidth==561&&body.maxLineCount==5,"body keeps native bounds and anchor");
+ }
+ static void BodyContracts(UIFont native,UnityEngine.Font sans,BindingFlags flags){
+  // text.1bd8ca742b1590ce, level2/level3 MessageDialog: four lines, 561px wide, 90px high.
+  foreach(bool explicitUnit in new[]{false,true}){
+   var policy=new TextStylePolicy();policy.Change("body",explicitUnit?"sans":"pixel_custom",100,explicitUnit?12:0);
+   typeof(TextStyles).GetField("policy",flags).SetValue(null,policy);var body=Body(native);
+   PrepareBody(body);BodyFits(body);
+   Need(body.transform.localScale.y==12&&body.font.dynamicFontSize==12,"four-line opening in 90px keeps whole 12px glyphs, not a 24px glyph scaled to 22px");
+   var next=body.transform.parent.Find("NextButton");next.localPosition=new UnityEngine.Vector3(315,-122,0);
+   PrepareBody(body);Need(body.transform.localScale.y==24&&body.font.dynamicFontSize==24,"exact 96px boundary retains four 24px lines");
+   next.localPosition=new UnityEngine.Vector3(315,-116,0);
+   foreach(int percent in new[]{150,75,100}){
+    var saved=policy.Copy();saved.Change("body",policy.For("body").Family,percent,policy.For("body").PixelSize);
+    body.text=Opening;var report=TextStyles.ApplySizes(saved,c=>{if(c==body)PrepareBody(c);},m=>{});
+    Need((int)report["failures"]==0,"body live-size refresh succeeds");BodyFits(body);
+    Need(body.transform.localScale.y==12&&body.font.dynamicFontSize==12,"live body fitting retains its pixel baseline");
+    body.text="中";PrepareBody(body);int expected=percent==150?36:percent==75?12:24;
+    Need(body.transform.localScale.y==expected&&body.font.dynamicFontSize==expected,"short body restores the requested glyph size without compounding");
+    body.text=Opening;for(int i=0;i<3;i++){PrepareBody(body);BodyFits(body);Need(body.transform.localScale.y==12&&body.font.dynamicFontSize==12,"repeated body processing stays on the pixel grid");}
+   }TextStyles.ReleaseLabel(body.GetInstanceID());
+  }
+  // Non-divisors of 12 must not round the readability floor down; oversized units use smooth Sans.
+  foreach(int pixel in new[]{5,8,11,24,64}){
+   int percent=pixel==11?75:150;var policy=new TextStylePolicy();policy.Change("body","pixel_custom",percent,pixel);
+   typeof(TextStyles).GetField("policy",flags).SetValue(null,policy);var body=Body(native);PrepareBody(body);BodyFits(body);
+   if(pixel==5||pixel==8){int expected=pixel==5?20:16;Need(body.transform.localScale.y==expected&&body.font.dynamicFontSize==expected&&TextStyles.LabelPixelUnit(body)==pixel,"readable integer pixel sizes fit without a fractional floor");}
+   else{Need(body.font.dynamicFont==sans&&TextStyles.LabelPixelUnit(body)==0&&(string)TextStyles.Report(body)["fallback"]=="pixel_body_bounds","unreadable or oversized pixel grid falls back for this body only");Need(body.transform.localScale.y==(pixel==11?15:22),"fallback preserves ordinary Sans fitting");}
+   Need(TextStyles.ActivePolicy().For("body").PixelSize==pixel,"bounded fallback does not rewrite the user setting");
+   if(pixel>=24){
+    for(int repeat=0;repeat<3;repeat++){PrepareBody(body);BodyFits(body);Need(body.transform.localScale.y==22,"repeated fallback retains the original size baseline");}
+    body.text="中";PrepareBody(body);Need(body.font.dynamicFont!=sans&&body.transform.localScale.y==pixel&&body.font.dynamicFontSize==pixel&&TextStyles.LabelPixelUnit(body)==pixel,"shorter text restores the selected pixel face after bounded fallback");
+   }
+   TextStyles.ReleaseLabel(body.GetInstanceID());
+  }
+  var smooth=new TextStylePolicy();smooth.Change("body","sans",150,0);typeof(TextStyles).GetField("policy",flags).SetValue(null,smooth);
+  var ordinary=Body(native);PrepareBody(ordinary);BodyFits(ordinary);
+  Need(ordinary.transform.localScale.y==22&&ordinary.font.dynamicFontSize==20&&TextStyles.LabelPixelUnit(ordinary)==0,"ordinary nonpixel body retains its existing 22px fit and native glyph size");
+  TextStyles.ReleaseLabel(ordinary.GetInstanceID());
  }
 }

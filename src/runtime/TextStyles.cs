@@ -101,15 +101,19 @@ internal static class TextStyles {
   }catch{UnityEngine.Object.Destroy(go);throw;}
  }
  static void Detach(LabelState state){if(state.Clone==null)return;state.Clone.Users--;state.Clone=null;}
- internal static void Label(Component label,string text,string path){
+ internal static void Label(Component label,string text,string path){Label(label,text,path,false);}
+ internal static void BodyFallback(Component label,string text,string path){Label(label,text,path,true);}
+ static void Label(Component label,string text,string path,bool smoothBodyFallback){
   if(label==null)return;int id=label.GetInstanceID();Component current=Get(label,"font") as Component;if(current==null)return;
   LabelState state;if(!labels.TryGetValue(id,out state)){state=new LabelState{Label=label,Native=current,Base=label.transform.localScale,Applied=label.transform.localScale};labels.Add(id,state);var life=label.gameObject.AddComponent<CW3StyleLifetime>();life.Id=id;}
   if(state.Clone!=null&&current!=state.Clone.Font){Detach(state);state.Native=current;state.Base=label.transform.localScale;state.Applied=state.Base;}
   else if(label.transform.localScale!=state.Applied)state.Base=label.transform.localScale;
   string role=TextStylePolicy.Role(label.name,path),family,reason;var style=policy.For(role);
   int size=20;object nativeSize=Get(state.Native,"dynamicFontSize");if(nativeSize is int)size=(int)nativeSize;size=Math.Max(4,Math.Min(128,size));
-  int unit=style.PixelSize>0?style.PixelSize:PixelUnit(style.Family);bool pixel=unit>0;if(pixel)size=TextStylePolicy.PixelSize((int)Math.Round(Math.Abs(state.Base.x)),style.Percent,unit);
-  Font selected=Select(role,text,size,Get(state.Native,"dynamicFont") as Font,out family,out reason);
+  int unit=style.PixelSize>0?style.PixelSize:PixelUnit(style.Family);bool pixel=unit>0&&!smoothBodyFallback;if(pixel)size=TextStylePolicy.PixelSize((int)Math.Round(Math.Abs(state.Base.x)),style.Percent,unit);
+  Font selected;
+  if(smoothBodyFallback){family="sans";reason="pixel_body_bounds";selected=FontFor(family);if(!Covers(selected,text))selected=Get(state.Native,"dynamicFont") as Font;}
+  else selected=Select(role,text,size,Get(state.Native,"dynamicFont") as Font,out family,out reason);
   try{
    if(selected!=null){Clone clone=CloneFont(state.Native,family,selected,size);if(clone!=state.Clone){Detach(state);clone.Users++;state.Clone=clone;Set(label,"font",clone.Font);}}
    else{Detach(state);Set(label,"font",state.Native);}
@@ -122,8 +126,8 @@ internal static class TextStyles {
  internal static int LabelPixelUnit(Component label){LabelState state;return label!=null&&labels.TryGetValue(label.GetInstanceID(),out state)?state.PixelUnit:0;}
  internal static void Fitted(Component label){
   LabelState state;if(label==null||!labels.TryGetValue(label.GetInstanceID(),out state))return;
-  // Title fitting steps in pixel units; rasterize at the fitted size instead of rescaling a larger glyph.
-  if(state.Role==TextStylePolicy.Title&&state.PixelUnit>0&&state.Clone!=null){
+  // Body/title fitting steps in pixel units; rasterize at the final size, never scale a larger glyph.
+  if((state.Role==TextStylePolicy.Title||state.Role==TextStylePolicy.Body)&&state.PixelUnit>0&&state.Clone!=null){
    int size=(int)Math.Round(Math.Abs(label.transform.localScale.x));
    if(size>=state.PixelUnit&&size%state.PixelUnit==0&&(int)Get(state.Clone.Font,"dynamicFontSize")!=size){
     Clone clone=CloneFont(state.Native,state.Family,Get(state.Clone.Font,"dynamicFont") as Font,size);
