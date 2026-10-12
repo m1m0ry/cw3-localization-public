@@ -42,5 +42,3 @@ python3 tools/workflow.py check
 自写代码采用 [MIT](LICENSE)，字体采用 [OFL 1.1](fonts/OFL.txt)。游戏原文、画面及资源不属于本项目的 MIT 授权范围，见 [NOTICE](NOTICE.md)。
 
 [贡献译文](CONTRIBUTING.md) · [构建与安装](docs/build.md) · [字体与字号](docs/text-style.md) · [字体与第三方许可](docs/licensing.md)
-
-可选启动加速覆盖包须匹配汉化版本。退出游戏后，用启用或停用包中的 `CW3_Data/sharedassets2.assets` 覆盖同名文件；升级或恢复汉化前先停用。构建命令见 [构建文档](docs/build.md)。

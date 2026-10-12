@@ -21,3 +21,10 @@ helper=compile('CW3Rendering',[ROOT/'src/rendering/CW3Rendering.cs'],True);exe('
 helper=compile('CW3Runtime',[ROOT/'src/runtime/CW3Runtime.cs',ROOT/'src/runtime/CaptionLayout.cs',ROOT/'src/runtime/FontRegistry.cs',ROOT/'src/runtime/TextStylePolicy.cs',ROOT/'src/runtime/TextStyles.cs',ROOT/'src/runtime/FontSettingsModel.cs',ROOT/'src/runtime/FontSettingsView.cs',ROOT/'src/runtime/GuiStyles.cs',ROOT/'src/runtime/MessageBindings.cs',ROOT/'src/runtime/ScriptBindings.cs',ROOT/'src/runtime/MissionLoads.cs',ROOT/'src/runtime/Json.cs',ROOT/'src/runtime/FontFile.cs',ROOT/'src/runtime/LocalFontFile.cs',ROOT/'src/runtime/LocalFonts.cs',ROOT/'src/runtime/NativeFontBundle.cs',ROOT/'src/runtime/Candidates.cs',generated/'Definitions.cs',generated/'StyleFonts.cs',generated/'BuildInfo.cs',generated/'NativeFontTemplate.cs'],True)
 exe('RuntimePatch',ROOT/'src/runtime/PatchRuntime.cs',render,helper,generated/'managed.tsv',final,g,generated/'audit.tsv',original)
 exe('RuntimeVerify',ROOT/'src/runtime/VerifyRuntime.cs',render,final,generated/'audit.tsv')
+
+# Audit the runtime bridge first, then independently bound the rendering change to
+# UIPanel's material-fill phase. Only promote it after verification succeeds.
+optimized=out/'Assembly-CSharp.panel-fill.dll'
+exe('PanelFillPatch',ROOT/'src/rendering/PatchPanelFill.cs',final,optimized,g)
+exe('PanelFillVerify',ROOT/'src/rendering/VerifyPanelFill.cs',final,optimized)
+shutil.copy2(optimized,final)

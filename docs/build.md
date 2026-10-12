@@ -60,12 +60,3 @@ python3 tools/audit_managed_display.py \
 `tools/verify_package.py --config local-only/候选/install-config.json --package local-only/候选包.zip --inspect-only` 检查 ZIP 清单、文件大小与哈希、安装器和说明，不创建游戏副本。没有构建用 EXE 时只核对目标指纹；安装器始终检查实际 EXE。
 
 [贡献译文](../CONTRIBUTING.md) · [可选调试](debug.md) · [许可](licensing.md)
-
-可选启动加速覆盖包从配套汉化完整包生成，独立于汉化本体：
-
-```sh
-python3 tools/package_audio_addon.py --player-package local-only/配套完整包 \
-  --output local-only/audio-addon
-```
-
-输出启用和停用两份 ZIP；停用资源保留该汉化版本的字体关联。基础资源不匹配时拒绝构建。
