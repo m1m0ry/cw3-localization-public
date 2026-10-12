@@ -61,5 +61,17 @@ class LegacyFontRetirement(unittest.TestCase):
             self.assertFalse(out.exists())
 
 
+    def test_settings_template_cannot_reenter_an_overwrite_package(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);config,_,out=self.package_fixture(root)
+            (root/'resources').mkdir();(root/'resources/supported-build.json').write_text('{}')
+            candidate=root/'candidate/manifest.json';doc=json.loads(candidate.read_text())
+            doc['files']=[dict(file='CW3Localization/text-style.json')];candidate.write_text(json.dumps(doc))
+            argv=['package_player.py','--config',str(config),'--output',str(out)]
+            with patch.object(package_player,'ROOT',root),patch.object(sys,'argv',argv),self.assertRaisesRegex(AssertionError,'settings template'):
+                package_player.main()
+            self.assertFalse(out.exists())
+
+
 if __name__ == '__main__':
     unittest.main()

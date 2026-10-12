@@ -11,7 +11,7 @@ import sys
 import tempfile
 import zipfile
 
-from package_player import PLAYER_CONTROLS, PLAYER_SOURCES
+from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, target_description
 from player_install import RUNTIME
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,7 +73,7 @@ def inspect_zip(archive, build, supported, exe):
     require(player.get('format') == 2 and isinstance(player.get('version'), str) and player['version']
             and player['version'] == build.get('patch_version'),
             'Player/build version mismatch')
-    target = 'Windows Steam ' + supported['version'].removesuffix(' Steam') + ' / build ' + supported['steam_build'] + ' / Unity ' + supported['unity_version']
+    target = target_description(supported)
     require(player.get('target') == target and player.get('exe_sha256') == supported['exe_sha256'],
             'Player target or executable hash mismatch')
     if exe is not None:

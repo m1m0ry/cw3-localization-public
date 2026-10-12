@@ -5,9 +5,10 @@ internal sealed class TextStylePolicy {
  internal const string Body="body",Title="title",Ui="ui",Status="status",CodeInput="code_input";
  internal static readonly string[] Roles={Body,Title,Ui,Status};
  internal sealed class Style {internal readonly string Family;internal readonly int Percent,PixelSize;internal Style(string family,int percent,int pixel=0){Family=family;Percent=percent;PixelSize=pixel;}}
+ static readonly Style DefaultStyle=new Style("sans",100);
  readonly Dictionary<string,Style> roles=new Dictionary<string,Style>();
- internal TextStylePolicy(){foreach(string role in new[]{Body,Title,Ui,Status})roles.Add(role,new Style("sans",100));}
- internal Style For(string role){Style value;return roles.TryGetValue(role,out value)?value:new Style("sans",100);}
+ internal TextStylePolicy(){foreach(string role in new[]{Body,Title,Ui,Status})roles.Add(role,DefaultStyle);}
+ internal Style For(string role){Style value;return roles.TryGetValue(role,out value)?value:DefaultStyle;}
  internal void Change(string role,string font,int percent,int pixel){if(!roles.ContainsKey(role)||!FontReference(font)||percent<75||percent>150||pixel<0||pixel>64)throw new FormatException("style value");roles[role]=new Style(font,percent,pixel);}
  internal TextStylePolicy Copy(){return Parse(Serialize());}
  // Sizes can change live; keep the active face and its pixel baseline until restart.

@@ -4,7 +4,6 @@ Preserve existing objects/references and append owned Font/Material/Texture2D ob
 The ResourceManager gains explicit namespaced keys; no OS font registration.
 """
 import copy
-import base64
 import hashlib
 import struct
 from fontTools.ttLib import TTFont
@@ -16,16 +15,6 @@ FAMILIES = ('sans', 'serif')
 
 def asset_name(family, digest):
     return 'CW3Style_' + family + '_' + digest[:12]
-
-
-def coverage(path):
-    # Compile the actual BMP cmap, so Unity's OS fallback cannot disguise a missing glyph.
-    bits = bytearray(8192)
-    with TTFont(path) as font:
-        for codepoint, glyph in font.getBestCmap().items():
-            if codepoint < 65536 and font.getGlyphID(glyph) != 0:
-                bits[codepoint // 8] |= 1 << (codepoint % 8)
-    return base64.b64encode(bits).decode('ascii')
 
 
 def _save_added(original, file, added):

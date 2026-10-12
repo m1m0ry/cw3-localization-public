@@ -96,10 +96,10 @@ def resource_plan(layout):
 
 def build(config,out):
     import workflow
-    from text_style import validate_style, validate_font
+    from text_style import validate_font
     sans=ROOT/'local-only/independent-font/font.ttf';serif=ROOT/'fonts/CW3SerifSC-Regular.ttf'
-    cps=validate_font(sans,'sans');validate_font(serif,'serif',json.loads((ROOT/'fonts/serif-provenance.json').read_text())['subset_sha256']);validate_style(ROOT/'resources/text-style.json')
-    entries=workflow.check(cps);original=workflow.location(config,'original');layout=workflow.read(ROOT/'resources/layout.json')
+    cps=validate_font(sans,'sans');validate_font(serif,'serif',json.loads((ROOT/'fonts/serif-provenance.json').read_text())['subset_sha256'])
+    entries=workflow.check(cps);original=workflow.location(config,'original');layout=workflow.read(ROOT/'resources/layout.json');supported=workflow.read(ROOT/'resources/supported-build.json')
     for name,sha in layout['original_hashes'].items():assert workflow.sha((original/name).read_bytes())==sha,name
     assert not (out/'manifest.json').exists(),'Keep the installed recovery point; choose a new output'
     out.mkdir(parents=True,exist_ok=True);dest=out/'files';generated=out/'generated';generated.mkdir(exist_ok=True)
@@ -131,7 +131,7 @@ def build(config,out):
         (dest/name).write_bytes(data);required_originals.pop(name,None)
     constants={'SansHash':font_hashes['sans'],'SerifHash':font_hashes['serif'],
                'AssetsHash':workflow.sha(resources['CW3_Data/sharedassets0.assets']),
-               'SansCoverage':style_font_resources.coverage(sans),'SerifCoverage':style_font_resources.coverage(serif)}
+               'SansCoverage':font_specs['sans']['coverage'],'SerifCoverage':font_specs['serif']['coverage']}
     (generated/'StyleFonts.cs').write_text('internal static class CW3StyleFonts {\n'+''.join(' internal const string '+key+'="'+value+'";\n' for key,value in constants.items())+'}\n')
     import native_font_template
     (generated/'NativeFontTemplate.cs').write_text(native_font_template.build(original))
@@ -142,10 +142,10 @@ def build(config,out):
     d=dest/'CW3Localization';d.mkdir(exist_ok=True);shutil.copy2(ROOT/'translations/zh-CN.json',d/'zh-CN.json');shutil.copy2(ROOT/'fonts/OFL.txt',d/'OFL.txt')
     # Full OFL source-derived font is prepared separately and hash-checked by the font tool.
     font=ROOT/'local-only/independent-font/font.ttf';assert font.exists(),'Prepare the full static OFL font first';shutil.copy2(font,d/'font.ttf')
-    shutil.copy2(serif,d/'serif.ttf');shutil.copy2(ROOT/'fonts/Serif-OFL.txt',d/'Serif-OFL.txt');shutil.copy2(ROOT/'resources/text-style.json',d/'text-style.json')
+    shutil.copy2(serif,d/'serif.ttf');shutil.copy2(ROOT/'fonts/Serif-OFL.txt',d/'Serif-OFL.txt')
     workflow.save(d/'fonts.json',dict(format=1,runtime_sha256=workflow.sha((out/'managed/CW3Runtime.dll').read_bytes()),resources={name:workflow.sha(data) for name,data in resources.items()},fonts=font_specs))
     rows=[{'file':str(p.relative_to(dest)),'before':layout['original_hashes'].get(str(p.relative_to(dest))),'after':workflow.sha(p.read_bytes()),'bytes':p.stat().st_size} for p in sorted(dest.rglob('*')) if p.is_file()]
-    workflow.save(out/'manifest.json',{'source_dirty':subprocess.run(['git','diff','--quiet','HEAD','--'],cwd=ROOT).returncode!=0,'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'format':1,'revision':'independent-v12-candidate','patch_version':config.get('patch_version','v12.3'),'steam_build':'22453699','version':'2.12 Steam','required_originals':required_originals,'controlled_fonts':font_hashes,'files':rows})
+    workflow.save(out/'manifest.json',{'source_dirty':subprocess.run(['git','diff','--quiet','HEAD','--'],cwd=ROOT).returncode!=0,'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'format':1,'revision':'independent-v12-candidate','patch_version':config.get('patch_version','v12.3'),'steam_build':supported['steam_build'],'version':supported['version'],'required_originals':required_originals,'controlled_fonts':font_hashes,'files':rows})
     workflow.save(out/'install-config.json',dict(config,package=str(out),build=str(dest)))
     print('Prepared',len(defs),'fixed runtime targets;',len(rows),'candidate files; original texts/scripts preserved. Game unchanged.')
 

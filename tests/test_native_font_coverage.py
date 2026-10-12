@@ -2,13 +2,12 @@
 from pathlib import Path
 import base64, sys, tempfile, unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
-import style_font_resources
 import font_registry
 
 class NativeCoverage(unittest.TestCase):
     def test_serif_coverage_distinguishes_own_glyphs_from_os_fallback(self):
         font=Path(__file__).resolve().parents[1]/'fonts/CW3SerifSC-Regular.ttf'
-        bits=base64.b64decode(style_font_resources.coverage(font))
+        bits=base64.b64decode(font_registry.inspect_font(font)['coverage'])
         self.assertEqual(len(bits),8192)
         for char in 'W泰赫摸章绩芒':
             self.assertTrue(bits[ord(char)//8] & (1<<(ord(char)%8)),char)

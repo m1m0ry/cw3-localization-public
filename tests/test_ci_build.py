@@ -74,6 +74,17 @@ class PinnedBuild(unittest.TestCase):
             checked=subprocess.run([sys.executable,str(ROOT/'tools/verify_package.py'),'--config',str(config),
                                     '--package',str(output)+'.zip','--inspect-only'],check=True,capture_output=True,text=True)
             self.assertIn('Actual executable unavailable',checked.stdout)
+            # Target strings follow the same supported-build metadata in both
+            # packaging and verification, rather than duplicating game numbers.
+            supported.update(version='9.99 Steam',steam_build='fixture-build',unity_version='fixture-unity')
+            (root/'resources/supported-build.json').write_text(json.dumps(supported))
+            manifest.update(version=supported['version'],steam_build=supported['steam_build'])
+            (build/'manifest.json').write_text(json.dumps(manifest));other=root/'local-only/other-target'
+            subprocess.run([sys.executable,str(root/'tools/package_player.py'),'--config',str(config),'--output',str(other)],check=True,capture_output=True)
+            with zipfile.ZipFile(str(other)+'.zip') as z,patch.object(verify_package,'ROOT',root):
+                _,player=verify_package.inspect_zip(z,manifest,supported,None)
+                self.assertEqual(player['target'],'Windows Steam 9.99 / build fixture-build / Unity fixture-unity')
+
 
 
 if __name__ == '__main__':unittest.main()

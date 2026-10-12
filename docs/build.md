@@ -25,11 +25,7 @@ python3 tools/package_player.py \
 
 安装和恢复步骤见 [README](../README.md)。基础补丁安装后，只改 `CW3Localization/zh-CN.json` 的 `translation`，保留其他字段、标签和占位符。退出后替换，重启生效。新增显示目标须重新审计和构建；新增字形须更新字体。
 
-```sh
-python3 tools/update_runtime.py --config local-only/independent-next/install-config.json
-```
-
-更新器检查固定目标、格式及实际字体，并同步恢复文件；该工具使用 CrossOver 进程检查。Windows 可在退出游戏后手动替换词典，恢复使用包内安装器。
+升级使用新版完整包的安装入口；兼容备份可直接更新，跨类型补丁按安装器提示先恢复。包内不含用户字号配置和自定义字体，覆盖或升级会保留它们。词典可在退出游戏后直接替换，重启生效；构建校验留在开发端。
 
 ## 开发检查
 

@@ -7,8 +7,12 @@ from pathlib import Path, PureWindowsPath
 import argparse, csv, hashlib, io, json, os, re, shutil, subprocess, sys, tempfile, uuid
 PACKAGE=Path(__file__).resolve().parent
 BACKUP='.cw3-zh-backup'
-RUNTIME={'CW3Localization/zh-CN.json','CW3Localization/font.ttf','CW3Localization/serif.ttf','CW3Localization/text-style.json'}
-EXTERNAL=RUNTIME|{'CW3Localization/OFL.txt','CW3Localization/Serif-OFL.txt','CW3Localization/fonts.json'}
+RUNTIME={'CW3Localization/zh-CN.json'}
+# Settings belong to the user, never to a new package. The exact legacy path
+# remains readable while old backups transition to packages without a template.
+SETTINGS={'CW3Localization/text-style.json'}
+MUTABLE=RUNTIME|SETTINGS
+EXTERNAL=MUTABLE|{'CW3Localization/font.ttf','CW3Localization/serif.ttf','CW3Localization/OFL.txt','CW3Localization/Serif-OFL.txt','CW3Localization/fonts.json'}
 def digest(path):
     if not path.exists():return None
     h=hashlib.sha256()
@@ -121,10 +125,11 @@ def status(game,manifest,state):
     rows=manifest['files'];now={f['file']:digest(safe(game,f['file'])) for f in rows}
     if state and (game/BACKUP/'journal.json').exists():return 'interrupted'
     if not required_originals_match(game,manifest):return 'unknown'
-    if all(now[f['file']]==f['after'] for f in rows):return 'installed' if state else 'unmanaged'
+    if all(now[f['file']]==f['after'] for f in rows):
+        if state and any(f['file'] in SETTINGS for f in state['files']):return 'upgrade'
+        return 'installed' if state else 'unmanaged'
     if state and all(digest(safe(game,f['file']))==f['after'] for f in state['files']):return 'upgrade'
-    runtime=set(manifest.get('runtime_files',[])) & RUNTIME
-    if state and runtime and {f['file'] for f in state['files']}=={f['file'] for f in rows} and all(f['before'] is None for f in state['files'] if f['file'] in runtime) and all(digest(safe(game,f['file']))==f['after'] for f in state['files'] if f['file'] not in runtime):return 'customized'
+    if state and all(f['before'] is None for f in state['files'] if f['file'] in MUTABLE) and all(digest(safe(game,f['file']))==f['after'] for f in state['files'] if f['file'] not in MUTABLE):return 'customized'
     if all(now[f['file']]==f['before'] for f in rows):return 'original'
     legacy=manifest.get('legacy_hashes',{})
     if all(now[f['file']]==legacy.get(f['file']) for f in rows):return 'legacy'
@@ -141,10 +146,10 @@ def atomic_copy(source,target):
 
 def preserve_runtime_updates(game,state,manifest):
     # Only whitelisted display-data files are mutable; assemblies/resources stay hash-locked.
-    if status(game,manifest,state)!='customized':return state
+    if status(game,manifest,state) not in ('customized','upgrade'):return state
     idle();rows=[dict(f) for f in state['files']];history=game/BACKUP/'runtime-updates'
     for f in rows:
-        if f['file'] not in RUNTIME:continue
+        if f['file'] not in MUTABLE:continue
         source=safe(game,f['file']);current=digest(source)
         if current==f['after']:continue
         if source.exists():
@@ -152,8 +157,9 @@ def preserve_runtime_updates(game,state,manifest):
             if history.is_symlink():raise RuntimeError('外部文件备份目录不能是符号链接')
             history.mkdir(exist_ok=True);saved=history/(current+'-'+source.name)
             if not saved.exists():atomic_copy(source,saved)
-            if digest(saved)!=current:raise RuntimeError('外部译文/字体备份校验失败')
+            if digest(saved)!=current:raise RuntimeError('外部译文/设置备份校验失败')
         f['after']=current;f['bytes']=source.stat().st_size if source.exists() else 0
+    if rows==state['files']:return state
     updated=dict(state,files=rows);put_json(game/BACKUP/'state.json',updated);return updated
 
 def restore(game,state):
@@ -163,6 +169,7 @@ def restore(game,state):
     if journal:
         for f in journal['files']:allowed[f['file']].add(f['after'])
     for f in rows:
+        if f['file'] in SETTINGS:continue
         if digest(safe(game,f['file'])) not in allowed[f['file']]:raise RuntimeError('文件已被其他程序修改，拒绝覆盖：'+f['file'])
     idle();ensure_writable(game,rows,max(f['bytes'] for f in rows)+10485760)
     if journal:
@@ -172,21 +179,24 @@ def restore(game,state):
             temporary.unlink(missing_ok=True)
     put_json(folder/'journal.json',{'action':'restore','files':journal['files'] if journal else rows})
     for f in rows:
+        if f['file'] in SETTINGS:continue
         target=safe(game,f['file'])
         if f['before'] is None:target.unlink(missing_ok=True)
         else:atomic_copy(safe(folder/'original',f['file']),target)
-    if any(digest(safe(game,f['file']))!=f['before'] for f in rows):raise RuntimeError('恢复后校验失败；原备份保留')
+    if any(digest(safe(game,f['file']))!=f['before'] for f in rows if f['file'] not in SETTINGS):raise RuntimeError('恢复后校验失败；原备份保留')
     (folder/'journal.json').unlink();print('已恢复原版。备份保留，存档未改动。')
 
 def install(game,manifest,state,package=PACKAGE):
     check_required_originals(game,manifest)
-    rows=manifest['files'];current=status(game,manifest,state)
+    rows=manifest['files']
+    if any(f['file'] in SETTINGS for f in rows):raise RuntimeError('此包包含旧设置模板，请使用新版完整包')
+    current=status(game,manifest,state)
     if current=='installed':print('此版本已经安装，全部文件校验通过。');return
-    if current=='customized':print('基础补丁已安装；检测到外部词典/字体更新，保留当前文件。');return
     if current in ('legacy','unmanaged'):raise RuntimeError('检测到已安装的汉化，但不由本安装器备份管理。无需重复安装；若要更换版本，请先用旧恢复入口还原原版。')
     if current=='interrupted':raise RuntimeError('检测到中断的安装/恢复，请先选择恢复原版，再安装')
-    if current not in ('original','upgrade'):raise RuntimeError('版本不匹配或文件已被修改；未写入游戏文件')
-    if state and {f['file']:f['before'] for f in state['files']}!={f['file']:f['before'] for f in rows}:raise RuntimeError('不支持跨版本升级。请先用旧入口恢复原版并另存旧备份目录，再安装本包')
+    if current not in ('original','upgrade','customized'):raise RuntimeError('版本不匹配或文件已被修改；未写入游戏文件')
+    if state and (any(f['before'] is not None for f in state['files'] if f['file'] in SETTINGS) or {f['file']:f['before'] for f in state['files'] if f['file'] not in SETTINGS}!={f['file']:f['before'] for f in rows}):raise RuntimeError('不支持跨版本升级。请先用旧入口恢复原版并另存旧备份目录，再安装本包')
+    if state:state=preserve_runtime_updates(game,state,manifest)
     idle();required=sum(f['bytes'] for f in rows)+max(f['bytes'] for f in rows)+10485760
     if not state:required+=sum(safe(game,f['file']).stat().st_size for f in rows if f['before'])
     ensure_writable(game,rows,required)
@@ -209,7 +219,7 @@ def install(game,manifest,state,package=PACKAGE):
                     if digest(dst)!=f['before']:raise RuntimeError('备份写入校验失败')
             put_json(preparing/'state.json',state);os.replace(preparing,folder)
         # Recheck after the potentially slow build/backup stage.
-        idle();check_required_originals(game,manifest);expected={f['file']:(f['before'] if current=='original' else f['after']) for f in state['files']}
+        idle();check_required_originals(game,manifest);expected={f['file']:(f['before'] if current=='original' else f['after']) for f in state['files'] if f['file'] not in SETTINGS}
         if any(digest(safe(game,n))!=h for n,h in expected.items()):raise RuntimeError('准备期间游戏文件发生变化；已取消')
         put_json(folder/'journal.json',{'action':'install','files':rows})
         try:

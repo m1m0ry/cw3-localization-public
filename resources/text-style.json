@@ -1,9 +1,0 @@
-{
-  "format": 1,
-  "roles": {
-    "body": {"font": "sans", "size_percent": 100},
-    "title": {"font": "sans", "size_percent": 100},
-    "ui": {"font": "sans", "size_percent": 100},
-    "status": {"font": "sans", "size_percent": 100}
-  }
-}
