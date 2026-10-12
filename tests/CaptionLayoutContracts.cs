@@ -11,7 +11,7 @@ namespace UnityEngine {
  public class GUILayoutOption {}
  public static class GUILayout {public static GUILayoutOption Width(float n){return new GUILayoutOption();}}
 }
-public class CaptionFont {public Vector2 CalculatePrintedSize(string s,bool e,CaptionSymbols symbols){return new Vector2(s.Length,1);}}
+public class CaptionFont {public string WrapText(string s,float width,int lines,bool e,CaptionSymbols symbols){int n=Math.Max(1,(int)width);var parts=new List<string>();for(int i=0;i<s.Length;i+=n)parts.Add(s.Substring(i,Math.Min(n,s.Length-i)));return String.Join("\n",parts.ToArray());}public Vector2 CalculatePrintedSize(string s,bool e,CaptionSymbols symbols){string[] lines=s.Split('\n');int width=0;foreach(string line in lines)width=Math.Max(width,line.Length);return new Vector2(width,lines.Length);}}
 public enum CaptionSymbols {None}
 public class CaptionLabel:Component {public object font{get;set;}public CaptionSymbols symbolStyle{get;set;}public bool supportEncoding{get;set;}public bool password{get;set;}public bool shrinkToFit{get;set;}public int lineWidth{get;set;}public int maxLineCount{get;set;}}
 class CaptionLayoutContracts {
@@ -30,6 +30,9 @@ class CaptionLayoutContracts {
    CaptionLayout.Prepare(label,title);Need(tr.localPosition.y==2,"Reprocessing must not shift the anchor");
   }
   tr.localPosition=new Vector3(7,5,-1);CaptionLayout.Prepare(label,"星区标题");Need(tr.localPosition.x==7&&tr.localPosition.y==5&&tr.localPosition.z==-1,"Preserve later native anchor adjustments");
+  var dialog=new Transform{name="MessageDialog"};var next=new Transform{localPosition=new Vector3(315,-116,0)};next.children.Add("Background",new Transform{localScale=new Vector3(60,20,1)});dialog.children.Add("NextButton",next);
+  var bodyTr=new Transform{parent=dialog,localPosition=new Vector3(-216,-12,0),localScale=new Vector3(30,30,1)};var body=new CaptionLabel{name="MessageText",transform=bodyTr,font=new CaptionFont(),lineWidth=561,maxLineCount=5};string text=new string('字',120);
+  CaptionLayout.PrepareStyled(body,text,150);float unit=bodyTr.localScale.y;var font=(CaptionFont)body.font;float height=font.CalculatePrintedSize(font.WrapText(text,561/unit,0,false,CaptionSymbols.None),false,CaptionSymbols.None).y*unit;Need(height<=90.1&&unit>=12&&unit<=30,"full body stays above fixed button row");Need(bodyTr.localPosition.y==-12&&body.maxLineCount==5,"body anchor and native limits preserved");CaptionLayout.PrepareStyled(body,text,150);Need(bodyTr.localScale.y==unit,"fitting is idempotent");
   Console.WriteLine("PASS native title anchor, status-row separation, bounded titles and repeat processing");
  }
 }

@@ -7,8 +7,8 @@ from pathlib import Path, PureWindowsPath
 import argparse, csv, hashlib, io, json, os, re, shutil, subprocess, sys, tempfile, uuid
 PACKAGE=Path(__file__).resolve().parent
 BACKUP='.cw3-zh-backup'
-RUNTIME={'CW3Localization/zh-CN.json','CW3Localization/font.ttf'}
-EXTERNAL=RUNTIME|{'CW3Localization/OFL.txt'}
+RUNTIME={'CW3Localization/zh-CN.json','CW3Localization/font.ttf','CW3Localization/serif.ttf','CW3Localization/text-style.json'}
+EXTERNAL=RUNTIME|{'CW3Localization/OFL.txt','CW3Localization/Serif-OFL.txt','CW3Localization/fonts.json'}
 def digest(path):
     if not path.exists():return None
     h=hashlib.sha256()
@@ -140,7 +140,7 @@ def atomic_copy(source,target):
     finally:temp.unlink(missing_ok=True)
 
 def preserve_runtime_updates(game,state,manifest):
-    # Only the two introduced display-data files are mutable; assemblies/resources stay hash-locked.
+    # Only whitelisted display-data files are mutable; assemblies/resources stay hash-locked.
     if status(game,manifest,state)!='customized':return state
     idle();rows=[dict(f) for f in state['files']];history=game/BACKUP/'runtime-updates'
     for f in rows:
@@ -236,7 +236,8 @@ def main():
     if not action:
         value=input('1 安装/更新汉化   2 恢复原版   其他键退出：').strip();action={'1':'install','2':'restore'}.get(value)
     if action=='install':install(game,manifest,state)
-    elif action=='restore':restore(game,preserve_runtime_updates(game,state,manifest) if state else state)
+    elif action=='restore':
+        restore(game,preserve_runtime_updates(game,state,manifest) if state else state)
     elif action=='status':print('仅检查，未写入游戏。')
 if __name__=='__main__':
     try:main()

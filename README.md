@@ -13,7 +13,7 @@ Steam 中右键游戏 → 管理 → 浏览本地文件，定位包含 `CW3.exe`
 - Windows：`<Steam 库>\steamapps\common\Creeper World 3`
 - CrossOver：`~/Library/Application Support/CrossOver/Bottles/<瓶名>/drive_c/Program Files (x86)/Steam/steamapps/common/Creeper World 3`
 
-手工覆盖须先备份 `CW3_Data`，将包内 `CW3_Data` 和 `CW3Localization` 合并到游戏目录，保留其他文件。恢复自己的备份，并删除新增的 `CW3_Data/Managed/CW3Rendering.dll`、`CW3_Data/Managed/CW3Runtime.dll` 及 `CW3Localization` 中的 `zh-CN.json`、`font.ttf`、`OFL.txt`；先另存自改词典和字体。安装和恢复不改存档。
+手工覆盖须先备份 `CW3_Data`，将包内 `CW3_Data` 和 `CW3Localization` 合并到游戏目录，保留其他文件。恢复自己的备份，并删除新增的 `CW3_Data/Managed/CW3Rendering.dll`、`CW3_Data/Managed/CW3Runtime.dll` 及 `CW3Localization` 中的 `zh-CN.json`、`font.ttf`、`serif.ttf`、`fonts.json`、`text-style.json`、`OFL.txt`、`Serif-OFL.txt`；先另存自改词典和字体。安装和恢复不改存档。
 
 ## 译文与构建
 
@@ -42,3 +42,5 @@ python3 tools/workflow.py check
 自写代码采用 [MIT](LICENSE)，字体采用 [OFL 1.1](fonts/OFL.txt)。游戏原文、画面及资源不属于本项目的 MIT 授权范围，见 [NOTICE](NOTICE.md)。
 
 [贡献译文](CONTRIBUTING.md) · [构建与安装](docs/build.md) · [字体与第三方许可](docs/licensing.md)
+
+源码包含游戏内字体与字号设置；当前 Release v12.5 尚未包含此功能。新版本中，字号保存后即时生效，字体更换重启生效；本地字体与许可说明见 [字体与字号](docs/text-style.md)。

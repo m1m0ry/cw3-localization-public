@@ -56,18 +56,6 @@
       "reason": "Verified text inset or render queue"
     },
     {
-      "file": "CW3_Data/sharedassets0.assets",
-      "object_id": 5,
-      "kind": "fields",
-      "fields": {
-        "m_CustomRenderQueue": {
-          "before": 3000,
-          "after": 3001
-        }
-      },
-      "reason": "Verified text inset or render queue"
-    },
-    {
       "file": "CW3_Data/sharedassets2.assets",
       "object_id": 288,
       "kind": "raw_fixed",

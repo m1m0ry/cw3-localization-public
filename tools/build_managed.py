@@ -13,6 +13,7 @@ def compile(folder,name,library=False):
  flags=['-nologo']
  if library:flags+=['-target:library','-nostdlib','-r:'+win(G/'mscorlib.dll'),'-r:'+win(G/'UnityEngine.dll')]
  else:flags+=['-r:'+win(CECIL),'-r:System.Core']
+ if folder=='debug':flags+=['-r:'+win(G/'System.Xml.dll')]
  dest=out/(folder+'-'+name+('.dll' if library else '.exe'))
  if library:dest=out/(name+'.dll')
  run(MONO/'lib/mono/4.5/mcs.exe',flags+['-out:'+win(dest),win(Path(a.generated)/'CW3Display.cs' if folder=='display' and name=='CW3Display' else ROOT/'src'/folder/(name+'.cs'))]);return dest

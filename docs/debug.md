@@ -35,3 +35,5 @@ python3 tools/debug.py disable
 临时注入限于三个 `Awake` 的 Boot 调用，构建时反向去除后校验原有方法。停用会恢复正式程序集并移除 `CW3Debug.dll`，保留候选正式运行所需的辅助 DLL。调试返回值不能代替实际画面或鼠标交互测试。
 
 外部候选需用对应 `--config local-only/候选/install-config.json` 构建调试模块；源码和运行时反向语义检查通过后才能 enable。存档写入使用游戏正常确认流程，先备份并选空槽位。
+
+`style_probe` 报告当前字体角色、加载与回退状态；`layout_probe "控件路径"` 查询已存在控件的字号、布局和图集。调试模块仅用于开发，不随安装包提供。

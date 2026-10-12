@@ -25631,6 +25631,1206 @@
         "method_token": 100666622,
         "instruction_index": 72
       }
+    },
+    {
+      "id": "text.cf53a500f775a97c",
+      "source": "Unit Settings",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 38",
+      "translation": "单位设置",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 38
+      }
+    },
+    {
+      "id": "text.e26262cb47b5bde4",
+      "source": "Scripts",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 59",
+      "translation": "脚本",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 59
+      }
+    },
+    {
+      "id": "text.beb1838b7486f2b0",
+      "source": "Custom Images",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 80",
+      "translation": "自定义图像",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 80
+      }
+    },
+    {
+      "id": "text.b3039520674163c7",
+      "source": "Custom Characters",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 101",
+      "translation": "自定义角色",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 101
+      }
+    },
+    {
+      "id": "text.9b14052a199cd64d",
+      "source": "Sounds",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 122",
+      "translation": "音效",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 122
+      }
+    },
+    {
+      "id": "text.3e9b12180e928f6b",
+      "source": "Tech Levels",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 143",
+      "translation": "科技等级",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 143
+      }
+    },
+    {
+      "id": "text.44d0e12a93ccfe2e",
+      "source": "Properties",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 196",
+      "translation": "属性",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 196
+      }
+    },
+    {
+      "id": "text.83ced5c2a135a531",
+      "source": "Conversation",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 234",
+      "translation": "对话",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 234
+      }
+    },
+    {
+      "id": "text.ac5ac4e34bb37c4e",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 32",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 32
+      }
+    },
+    {
+      "id": "text.8a96d5512387d3cd",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 41",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 41
+      }
+    },
+    {
+      "id": "text.d5810d1c181c64f1",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 53",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 53
+      }
+    },
+    {
+      "id": "text.db27e38ed9d8de63",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 65",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 65
+      }
+    },
+    {
+      "id": "text.4275b7d5ef049c42",
+      "source": "ALERT:",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 22",
+      "translation": "警告：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 22
+      }
+    },
+    {
+      "id": "text.8e2dc4c71200d520",
+      "source": "OK",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 50",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 50
+      }
+    },
+    {
+      "id": "text.85fa8baf551cba87",
+      "source": "Confirm Deletion:",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 84",
+      "translation": "确认删除：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 84
+      }
+    },
+    {
+      "id": "text.6828822f114e30f6",
+      "source": "OK",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 100",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 100
+      }
+    },
+    {
+      "id": "text.e49539d8ef66aa18",
+      "source": "UNKNOWN",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1589",
+      "translation": "未知",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1589
+      }
+    },
+    {
+      "id": "text.d71152ce83fa13a7",
+      "source": "DEFAULT",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1596",
+      "translation": "默认",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1596
+      }
+    },
+    {
+      "id": "text.fef80ffa633b22c9",
+      "source": "NONE",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1603",
+      "translation": "无",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1603
+      }
+    },
+    {
+      "id": "text.c8a3e6c9cd3cefb9",
+      "source": "FLASH",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1611",
+      "translation": "闪光",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1611
+      }
+    },
+    {
+      "id": "text.d909982b5baf211d",
+      "source": "EXPLOSION w/SOUND",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1619",
+      "translation": "爆炸（带音效）",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1619
+      }
+    },
+    {
+      "id": "text.ef638946c2fce7b4",
+      "source": "EXPLOSION",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1627",
+      "translation": "爆炸",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1627
+      }
+    },
+    {
+      "id": "text.1893da94c033f21f",
+      "source": "Confirm Removal:",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1770",
+      "translation": "确认移除：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1770
+      }
+    },
+    {
+      "id": "text.e97268f83fe738d4",
+      "source": "OK",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1789",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1789
+      }
+    },
+    {
+      "id": "text.d1a6a7336b1ee943",
+      "source": "Up",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 2034",
+      "translation": "上移",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 2034
+      }
+    },
+    {
+      "id": "text.fec2eb328e03e294",
+      "source": "KEY(no edit)",
+      "context": "GUI caption / System.Void EditMapGUI::DoShieldKey(System.Boolean) / instruction 41",
+      "translation": "护盾钥匙（不可编辑）",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666037,
+        "instruction_index": 41
+      }
+    },
+    {
+      "id": "text.8a4ea1ed165b8ff8",
+      "source": "Freeze",
+      "context": "GUI caption / System.Void EditMapGUI::DoProspectorArtifact(System.Boolean) / instruction 55",
+      "translation": "冻结",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666042,
+        "instruction_index": 55
+      }
+    },
+    {
+      "id": "text.12a2231b73807235",
+      "source": "Mass",
+      "context": "GUI caption / System.Void EditMapGUI::DoProspectorArtifact(System.Boolean) / instruction 62",
+      "translation": "质量",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666042,
+        "instruction_index": 62
+      }
+    },
+    {
+      "id": "text.10c79cfa063f05a5",
+      "source": "Convert",
+      "context": "GUI caption / System.Void EditMapGUI::DoProspectorArtifact(System.Boolean) / instruction 69",
+      "translation": "转换",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666042,
+        "instruction_index": 69
+      }
+    },
+    {
+      "id": "text.2b2e0ea662ace29d",
+      "source": "Packet",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 69",
+      "translation": "数据包",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 69
+      }
+    },
+    {
+      "id": "text.6528c81d02e47b9f",
+      "source": "AC",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 76",
+      "translation": "反爬行体",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 76
+      }
+    },
+    {
+      "id": "text.92fbd2265c32adea",
+      "source": "Energy",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 83",
+      "translation": "能量",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 83
+      }
+    },
+    {
+      "id": "text.ea3aa0f043fe8f10",
+      "source": "Ore",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 90",
+      "translation": "矿石",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 90
+      }
+    },
+    {
+      "id": "text.6babdc12be3a5b29",
+      "source": "Resize Map",
+      "context": "GUI caption / System.Void ResizeMapManager::OnGUI() / instruction 37",
+      "translation": "调整地图大小",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666457,
+        "instruction_index": 37
+      }
+    },
+    {
+      "id": "text.57724640d7164017",
+      "source": "Resizing the map will increase or decrease the amount of land.\nIf you decrease either dimension, terrain/units will get clipped on the right and/or the bottom.  Any clipped items will be lost!\n\nNOTE THAT THE GAME WILL BE AUTOMATICALLY SAVED AND RELOADED AFTER YOU APPLY.  SO MAKE A BACKUP COPY FIRST!",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 0",
+      "translation": "调整地图大小会增减地形面积。\n缩小宽度或高度时，右侧或底部超出范围的地形和单位将被裁掉，无法保留！\n\n应用后会自动保存并重新载入地图。请先备份！",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 0
+      }
+    },
+    {
+      "id": "text.68696437f14e97f2",
+      "source": "New Width (20-256):",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 9",
+      "translation": "新宽度（20-256）：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 9
+      }
+    },
+    {
+      "id": "text.5a3a2c56a67cc9aa",
+      "source": "New Height (20-256):",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 29",
+      "translation": "新高度（20-256）：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 29
+      }
+    },
+    {
+      "id": "text.bf9c46ad66a9b6a6",
+      "source": "Apply",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 49",
+      "translation": "应用",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 49
+      }
+    },
+    {
+      "id": "text.6acc9fbe1da211bc",
+      "source": "Cancel",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 222",
+      "translation": "取消",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 222
+      }
+    },
+    {
+      "id": "text.72126cae7a4a0c33",
+      "source": "Finalizing a map will create a copy of the map in your finalized list.  From there you can play, post scores, and optionally upload the mission to share with others.",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::OnPress(System.Boolean) / instruction 585",
+      "translation": "定稿会在已定稿地图列表中创建副本。之后可游玩、提交成绩，也可选择上传关卡与他人分享。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666484,
+        "instruction_index": 585
+      }
+    },
+    {
+      "id": "text.9b0e3e791be92bb2",
+      "source": "OK",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::OnPress(System.Boolean) / instruction 587",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666484,
+        "instruction_index": 587
+      }
+    },
+    {
+      "id": "text.7b9fe76a9e5ec809",
+      "source": "Cancel",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::OnPress(System.Boolean) / instruction 588",
+      "translation": "取消",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666484,
+        "instruction_index": 588
+      }
+    },
+    {
+      "id": "text.79c5ea36c680605d",
+      "source": "Collector",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "收集器",
+      "target": {
+        "kind": "label_display",
+        "key": "Collector",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.208df12742e37199",
+      "source": "Relay",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "中继器",
+      "target": {
+        "kind": "label_display",
+        "key": "Relay",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.b8a621abb07708c4",
+      "source": "Reactor",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "反应堆",
+      "target": {
+        "kind": "label_display",
+        "key": "Reactor",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.a0979922f11a8e2f",
+      "source": "Shield",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "护盾",
+      "target": {
+        "kind": "label_display",
+        "key": "Shield",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.e5309c663956d3c9",
+      "source": "Ore Mine",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "矿井",
+      "target": {
+        "kind": "label_display",
+        "key": "Ore Mine",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.5cbb25dcc023570a",
+      "source": "Siphon",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "虹吸器",
+      "target": {
+        "kind": "label_display",
+        "key": "Siphon",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.0bd069718f2bb8aa",
+      "source": "Terp",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "塑地机",
+      "target": {
+        "kind": "label_display",
+        "key": "Terp",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.e566d6518bd18706",
+      "source": "Guppy",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "运输艇",
+      "target": {
+        "kind": "label_display",
+        "key": "Guppy",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.541543b25e931e26",
+      "source": "Pulse Cannon",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "脉冲加农炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Pulse Cannon",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.776c4626a2d86fde",
+      "source": "Mortar",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "迫击炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Mortar",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.38157e7d34aeef48",
+      "source": "Strafer",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "扫射机",
+      "target": {
+        "kind": "label_display",
+        "key": "Strafer",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.d57cc5b6e996489f",
+      "source": "Bomber",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "轰炸机",
+      "target": {
+        "kind": "label_display",
+        "key": "Bomber",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.0b215c8ca5da053e",
+      "source": "Nullifier",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "消除器",
+      "target": {
+        "kind": "label_display",
+        "key": "Nullifier",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.2175c2dd1ec47f5e",
+      "source": "Beam",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "光束炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Beam",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.de7963dd806ad605",
+      "source": "Sprayer",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "喷洒器",
+      "target": {
+        "kind": "label_display",
+        "key": "Sprayer",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.9fbce0a9ae1d6ad1",
+      "source": "Sniper",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "狙击炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Sniper",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.3142dc67bb0a5558",
+      "source": "Forge",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "锻造厂",
+      "target": {
+        "kind": "label_display",
+        "key": "Forge",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.11f0eb194889895b",
+      "source": "Bertha",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "贝尔莎炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Bertha",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.1d7655613f3c0b23",
+      "source": "Thor",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "雷神",
+      "target": {
+        "kind": "label_display",
+        "key": "Thor",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.5d43e7cd1ac6fed8",
+      "source": "Emitter",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "发射源",
+      "target": {
+        "kind": "label_display",
+        "key": "Emitter",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.1c157721ba89891a",
+      "source": "Spore Tower",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "孢子塔",
+      "target": {
+        "kind": "label_display",
+        "key": "Spore Tower",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.62c6b4c48001beb0",
+      "source": "Air Exclusion",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "禁空建筑",
+      "target": {
+        "kind": "label_display",
+        "key": "Air Exclusion",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.d486437171fdc885",
+      "source": "Runner Nest",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "奔跑者巢穴",
+      "target": {
+        "kind": "label_display",
+        "key": "Runner Nest",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.36d5e3ef1b7a0ab0",
+      "source": "Inhibitor",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "抑制器",
+      "target": {
+        "kind": "label_display",
+        "key": "Inhibitor",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.cf46abd881773bce",
+      "source": "CRPLCore",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "CRPL 核心",
+      "target": {
+        "kind": "label_display",
+        "key": "CRPLCore",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.4bfeb5146a6368d2",
+      "source": "AntiEmitter",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "反爬行体发射源",
+      "target": {
+        "kind": "label_display",
+        "key": "AntiEmitter",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.95945cc685bab0b9",
+      "source": "Totem",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "图腾",
+      "target": {
+        "kind": "label_display",
+        "key": "Totem",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.098e6054681e1a5f",
+      "source": "Ore Deposit",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "矿床",
+      "target": {
+        "kind": "label_display",
+        "key": "Ore Deposit",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.4ff12dc76f0667e6",
+      "source": "Resource Pack",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "资源包",
+      "target": {
+        "kind": "label_display",
+        "key": "Resource Pack",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.2e6f4c24a1eafc13",
+      "source": "Power Zone",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "强化区",
+      "target": {
+        "kind": "label_display",
+        "key": "Power Zone",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.616a46b79588da2e",
+      "source": "Tech Artifact",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "科技神器",
+      "target": {
+        "kind": "label_display",
+        "key": "Tech Artifact",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.72bae1d78e8369f5",
+      "source": "Message Artifact",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "信息神器",
+      "target": {
+        "kind": "label_display",
+        "key": "Message Artifact",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.5489d31f11b93c49",
+      "source": "Shield Key",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "护盾钥匙",
+      "target": {
+        "kind": "label_display",
+        "key": "Shield Key",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.38875d47ec3048d3",
+      "source": "Orbital Weapon",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "轨道武器",
+      "target": {
+        "kind": "label_display",
+        "key": "Orbital Weapon",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.72b9f5508289545c",
+      "source": "A finalized map with the name '",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 28",
+      "translation": "名为 '",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 28
+      }
+    },
+    {
+      "id": "text.c0ad883d606bc403",
+      "source": "' already exists! Are you sure you want to overwrite?  All auto saves for this map will also be deleted!",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 30",
+      "translation": "' 的已定稿地图已存在！确定覆盖吗？该地图的所有自动存档也会删除！",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 30
+      }
+    },
+    {
+      "id": "text.0e691599fd103ce9",
+      "source": "OK",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 33",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 33
+      }
+    },
+    {
+      "id": "text.542a99742d55fd4d",
+      "source": "Cancel",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 34",
+      "translation": "取消",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 34
+      }
+    },
+    {
+      "id": "text.5b934ef1653caaf1",
+      "source": "Texture Picker",
+      "context": "GUI caption / System.Void TexturePickerManager::OnGUI() / instruction 37",
+      "translation": "地图纹理",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666530,
+        "instruction_index": 37
+      }
+    },
+    {
+      "id": "text.a3aeea7781622a7d",
+      "source": "Select a terrain level, then select a texture below from the palette.\nClick the 'APPLY IMAGE TO TERRAIN' button to assign the image to the selected terrain level.\nOnce finished, click the 'Close and Apply Changes' button to apply all changes to the map.\nThe numbers under each terrain level are brightness. 0 is dark, 100 is bright, 50 is normal",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 57",
+      "translation": "先选择地形层级，再从下方选取纹理。\n点击“将图像应用到地形”，为所选层级指定图像。\n完成后点击“关闭并应用更改”，将更改应用到地图。\n层级下方的数值为亮度：0 最暗，100 最亮，50 为正常。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 57
+      }
+    },
+    {
+      "id": "text.b450bef4b0929b0c",
+      "source": "Lvl: ",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 70",
+      "translation": "层级：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 70
+      }
+    },
+    {
+      "id": "text.18b38f06af07ee7f",
+      "source": "Texture Palette.  Chose any texture below.",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 233",
+      "translation": "纹理库：选择下方任意纹理。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 233
+      }
+    },
+    {
+      "id": "text.7db84b2001021a5d",
+      "source": "Custom Images. Must be 256x256 png files. Click 'Pick' to load image.",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 351",
+      "translation": "自定义图像须为 256x256 PNG 文件。点击“选择”载入图像。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 351
+      }
+    },
+    {
+      "id": "text.6f15209f117af747",
+      "source": "Select current terrain image from above.",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 387",
+      "translation": "从上方选择当前地形图像。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 387
+      }
+    },
+    {
+      "id": "text.1964c0159dd7b4f2",
+      "source": "APPLY IMAGE TO TERRAIN",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 420",
+      "translation": "将图像应用到地形",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 420
+      }
+    },
+    {
+      "id": "text.a9c20661e8a7171b",
+      "source": "Close and Apply Changes",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 441",
+      "translation": "关闭并应用更改",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 441
+      }
+    },
+    {
+      "id": "text.8344814c200ad79c",
+      "source": "Pick",
+      "context": "GUI caption / System.Void TexturePickerManager::DoImageButton(System.Int32,System.Boolean) / instruction 69",
+      "translation": "选择",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666538,
+        "instruction_index": 69
+      }
+    },
+    {
+      "id": "text.4532b83d18ca9ed1",
+      "source": "U/D",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrainPanel/VerticalForceLabel",
+      "translation": "上/下",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 5940
+      }
+    },
+    {
+      "id": "text.956d742d3a71e4bf",
+      "source": "i",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label2",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 5987
+      }
+    },
+    {
+      "id": "text.dce7908df9465f4c",
+      "source": "R/L",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrainPanel/HorizontalForceLabel",
+      "translation": "右/左",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 6101
+      }
+    },
+    {
+      "id": "text.2442c305f82f6f70",
+      "source": "r",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label3",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 6628
+      }
+    },
+    {
+      "id": "text.aa5d22436229cabb",
+      "source": "t",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label3",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7268
+      }
+    },
+    {
+      "id": "text.d2500f533eee5a85",
+      "source": "Alpha",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrainPanel/EditingOverlayLabel",
+      "translation": "透明度",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7307
+      }
+    },
+    {
+      "id": "text.8cb5d5e149c53e8e",
+      "source": "n",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label1",
+      "translation": "位",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7316
+      }
+    },
+    {
+      "id": "text.4fbd576c35857115",
+      "source": "Emitter",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitPanel/UnitToBuildLabel",
+      "translation": "发射源",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7580
+      }
+    },
+    {
+      "id": "text.59e7e7c1bb8656d1",
+      "source": "e",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label1",
+      "translation": "形",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7642
+      }
+    },
+    {
+      "id": "text.365fc71680c7de5c",
+      "source": "U",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label0",
+      "translation": "单",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 8265
+      }
+    },
+    {
+      "id": "text.4f89f4679cae1da7",
+      "source": "r",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label2",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 8373
+      }
+    },
+    {
+      "id": "text.6b2b3f4203a88b66",
+      "source": "T",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label0",
+      "translation": "地",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 8383
+      }
     }
   ]
 }

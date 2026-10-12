@@ -74,6 +74,40 @@ class RuntimeUpdateTests(unittest.TestCase):
         self.assertFalse((self.package/'runtime-update-backup').exists())
         self.assertFalse(list(self.root.rglob('*runtime-update-tmp')))
 
+class TextStyleUpdateTests(unittest.TestCase):
+    # Extend the transaction fixture with the new mutable configuration and controlled Serif.
+    def setUp(self):
+        RuntimeUpdateTests.setUp(self)
+        rows=json.loads(self.manifest.read_text())
+        for name,data in [('CW3Localization/serif.ttf',b'old serif'),('CW3Localization/text-style.json',b'{"format":1,"roles":{}}')]:
+            self.names.append(name)
+            for base in (self.game,self.build):
+                path=base/name;path.write_bytes(data);self.original[path]=data
+            rows['files'].append(dict(file=name,after=updater.sha(data),bytes=len(data)))
+        rows['controlled_fonts']={'sans':'pinned sans','serif':'pinned serif'}
+        self.manifest.write_text(json.dumps(rows));self.original[self.manifest]=self.manifest.read_bytes()
+        self.serif,self.style=self.root/'new-serif.ttf',self.root/'new-style.json'
+        self.serif.write_bytes(b'new serif');self.style.write_text(json.dumps(dict(format=1,roles=dict(body=dict(font='serif',size_percent=125)))))
+        self.font_validator=patch('text_style.validate_font',return_value=set());self.font_validator.start();self.addCleanup(self.font_validator.stop)
+
+    def restored(self):RuntimeUpdateTests.restored(self)
+
+    def test_style_failure_restores_dictionary_fonts_and_manifest(self):
+        replace=updater.os.replace;fired=[]
+        def fail(source,target):
+            if Path(target)==self.game/'CW3Localization/text-style.json' and not fired:
+                fired.append(True);raise OSError('style transaction interrupted')
+            return replace(source,target)
+        with patch.object(updater,'validate',return_value=2130),patch.object(updater.subprocess,'run',return_value=SimpleNamespace(returncode=1,stdout='')),patch.object(updater.os,'replace',side_effect=fail):
+            with self.assertRaises(OSError):updater.update(self.config,self.dictionary,self.font,self.serif,self.style)
+        self.assertTrue(fired);self.restored()
+
+    def test_invalid_style_writes_nothing(self):
+        self.style.write_text('{"format":1,"roles":{"body":{"font":"zpix","size_percent":100}}}')
+        with patch.object(updater,'validate',return_value=2130),patch.object(updater.subprocess,'run',return_value=SimpleNamespace(returncode=1,stdout='')):
+            with self.assertRaises(ValueError):updater.update(self.config,self.dictionary,self.font,self.serif,self.style)
+        self.restored();self.assertFalse((self.package/'runtime-update-backup').exists())
+
 class DictionaryParityTests(unittest.TestCase):
     def test_shared_invalid_json_cases(self):
         for text in json.loads((ROOT/'tests/json_rejected.json').read_text()):

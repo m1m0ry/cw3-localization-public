@@ -67,6 +67,8 @@ def main():
             data = z.read(package.name+'/'+row['file'])
             if len(data) != row['bytes'] or hashlib.sha256(data).hexdigest() != row['after']:
                 raise ValueError('ZIP payload mismatch: '+row['file'])
+    run(sys.executable, ROOT/'tools/verify_package.py', '--config', build/'install-config.json',
+        '--package', archive, '--inspect-only')
     (release/'SHA256SUMS.txt').write_text(digest(archive)+'  '+archive.name+'\n')
     (release/'build-info.json').write_text(json.dumps(dict(
         provenance, archive=archive.name, archive_sha256=digest(archive),

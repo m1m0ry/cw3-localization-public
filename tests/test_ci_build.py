@@ -12,6 +12,8 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'tools'))
 from ci_build import plan
+from unittest.mock import patch
+import verify_package
 
 
 class PinnedBuild(unittest.TestCase):
@@ -41,7 +43,7 @@ class PinnedBuild(unittest.TestCase):
             root = Path(name)
             for file in ['tools/package_player.py','tools/player_install.py','resources/supported-build.json',
                          'player/安装或恢复.command','player/安装或恢复.cmd','player/使用说明-v12.txt',
-                         'fonts/OFL.txt','LICENSE','NOTICE.md']:
+                         'fonts/OFL.txt','LICENSE','NOTICE.md','docs/text-style.md']:
                 target=root/file;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/file,target)
             original=root/'original';original.mkdir()
             build=root/'build';build.mkdir()
@@ -49,10 +51,12 @@ class PinnedBuild(unittest.TestCase):
             sha=lambda data:hashlib.sha256(data).hexdigest()
             provenance=dict(source_repo='m1m0ry/cw3-localization-public',source_commit='a'*40,
                             source_dirty=False,build_inputs_sha256='b'*64)
-            manifest=dict(provenance,revision='independent-v12-candidate',patch_version='v12.6',
+            supported=json.loads((root/'resources/supported-build.json').read_text())
+            manifest=dict(provenance,format=1,revision='independent-v12-candidate',patch_version='v12.6',
+                          steam_build=supported['steam_build'],version=supported['version'],
                           files=[dict(file='file',before=sha(b'original'),after=sha(b'patch'),bytes=5)])
             (build/'manifest.json').write_text(json.dumps(manifest))
-            config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original))))
+            config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original),game=str(original))))
             output=root/'local-only/package'
             subprocess.run([sys.executable,str(root/'tools/package_player.py'),'--config',str(config),'--output',str(output)],check=True,capture_output=True)
             with zipfile.ZipFile(str(output)+'.zip') as z:
@@ -60,6 +64,16 @@ class PinnedBuild(unittest.TestCase):
                 for key,value in provenance.items():self.assertEqual(player[key],value)
                 self.assertEqual(player['files'],manifest['files'])
                 self.assertEqual(sha(z.read('package/file')),player['files'][0]['after'])
+                self.assertEqual({name.split('/',1)[1] for name in z.namelist()},{'file','manifest.json','install.py','安装或恢复.command','安装或恢复.cmd','使用说明.txt','OFL.txt','LICENSE','NOTICE.md','字体设置.md'})
+                with patch.object(verify_package,'ROOT',root):
+                    _,inspected=verify_package.inspect_zip(z,manifest,supported,None)
+                    self.assertEqual(inspected['source_commit'],provenance['source_commit'])
+                    invalid_exe=root/'invalid-exe';invalid_exe.write_bytes(b'wrong executable')
+                    with self.assertRaisesRegex(ValueError,'CW3.exe does not match'):
+                        verify_package.inspect_zip(z,manifest,supported,invalid_exe)
+            checked=subprocess.run([sys.executable,str(ROOT/'tools/verify_package.py'),'--config',str(config),
+                                    '--package',str(output)+'.zip','--inspect-only'],check=True,capture_output=True,text=True)
+            self.assertIn('Actual executable unavailable',checked.stdout)
 
 
 if __name__ == '__main__':unittest.main()

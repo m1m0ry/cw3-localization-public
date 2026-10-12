@@ -21,7 +21,11 @@ internal static class GuiCaptionAudit {
      if(call.DeclaringType.FullName=="System.String"&&call.Name=="Concat"){stack.Add(true);continue;}
      if(call.DeclaringType.FullName=="System.String"&&call.Name=="Format"&&args[0]&&!args.GetRange(1,args.Count-1).Contains(true)){stack.Add(true);continue;}
      bool gui=call.DeclaringType.FullName=="UnityEngine.GUI"||call.DeclaringType.FullName=="UnityEngine.GUILayout";bool label=call.DeclaringType.FullName=="UILabel"&&call.Name=="set_text"||call.DeclaringType.FullName=="InfoPanel"&&call.Name=="ShowInfoMessage";
-     if(label||gui&&(call.Name=="Label"||call.Name=="Button"||call.Name=="Toggle"||call.Name=="Box"||call.Name=="Window")){
+     // Fixed-build GUIUtils forwards only argument 2 to a title Label, then invokes the original callback.
+     bool window=call.FullName=="System.Void GUIUtils::MyWindow(UnityEngine.Rect,UnityEngine.GUI/WindowFunction,System.String,UnityEngine.GUIStyle)";
+     // Some enum captions use a TextField whose result is discarded. Editable/model fields remain rejected.
+     bool readOnly=call.FullName=="System.String UnityEngine.GUILayout::TextField(System.String,UnityEngine.GUILayoutOption[])"&&at+1<xs.Count&&xs[at+1].OpCode==OpCodes.Pop;
+     if(label||window||readOnly||gui&&(call.Name=="Label"||call.Name=="Button"||call.Name=="Toggle"||call.Name=="Box"||call.Name=="Window")){
       int offset=call.HasThis?1:0;for(int k=0;k<call.Parameters.Count;k++)if(args[k+offset]&&call.Parameters[k].ParameterType.FullName!="System.String")throw new Exception("Not a caption parameter");if(stack.Contains(true))throw new Exception("Caption source has another consumer");return i;
      }
      throw new Exception("Literal consumed by "+call.FullName);
@@ -33,9 +37,11 @@ internal static class GuiCaptionAudit {
    if(consumed.Contains(true)){
     int local=Local(i,true);
     if(local>=0){
-     int read=-1;for(int k=0;k<xs.Count;k++)if(Local(xs[k],false)==local){if(read>=0)throw new Exception("Caption local has multiple readers");read=k;}
+     int read=-1;for(int k=0;k<xs.Count;k++){var v=xs[k].Operand as VariableDefinition;if(v!=null&&v.Index==local&&xs[k].OpCode.Name.StartsWith("ldloca"))throw new Exception("Caption local address escapes");if(Local(xs[k],false)==local){if(read>=0)throw new Exception("Caption local has multiple readers");read=k;}}
      if(read<=at)throw new Exception("Caption local reader not forward");
-     for(int k=at+1;k<read;k++){if(xs[k].OpCode==OpCodes.Nop)continue;if(xs[k].OpCode.FlowControl==FlowControl.Branch&&Object.ReferenceEquals(xs[k].Operand,xs[read]))break;throw new Exception("Caption local has intervening logic");}
+     // Branch-selected captions may have other assignments before their sole display read.
+     // No backward edge, escape past that read, switch, or early return is allowed.
+     for(int k=at+1;k<read;k++){var op=xs[k];if(op.OpCode.FlowControl==FlowControl.Return||op.OpCode.FlowControl==FlowControl.Throw)throw new Exception("Caption local exits before display");if(op.OpCode.FlowControl==FlowControl.Branch||op.OpCode.FlowControl==FlowControl.Cond_Branch){var target=op.Operand as Instruction;int destination=target==null?-1:xs.IndexOf(target);if(destination<=k||destination>read)throw new Exception("Caption local leaves display join");}}
      stack.Add(true);at=read;continue;
     }
     if(captionArray&&i.OpCode==OpCodes.Stelem_Ref){
