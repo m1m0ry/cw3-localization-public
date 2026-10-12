@@ -21,6 +21,8 @@ python3 tools/package_player.py \
 
 构建只写本地产物，不自动安装。完整文件包含安装、恢复入口、外部词典和 OFL 字体。`--external-full` 生成完整静态字体；分发字体须保留 OFL。
 
+确定性复核须保持源码提交、版本参数、游戏及引用 DLL、mcs.exe、Cecil、字体和依赖版本相同。完整 Python 依赖版本固定在 `requirements-build.txt`；字体配方保留受控产物的 OpenType `head.modified` 和输出 SHA256，生成时不读取当前时间。ZIP 固定排序、日期、Unix 权限和 DEFLATE 级别；安装入口保留可执行位。不同 Python/zlib 或 Mono 环境间的字节一致性须另行验证。
+
 ## 安装与更新
 
 安装和恢复步骤见 [README](../README.md)。基础补丁安装后，只改 `CW3Localization/zh-CN.json` 的 `translation`，保留其他字段、标签和占位符。退出后替换，重启生效。新增显示目标须重新审计和构建；新增字形须更新字体。
