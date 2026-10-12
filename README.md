@@ -1,6 +1,6 @@
 # Creeper World 3 简体中文补丁
 
-面向 **Windows Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。已在 CrossOver 26.2 使用；原生 Windows 未完整实测，不支持原生 Mac 版。社区内容和地图编辑器可能保留英文。
+面向 **Windows Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。不支持原生 Mac 版。社区内容和地图编辑器可能保留英文。
 
 ## 下载与安装
 
@@ -41,6 +41,4 @@ python3 tools/workflow.py check
 
 自写代码采用 [MIT](LICENSE)，字体采用 [OFL 1.1](fonts/OFL.txt)。游戏原文、画面及资源不属于本项目的 MIT 授权范围，见 [NOTICE](NOTICE.md)。
 
-[贡献译文](CONTRIBUTING.md) · [构建与安装](docs/build.md) · [字体与第三方许可](docs/licensing.md)
-
-源码包含游戏内字体与字号设置；当前 Release v12.5 尚未包含此功能。新版本中，字号保存后即时生效，字体更换重启生效；本地字体与许可说明见 [字体与字号](docs/text-style.md)。
+[贡献译文](CONTRIBUTING.md) · [构建与安装](docs/build.md) · [字体与字号](docs/text-style.md) · [字体与第三方许可](docs/licensing.md)

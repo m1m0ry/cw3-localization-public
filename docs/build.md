@@ -52,11 +52,11 @@ python3 tools/audit_managed_display.py \
   --output local-only/managed-review-new.json
 ```
 
-`--suite` 可重复、去重，只运行选定 C# 套件及必要夹具；不指定时运行全套。IL 审计只读枚举原版 `ldstr`，区分已有绑定、显示候选、明确内部键及未知；候选不等于确认漏译，不自动改译文。配置须指向对应 `managed/render.dll`，输出使用新的 `local-only` 路径。静态检查不证明实际画面或点击正常。
+`--suite` 可重复、去重，只运行所选 C# 套件；不指定时运行全套。IL 审计区分已有绑定、显示候选、内部键及未知，不自动改译文。配置须指向对应 `managed/render.dll`，输出使用新的 `local-only` 路径。
 
 漏译候选采集默认关闭。创建游戏目录下的 `CW3Localization/discover.enabled` 并重启可启用，删除后重启关闭；结果写入同目录 `candidates.json`，需人工审核，不自动翻译或上传。
 
 
-`tools/verify_package.py --config local-only/候选/install-config.json --package local-only/候选包.zip --inspect-only` 从真实 ZIP 核对完整清单、逐文件大小与哈希、安装器和说明内容；此模式不解压或创建游戏副本；构建输入没有 EXE 时只验证包的目标指纹，有 EXE 时同时验证实际文件。安装器始终验证实际 EXE。安装/恢复验收再在已备份且退出的正式 Steam 安装执行包内入口，并核对清单文件和用户配置。
+`tools/verify_package.py --config local-only/候选/install-config.json --package local-only/候选包.zip --inspect-only` 检查 ZIP 清单、文件大小与哈希、安装器和说明，不创建游戏副本。没有构建用 EXE 时只核对目标指纹；安装器始终检查实际 EXE。
 
 [贡献译文](../CONTRIBUTING.md) · [可选调试](debug.md) · [许可](licensing.md)
