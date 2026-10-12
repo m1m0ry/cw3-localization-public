@@ -4,9 +4,9 @@
   "upstream_commit_from_metadata": "523d033d6cb47f4a80c58a35753646f5c3608a78",
   "upstream_version": "2.004-H2",
   "license": "SIL OFL 1.1",
-  "retained_open_font_codepoints": 2129,
-  "subset_bytes": 531536,
+  "retained_open_font_codepoints": 2137,
+  "subset_bytes": 533784,
   "static_weight": 400,
   "family": "CW3 Sans SC",
-  "subset_sha256": "0fde9cf0c608a8e7646092d8f79f9e2f91d772b089e0e0566e648e1c457a8748"
+  "subset_sha256": "beb5e4eb35f2eddc722bd1f48bcb364a33a77a2d0eedab723c3ef035cc72c1f4"
 }

@@ -12,26 +12,45 @@ internal static class CaptionLayout {
   var size=(Vector2)t.GetMethod("CalculatePrintedSize",new[]{typeof(string),typeof(bool),symbols.GetType()}).Invoke(font,new object[]{text,encoding,symbols});return wrap?size.y:size.x;
  }
  static bool Chinese(string text){foreach(char c in text)if(c>='\u3400'&&c<='\u9fff')return true;return false;}
- internal static void Prepare(Component label,string display){
-  if(label==null||String.IsNullOrEmpty(display)||!Chinese(display)||(bool)Get(label,"password"))return;
+ internal static void Prepare(Component label,string display){PrepareStyled(label,display,100);}
+ internal static void PrepareStyled(Component label,string display,int percent){PrepareStyled(label,display,percent,0);}
+ // False asks the caller for smooth body fallback when no readable pixel multiple fits.
+ internal static bool PrepareStyled(Component label,string display,int percent,int pixelUnit){
+  if(label==null||String.IsNullOrEmpty(display)||!Chinese(display)||(bool)Get(label,"password"))return true;
   Transform tr=label.transform;Vector3 scale=tr.localScale,pos=tr.localPosition;
-  if(label.name=="CharacterName"&&tr.parent!=null&&tr.parent.name.StartsWith("MessageDialog",StringComparison.Ordinal)){
-   Transform portrait=tr.parent.Find("Texture");if(portrait==null||portrait.localScale.x<=0)return;
+  if(label.name=="MessageText"&&tr.parent!=null&&tr.parent.name=="MessageDialog"){
+   Transform next=tr.parent.Find("NextButton"),background=next==null?null:next.Find("Background");if(background==null)return true;
+   float width=Convert.ToSingle(Get(label,"lineWidth")),height=pos.y-next.localPosition.y-Math.Abs(background.localScale.y)/2-4;
+   if(width<=0||height<=0)return true;Set(label,"shrinkToFit",false);float unit=Math.Abs(scale.y);
+   // The original button row stays fixed; reserve 4px above it and fit complete text.
+   // Four opening lines need 96px at 24px but have only 90px: fit a 12px face
+   // to 12px, not 22px. Round the existing readability floor up to a whole unit.
+   float step=pixelUnit>0?pixelUnit:1,minimum=pixelUnit>0?((12+pixelUnit-1)/pixelUnit)*pixelUnit:12;
+   while(unit>minimum&&Measure(label,display,width/unit,true)*unit>height+.1f)unit=Math.Max(minimum,unit-step);
+   if(pixelUnit>0&&(unit<minimum||Measure(label,display,width/unit,true)*unit>height+.1f))return false;
+   scale.x=Math.Sign(scale.x)*unit;scale.y=Math.Sign(scale.y)*unit;tr.localScale=scale;
+  }else if(label.name=="CharacterName"&&tr.parent!=null&&tr.parent.name.StartsWith("MessageDialog",StringComparison.Ordinal)){
+   Transform portrait=tr.parent.Find("Texture");if(portrait==null||portrait.localScale.x<=0)return true;
    float width=Math.Abs(portrait.localScale.x);Set(label,"shrinkToFit",false);Set(label,"lineWidth",(int)Math.Floor(width));Set(label,"maxLineCount",2);
-   float unit=16;while(unit>12&&Measure(label,display,width/unit,true)>2.01f)unit--;
+   // Keep the already-snapped style size; only whole pixel steps may fit it down.
+   // Non-pixel titles retain the native 16px target and 12px percentage-scaled floor.
+   float unit=pixelUnit>0?Math.Abs(scale.y):16*percent/100f,minimum=pixelUnit>0?pixelUnit:12*percent/100f,step=pixelUnit>0?pixelUnit:1;
+   while(unit>minimum&&Measure(label,display,width/unit,true)>2.01f)unit=Math.Max(minimum,unit-step);
    scale.x=scale.y=unit;tr.localScale=scale;float height=Measure(label,display,width/unit,true)*unit;
    float bottom=portrait.localPosition.y-Math.Abs(portrait.localScale.y)*0.5f;
    pos.y=Math.Max(-113,bottom+Math.Min(2*unit,height));tr.localPosition=pos;
   }else if(label.name=="MapTitleLabel"&&tr.parent!=null&&tr.parent.name=="CommandNodePanels"){
-   Transform strip=tr.parent.Find("SlicedSprite (ButtonSelection)");if(strip==null)return;
+   Transform strip=tr.parent.Find("SlicedSprite (ButtonSelection)");if(strip==null)return true;
    float width=Math.Abs(strip.localScale.x)-16;
    for(Transform root=tr;root!=null;root=root.parent){Component ui=root.GetComponent("UIRoot");if(ui!=null){object height=Get(ui,"activeHeight");if(height is int&&Screen.height>0)width=Math.Min(width,(int)height*(float)Screen.width/Screen.height-32);break;}}
-   if(width<96)return;Set(label,"shrinkToFit",false);Set(label,"lineWidth",(int)Math.Floor(width));Set(label,"maxLineCount",1);
-   float measured=Measure(label,display,0,false)*16,unit=measured>width?Math.Max(12,(float)Math.Floor(16*width/measured)):16;
+   if(width<96)return true;Set(label,"shrinkToFit",false);Set(label,"lineWidth",(int)Math.Floor(width));Set(label,"maxLineCount",1);
+   float wanted=pixelUnit>0?Math.Abs(scale.y):16*percent/100f,measured=Measure(label,display,0,false)*wanted;
+   float minimum=pixelUnit>0?pixelUnit:12*percent/100f,step=pixelUnit>0?pixelUnit:1;
+   float unit=measured>width?Math.Max(minimum,(float)Math.Floor(wanted*width/measured/step)*step):wanted;
    // Native title/anchor position reserves the row above the command-node bars.
    // Only fit its width; moving it down overlaps CN name/production labels.
    scale.x=scale.y=unit;tr.localScale=scale;
-  }
+  }return true;
  }
  // GUILayout uses these same options for drawing and hit testing. Retain caller styles/limits.
  internal static GUILayoutOption[] ButtonOptions(string text,GUIStyle style,GUILayoutOption[] options){

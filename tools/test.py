@@ -6,10 +6,14 @@ ROOT=Path(__file__).resolve().parents[1]
 POLICY={
     'CandidateContracts':['Candidates.cs','Json.cs'],
     'RuntimeContracts':['Json.cs','FontFile.cs'],
+    'LocalFontContracts':['LocalFontFile.cs'],
+    'NativeFontBundleContracts':['LocalFontFile.cs','NativeFontBundle.cs'],
+    'FontSettingsContracts':['Json.cs','TextStylePolicy.cs','FontSettingsModel.cs'],
+    'TextStyleContracts':['Json.cs','FontRegistry.cs','TextStylePolicy.cs','TextStyles.cs','CaptionLayout.cs'],
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('CaptionLayoutContracts','RenderingOrderContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts')
+SUITES=tuple(POLICY)+('CaptionLayoutContracts','RenderingOrderContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts')
 class Contracts:
     def __init__(self,mono,out):self.mono=mono;self.out=out
     def execute(self,name,sources,args=(),flags=()):
@@ -21,12 +25,29 @@ class Contracts:
             sources=[runtime/s for s in POLICY[name]]+[test/(name+'.cs')]
             args=[]
             if name=='CandidateContracts':args=[w(o)]
+            elif name in ('TextStyleContracts','FontSettingsContracts'):pass
+            elif name=='NativeFontBundleContracts':
+                import native_font_template
+                generated=o/'NativeFontTemplate.cs';generated.write_text(native_font_template.build(m.location('original')));sources.append(generated)
+                args=[w(m.location('build')/'CW3Localization/font.ttf'),w(o/'native-contract.bundle')]
+            elif name=='LocalFontContracts':
+                import font_registry
+                from fontTools.ttLib import TTFont
+                font=m.location('build')/'CW3Localization/font.ttf';spec=font_registry.inspect_font(font)
+                with TTFont(font) as face:family=face['name'].getDebugName(1)
+                args=[w(font),family,spec['coverage'],str(spec['probe_advance'])]
             elif name=='RuntimeContracts':args=[w(m.location('build')/'CW3Localization/font.ttf'),w(ROOT/'fonts/CW3SansSC-Regular.ttf'),w(o),w(test/'json_rejected.json')]
             else:
                 sources.append(m.location('build').parent/'generated/Definitions.cs')
                 args=[w(o/'message-candidates.json')] if name=='MessageCandidateContracts' else [w(ROOT/'translations/zh-CN.json')]
             self.execute(name,sources,args)
+            if name=='NativeFontBundleContracts':subprocess.run([sys.executable,str(test/'check_native_font_bundle.py'),str(o/'native-contract.bundle'),str(m.location('build')/'CW3Localization/font.ttf')],check=True)
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
+        elif name=='PanelFillContracts':
+            fixture=m.compile(o,'PanelFillContract.exe',[test/'PanelFillContract.cs'])
+            patched=o/'PanelFillContract.patched.exe'
+            self.execute('PatchPanelFill',[ROOT/'src/rendering/PatchPanelFill.cs'],[w(fixture),w(patched),w(m.location('original')/'CW3_Data/Managed')],[m.prepare_cecil(o),'-r:System.Core'])
+            m.run(patched,[])
         elif name=='CaptionLayoutContracts':self.execute(name,[runtime/'CaptionLayout.cs',test/(name+'.cs')])
         elif name=='RenderingOrderContracts':
             engine=o/'UnityEngine.dll';shutil.copy2(m.location('game')/'CW3_Data/Managed/UnityEngine.dll',engine)

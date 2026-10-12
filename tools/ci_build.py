@@ -59,17 +59,12 @@ def main():
     run(sys.executable, ROOT/'tools/package_player.py', '--config', build/'install-config.json', '--output', package)
     archive = Path(str(package)+'.zip')
     player = json.loads((package/'manifest.json').read_text())
-    for key, value in provenance.items():
-        if player.get(key) != value:
-            raise ValueError('Player manifest lost provenance: '+key)
-    with __import__('zipfile').ZipFile(archive) as z:
-        for row in player['files']:
-            data = z.read(package.name+'/'+row['file'])
-            if len(data) != row['bytes'] or hashlib.sha256(data).hexdigest() != row['after']:
-                raise ValueError('ZIP payload mismatch: '+row['file'])
-    (release/'SHA256SUMS.txt').write_text(digest(archive)+'  '+archive.name+'\n')
+    run(sys.executable, ROOT/'tools/verify_package.py', '--config', build/'install-config.json',
+        '--package', archive, '--inspect-only')
+    archive_sha = digest(archive)
+    (release/'SHA256SUMS.txt').write_text(archive_sha+'  '+archive.name+'\n')
     (release/'build-info.json').write_text(json.dumps(dict(
-        provenance, archive=archive.name, archive_sha256=digest(archive),
+        provenance, archive=archive.name, archive_sha256=archive_sha,
         manifest_sha256=digest(package/'manifest.json'),
         payload_sha256={r['file']: r['after'] for r in player['files']}), indent=2)+'\n')
     print('Prepared', a.tag, 'from', a.source_commit, '; build only, no publish or install')

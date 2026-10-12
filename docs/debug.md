@@ -18,7 +18,7 @@ python3 tools/debug.py disable
 | `discovery_probe` | 无 | 候选采集开关、计数、写盘及局部耗时 |
 | `runtime_probe` / `font_probe` | 无 | 外部候选的绑定/词典计数、原文 fallback 与实际字体选择 |
 | `load_auto` / `restart_mission` | 无 | Tempus 正常加载界面中的自动读取/重开；保留锁定与碰撞器前置检查 |
-| `load_slot` | `0` | Tempus 正常界面读取 0 槽，仅用于存档往返验收 |
+| `load_slot` | `0` | 从 Tempus 加载界面读取 0 槽 |
 | `ui_probe` | 无 | 当前鼠标命中、首页锁定、弹窗矩形与 GUI 字号；附最近一次首页点击，只读 |
 | `snapshot` | 无 | 场景、字体、材质所有权/淡入引用状态及原始/绘制文本 |
 | `menu_open` / `menu_close` | 无 | 打开或关闭游戏菜单 |
@@ -32,6 +32,8 @@ python3 tools/debug.py disable
 
 选择和开始关卡遵守游戏原有锁定条件。接口只接受这些固定命令，没有网络端口或任意代码执行接口。请求/响应使用随机 ID；超时后先检查待处理请求再重试。
 
-临时注入限于三个 `Awake` 的 Boot 调用，构建时反向去除后校验原有方法。停用会恢复正式程序集并移除 `CW3Debug.dll`，保留候选正式运行所需的辅助 DLL。调试返回值不能代替实际画面或鼠标交互测试。
+停用会恢复正式程序集并移除 `CW3Debug.dll`。
 
-外部候选需用对应 `--config local-only/候选/install-config.json` 构建调试模块；源码和运行时反向语义检查通过后才能 enable。存档写入使用游戏正常确认流程，先备份并选空槽位。
+其他构建目录须使用对应的 `--config local-only/候选/install-config.json`。写存档前先备份并选择空槽位，遵守游戏正常确认流程。
+
+`style_probe` 报告当前字体角色、加载与回退状态；`layout_probe "控件路径"` 查询已存在控件的字号、布局和图集。

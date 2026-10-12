@@ -37,6 +37,12 @@ class TranslationContract(unittest.TestCase):
         self.doc['entries'][0]['translation'] += '！'
         self.assertEqual(self.check(self.doc)[0]['translation'], self.doc['entries'][0]['translation'])
 
+    def test_editor_unit_names_keep_native_build_keys(self):
+        captions=[e for e in self.doc['entries'] if e['target'].get('selector')=='UnitToBuildLabel']
+        self.assertTrue({'Emitter','Collector'}<={e['source'] for e in captions})
+        self.assertTrue(all(e['target']['kind']=='label_display' and e['target']['match']=='exact' for e in captions))
+        self.assertFalse(any(e['target'].get('method_token')==100666487 for e in self.doc['entries']))
+
     def test_source_and_internal_target_cannot_drift(self):
         for field, value in (('source', 'changed'), ('target', {'kind': 'label', 'object_id': -1})):
             with self.subTest(field=field):

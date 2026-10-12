@@ -237,7 +237,7 @@
       "id": "text.40d35c1bc309955c",
       "source": "Huge",
       "context": "CW3_Data/level1 / UILabel 3449",
-      "translation": "极宏大",
+      "translation": "极大",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -347,7 +347,7 @@
       "id": "text.4eb47cccf7a0f940",
       "source": "Show Soylent:",
       "context": "CW3_Data/level1 / UILabel 3564",
-      "translation": "显示索兰特：",
+      "translation": "显示采能区：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -578,7 +578,7 @@
       "id": "text.a07e0f87927849da",
       "source": "Alternate",
       "context": "CW3_Data/level1 / UILabel 3798",
-      "translation": "交替",
+      "translation": "备用键",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -765,7 +765,7 @@
       "id": "text.14f02f983dde96a1",
       "source": "Create Group 8:",
       "context": "CW3_Data/level1 / UILabel 3968",
-      "translation": "创建编队 8：",
+      "translation": "创建编组 8：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -787,7 +787,7 @@
       "id": "text.55d715afe5b22447",
       "source": "Create Group 4:",
       "context": "CW3_Data/level1 / UILabel 3975",
-      "translation": "创建编队 4：",
+      "translation": "创建编组 4：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -798,7 +798,7 @@
       "id": "text.f9b061ad2dcc627d",
       "source": "Set T-Brush To Terrain:",
       "context": "CW3_Data/level1 / UILabel 3982",
-      "translation": "将地形刷设为地形：",
+      "translation": "地形刷取地形高度：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -886,7 +886,7 @@
       "id": "text.fb980c5ce6170a5d",
       "source": "Create Group 3:",
       "context": "CW3_Data/level1 / UILabel 4013",
-      "translation": "创建编队 3：",
+      "translation": "创建编组 3：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -897,7 +897,7 @@
       "id": "text.dedc0bd0ea3240a4",
       "source": "Create Group 6:",
       "context": "CW3_Data/level1 / UILabel 4023",
-      "translation": "创建编队 6：",
+      "translation": "创建编组 6：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -908,7 +908,7 @@
       "id": "text.014aa015a0d858ea",
       "source": "Create Group 5:",
       "context": "CW3_Data/level1 / UILabel 4043",
-      "translation": "创建编队 5：",
+      "translation": "创建编组 5：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -985,7 +985,7 @@
       "id": "text.1b20e406f364f634",
       "source": "Create Group 7:",
       "context": "CW3_Data/level1 / UILabel 4116",
-      "translation": "创建编队 7：",
+      "translation": "创建编组 7：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1029,7 +1029,7 @@
       "id": "text.fa1c927d94d9f4f5",
       "source": "Create Group 2:",
       "context": "CW3_Data/level1 / UILabel 4160",
-      "translation": "创建编队 2：",
+      "translation": "创建编组 2：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1194,7 +1194,7 @@
       "id": "text.9810ac3984a74890",
       "source": "Build Terp:",
       "context": "CW3_Data/level1 / UILabel 4290",
-      "translation": "建造地形改造仪：",
+      "translation": "建造塑地机：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1337,7 +1337,7 @@
       "id": "text.a675c70ddda4098f",
       "source": "Build Bertha:",
       "context": "CW3_Data/level1 / UILabel 4393",
-      "translation": "建造贝尔莎加农炮：",
+      "translation": "建造贝尔莎炮：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1491,7 +1491,7 @@
       "id": "text.524b27c7d5019ac6",
       "source": "Create Group 9:",
       "context": "CW3_Data/level1 / UILabel 4535",
-      "translation": "创建编队 9：",
+      "translation": "创建编组 9：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1535,7 +1535,7 @@
       "id": "text.a40b6d10de0ddfb4",
       "source": "Create Group 1:",
       "context": "CW3_Data/level1 / UILabel 4599",
-      "translation": "创建编队 1：",
+      "translation": "创建编组 1：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1557,7 +1557,7 @@
       "id": "text.b1eb86fab6cac22e",
       "source": "Primary",
       "context": "CW3_Data/level1 / UILabel 4605",
-      "translation": "主要",
+      "translation": "主键",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1579,7 +1579,7 @@
       "id": "text.d4e84ad6452057b1",
       "source": "Build Sniper:",
       "context": "CW3_Data/level1 / UILabel 4646",
-      "translation": "建造狙击手：",
+      "translation": "建造狙击炮：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1667,7 +1667,7 @@
       "id": "text.f87e89e4d2842659",
       "source": "Build Guppy:",
       "context": "CW3_Data/level1 / UILabel 4769",
-      "translation": "建造孔雀鱼：",
+      "translation": "建造运输艇：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1854,7 +1854,7 @@
       "id": "text.3954130cf0197553",
       "source": "Build Sprayer:",
       "context": "CW3_Data/level1 / UILabel 5001",
-      "translation": "建造喷射器：",
+      "translation": "建造喷洒器：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1876,7 +1876,7 @@
       "id": "text.89ea62b378ec91c2",
       "source": "Show D-Growth:",
       "context": "CW3_Data/level1 / UILabel 5004",
-      "translation": "显示数字生长：",
+      "translation": "显示生长区：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -1975,7 +1975,7 @@
       "id": "text.bf0d39b5fce73253",
       "source": "[ffffe0]Precursor worlds.[ffffff]\nBefore space as we know it was formed,\nthese worlds were the pillars of reality.\n[ff5050]To Access:\n[ff0000]Collect 50 Artifacts of Odin in Prospector.",
       "context": "CW3_Data/level1 / UILabel 5128",
-      "translation": "[ffffe0]先驱世界。[ffffff]\n在我们所知的空间形成之前，\n这些世界曾是现实的支柱。\n[ff5050]解锁条件：\n[ff0000]在勘探者（Prospector）中收集50个奥丁神器。",
+      "translation": "[ffffe0]先驱世界。[ffffff]\n在我们所知的空间形成之前，\n这些世界曾是现实的支柱。\n[ff5050]解锁条件：\n[ff0000]在勘探者地带中收集50个奥丁神器。",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level1",
@@ -2261,7 +2261,7 @@
       "id": "text.e64548aac22d2249",
       "source": "'ARTIFACTS OF ODIN' SCORE",
       "context": "CW3_Data/level2 / UILabel 703",
-      "translation": "“奥丁神物”得分",
+      "translation": "“奥丁神器”得分",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level2",
@@ -2470,7 +2470,7 @@
       "id": "text.a34f26d1370bddd3",
       "source": "Left Click a destination to initiate warp.",
       "context": "CW3_Data/level2 / UILabel 813",
-      "translation": "左键点击目的地以启动折跃。",
+      "translation": "左键点击目的地以启动跃迁。",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level2",
@@ -2778,7 +2778,7 @@
       "id": "text.13d26f6694ec1fd2",
       "source": "Build Bertha:",
       "context": "CW3_Data/level3 / UILabel 5754",
-      "translation": "建造贝尔莎加农炮：",
+      "translation": "建造贝尔莎炮：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -2811,7 +2811,7 @@
       "id": "text.4b8a9454d712a84a",
       "source": "Guppy",
       "context": "CW3_Data/level3 / UILabel 5813",
-      "translation": "孔雀鱼",
+      "translation": "运输艇",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -2822,7 +2822,7 @@
       "id": "text.738d3fb39b03255f",
       "source": "Create Group 1:",
       "context": "CW3_Data/level3 / UILabel 5827",
-      "translation": "创建编队 1：",
+      "translation": "创建编组 1：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -2954,7 +2954,7 @@
       "id": "text.3f3fcc873b764f2f",
       "source": "Primary",
       "context": "CW3_Data/level3 / UILabel 5942",
-      "translation": "主要",
+      "translation": "主键",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3108,7 +3108,7 @@
       "id": "text.67ec86b2fca425b3",
       "source": "Show D-Growth:",
       "context": "CW3_Data/level3 / UILabel 6060",
-      "translation": "显示数字生长：",
+      "translation": "显示生长区：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3163,7 +3163,7 @@
       "id": "text.e5386e4bdac1a979",
       "source": "PACKET SPEED.  ",
       "context": "CW3_Data/level3 / UILabel 6084",
-      "translation": "数据包速度。  ",
+      "translation": "物资包速度。  ",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3207,7 +3207,7 @@
       "id": "text.eb1c8b0dccf3f270",
       "source": "Show D-Growth",
       "context": "CW3_Data/level3 / UILabel 6109",
-      "translation": "显示数字生长",
+      "translation": "显示生长区",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3218,7 +3218,7 @@
       "id": "text.b5047269cc28e35b",
       "source": "+Digi",
       "context": "CW3_Data/level3 / UILabel 6113",
-      "translation": "+数码网格",
+      "translation": "+生化质",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3251,7 +3251,7 @@
       "id": "text.088315df7dde8221",
       "source": "Set T-Brush To Terrain:",
       "context": "CW3_Data/level3 / UILabel 6133",
-      "translation": "将地形刷设为地形：",
+      "translation": "地形刷取地形高度：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3394,7 +3394,7 @@
       "id": "text.85a2e5b1fdfeda68",
       "source": "Alternate",
       "context": "CW3_Data/level3 / UILabel 6253",
-      "translation": "交替",
+      "translation": "备用键",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3471,7 +3471,7 @@
       "id": "text.31a1f5ff17507394",
       "source": "Show Soylent:",
       "context": "CW3_Data/level3 / UILabel 6277",
-      "translation": "显示索兰特：",
+      "translation": "显示采能区：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3603,7 +3603,7 @@
       "id": "text.14d7fa6713bfd42d",
       "source": "Build Guppy:",
       "context": "CW3_Data/level3 / UILabel 6330",
-      "translation": "建造孔雀鱼：",
+      "translation": "建造运输艇：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3845,7 +3845,7 @@
       "id": "text.f23e2b930299cfbf",
       "source": "Packet Receive",
       "context": "CW3_Data/level3 / UILabel 6588",
-      "translation": "数据包接收",
+      "translation": "物资包接收",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -3867,7 +3867,7 @@
       "id": "text.da2f5242c13e5402",
       "source": "Create Group 3:",
       "context": "CW3_Data/level3 / UILabel 6597",
-      "translation": "创建编队 3：",
+      "translation": "创建编组 3：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -4065,7 +4065,7 @@
       "id": "text.7845069b4a49237f",
       "source": "Show Soylent",
       "context": "CW3_Data/level3 / UILabel 6727",
-      "translation": "显示索兰特",
+      "translation": "显示采能区",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -4340,7 +4340,7 @@
       "id": "text.9f7ae1bf7aed8587",
       "source": "Packets",
       "context": "CW3_Data/level3 / UILabel 6925",
-      "translation": "数据包",
+      "translation": "物资包",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -4582,7 +4582,7 @@
       "id": "text.2712942390f0bca8",
       "source": "Siphon",
       "context": "CW3_Data/level3 / UILabel 7186",
-      "translation": "虹吸管",
+      "translation": "虹吸器",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -4769,7 +4769,7 @@
       "id": "text.c811e4ff55a105a0",
       "source": "Fire Mass",
       "context": "CW3_Data/level3 / UILabel 7318",
-      "translation": "弹药量",
+      "translation": "发射质量弹",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -4912,7 +4912,7 @@
       "id": "text.484205a6647b2f52",
       "source": "Create Group 9:",
       "context": "CW3_Data/level3 / UILabel 7422",
-      "translation": "创建编队 9：",
+      "translation": "创建编组 9：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -4934,7 +4934,7 @@
       "id": "text.b331a0b54f043fed",
       "source": "Build Terp:",
       "context": "CW3_Data/level3 / UILabel 7445",
-      "translation": "建造地形改造仪：",
+      "translation": "建造塑地机：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5253,7 +5253,7 @@
       "id": "text.298f01c4d2098862",
       "source": "Create Group 4:",
       "context": "CW3_Data/level3 / UILabel 7750",
-      "translation": "创建编队 4：",
+      "translation": "创建编组 4：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5440,7 +5440,7 @@
       "id": "text.e028e8dd735e07e7",
       "source": "Sniper",
       "context": "CW3_Data/level3 / UILabel 7890",
-      "translation": "狙击手",
+      "translation": "狙击炮",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5484,7 +5484,7 @@
       "id": "text.956976ee9b957c26",
       "source": "-Digi",
       "context": "CW3_Data/level3 / UILabel 7910",
-      "translation": "-数码网格",
+      "translation": "-生化质",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5506,7 +5506,7 @@
       "id": "text.25bdec66b43219f3",
       "source": "Create Group 8:",
       "context": "CW3_Data/level3 / UILabel 7925",
-      "translation": "创建编队 8：",
+      "translation": "创建编组 8：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5539,7 +5539,7 @@
       "id": "text.7e319d0d34e59725",
       "source": "Bertha",
       "context": "CW3_Data/level3 / UILabel 7965",
-      "translation": "贝尔莎加农炮",
+      "translation": "贝尔莎炮",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5704,7 +5704,7 @@
       "id": "text.8c82f0bc05c531de",
       "source": "Build Sprayer:",
       "context": "CW3_Data/level3 / UILabel 8097",
-      "translation": "建造喷射器：",
+      "translation": "建造喷洒器：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5726,7 +5726,7 @@
       "id": "text.f6c821bf91190a6d",
       "source": "Create Group 2:",
       "context": "CW3_Data/level3 / UILabel 8122",
-      "translation": "创建编队 2：",
+      "translation": "创建编组 2：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5759,7 +5759,7 @@
       "id": "text.b9fd140cf32afc23",
       "source": "PACKET SPEED.  ",
       "context": "CW3_Data/level3 / UILabel 8153",
-      "translation": "数据包速度。  ",
+      "translation": "物资包速度。  ",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5781,7 +5781,7 @@
       "id": "text.4eec7f9f2fe15f1a",
       "source": "Create Group 7:",
       "context": "CW3_Data/level3 / UILabel 8184",
-      "translation": "创建编队 7：",
+      "translation": "创建编组 7：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5803,7 +5803,7 @@
       "id": "text.37ac56d67d3f49d3",
       "source": "Creeper and Digitalis",
       "context": "CW3_Data/level3 / UILabel 8208",
-      "translation": "爬行体与蔓生体",
+      "translation": "爬行体与数字生化质",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5935,7 +5935,7 @@
       "id": "text.479e66a3f89c872c",
       "source": "Packet Dispatch",
       "context": "CW3_Data/level3 / UILabel 8332",
-      "translation": "数据包发送",
+      "translation": "物资包发送",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -5946,7 +5946,7 @@
       "id": "text.b9285494d0fd5ff4",
       "source": "Enable AC Collection Field",
       "context": "CW3_Data/level3 / UILabel 8337",
-      "translation": "启用反爬行体收集力场",
+      "translation": "启用AC回收",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6001,7 +6001,7 @@
       "id": "text.bed80f9521d6c789",
       "source": "Create Group 5:",
       "context": "CW3_Data/level3 / UILabel 8367",
-      "translation": "创建编队 5：",
+      "translation": "创建编组 5：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6023,7 +6023,7 @@
       "id": "text.a7ca5638057eb16e",
       "source": "Create Group 6:",
       "context": "CW3_Data/level3 / UILabel 8379",
-      "translation": "创建编队 6：",
+      "translation": "创建编组 6：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6177,7 +6177,7 @@
       "id": "text.52d3717e252dbcbd",
       "source": "Terp",
       "context": "CW3_Data/level3 / UILabel 8559",
-      "translation": "地形改造仪",
+      "translation": "塑地机",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6364,7 +6364,7 @@
       "id": "text.36313504dbb92223",
       "source": "Bertha Auto Target ",
       "context": "CW3_Data/level3 / UILabel 8668",
-      "translation": "贝尔莎加农炮自动瞄准 ",
+      "translation": "贝尔莎炮自动瞄准 ",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6430,7 +6430,7 @@
       "id": "text.27c8bf56cbc93995",
       "source": "Sniper Gun",
       "context": "CW3_Data/level3 / UILabel 8727",
-      "translation": "狙击枪",
+      "translation": "狙击炮",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6529,7 +6529,7 @@
       "id": "text.56996ff80f4b4942",
       "source": "Build Sniper:",
       "context": "CW3_Data/level3 / UILabel 8783",
-      "translation": "建造狙击手：",
+      "translation": "建造狙击炮：",
       "target": {
         "kind": "label",
         "file": "CW3_Data/level3",
@@ -6757,7 +6757,7 @@
       "id": "text.5fa5997498fbe6c9",
       "source": "The message is a transcript between two researchers who devoted their careers to studying the Seloi.",
       "context": "story_3_system / /System/Messages[1]/Message[4]/m[1]",
-      "translation": "该信息是两位毕生致力于研究塞洛伊的研究人员之间的记录抄本。",
+      "translation": "这条信息是两位毕生致力于研究塞洛伊的研究人员之间的对话记录。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -6769,7 +6769,7 @@
       "id": "text.5e4b0f51d11326bb",
       "source": "The researchers believed the Seloi made a discovery regarding the intent of the Loki.  Unfortunately, the message contains no further details or descriptions.",
       "context": "story_3_system / /System/Messages[1]/Message[5]/m[1]",
-      "translation": "研究人员认为，塞洛伊发现了洛基的真正意图。遗憾的是，信息中没有更多细节或描述。",
+      "translation": "研究人员认为，塞洛伊曾对洛基的意图有所发现。遗憾的是，信息中没有更多细节或描述。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -6781,7 +6781,7 @@
       "id": "text.c06208f6029a30cd",
       "source": "I see, perhaps it was just some random data storage device that survived the Creeper.  It seems as random as our purpose is now....",
       "context": "story_3_system / /System/Messages[1]/Message[6]/m[1]",
-      "translation": "我明白了，也许它只是碰巧在爬行体的侵袭中幸存下来的某种随机数据存储设备。就像我们现在的目标一样漫无目的……",
+      "translation": "原来如此，也许它只是某个碰巧在爬行体侵袭中幸存下来的数据存储设备。这看起来毫无章法，就像我们眼下的目标一样……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -6805,7 +6805,7 @@
       "id": "text.f03bcb895478f246",
       "source": "Everyone I ever loved has been gone for billions of years.  Even their memories have been erased and crushed by the Creeper....",
       "context": "story_3_system / /System/Messages[1]/Message[8]/m[1]",
-      "translation": "我所爱的每一个人，都已消逝了数十亿年。连他们的记忆都已被爬行体抹去、碾碎……",
+      "translation": "我所爱的每一个人，都已消逝了数十亿年。连关于他们的记忆都已被爬行体抹去、碾碎……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7069,7 +7069,7 @@
       "id": "text.406e6af846553ae6",
       "source": "Not surprising to find this here.  The Sniper Tech is specifically designed to take out Runners at significant range.  Pick up this tech and use it to create a perimeter around your base and your units.  That should keep the Runners at bay.",
       "context": "Defi / /Game/Info[1]/Messages[1]/Message[14]/m[1]",
-      "translation": "在这里发现这个并不意外。狙击科技专门用于超远距离消灭奔跑者。拾取该科技，并在你的基地和单位周围建立一道防线。这样应该能阻挡奔跑者。",
+      "translation": "在这里发现这个并不意外。狙击炮科技专门用于超远距离消灭奔跑者。拾取该科技，并在你的基地和单位周围建立一道防线。这样应该能阻挡奔跑者。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7153,7 +7153,7 @@
       "id": "text.2b51ee75e38872d1",
       "source": "Strange... This world seems to contain some manner of pod.  Technological remnants are rare, so I would investigate.  Follow the ships automated assistance system, and acquire that pod...",
       "context": "Tempus / /Game/Info[1]/Messages[1]/Message[6]/m[1]",
-      "translation": "奇怪……这个星球上似乎存在某种舱体。技术遗物极为罕见，建议去调查一番。遵循飞船的自动化辅助系统，回收那个舱体……",
+      "translation": "奇怪……这个星球上似乎留有某种舱体。科技遗物极为罕见，建议去调查一番。按照飞船自动辅助系统的指引，回收那个舱体……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7207,7 +7207,7 @@
       "id": "text.2a1c4ae944c5deb6",
       "source": "Impressive.\\nNow, spread your network and defeat the blue Creeper Emitter.\\nYou will need to build a Nullifier near the emitter to destroy it.\\nAlso, don't forget to connect your network to the pod behind the emitter.",
       "context": "Tempus / Tutorial.crpl / ShowMessage",
-      "translation": "干得漂亮。\\n现在，扩展你的网络并消灭蓝色的爬行体发射源。\\n你需要在发射源附近建造一个消除器来摧毁它。\\n此外，别忘了将网络连接到发射源后方的储囊。",
+      "translation": "干得漂亮。\\n现在，扩展你的网络并消灭蓝色的爬行体发射源。\\n你需要在发射源附近建造一个消除器来摧毁它。\\n此外，别忘了将网络连接到发射源后方的舱体。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -7235,7 +7235,7 @@
       "id": "text.302f9a96754e8497",
       "source": "Now, build your network close to the Pod to collect it.",
       "context": "Tempus / Tutorial.crpl / ShowMessage",
-      "translation": "现在，将网络铺设到太空舱附近以收集它。",
+      "translation": "现在，将网络铺设到舱体附近以回收它。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -7457,7 +7457,7 @@
       "id": "text.569fa3e453b25a8b",
       "source": "This system was last called \"Frykt\".  It now contains only three worlds, as the others have vanished.  Of the former worlds, one was deorbited into the sun, and three others were deconstructed into material for a failed Dyson sphere.",
       "context": "story_4_system / /System/Messages[1]/Message[13]/m[1]",
-      "translation": "这个星系最近被称为“弗里克特”。它现在仅剩下三个世界，其余的都已消失。在以往的世界中，一个坠入了恒星，另外三个则被拆解，用作建造失败的戴森球的材料。",
+      "translation": "这个星系最后的名字是“弗里克特”。它现在仅剩下三个世界，其余的都已消失。原先的世界中，一个被推离轨道坠入恒星，另外三个则被拆解，用作建造戴森球的材料，但这一尝试失败了。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7481,7 +7481,7 @@
       "id": "text.3161490ba6824d24",
       "source": "It would seem so...  Skars, if we manage to take out the Inhibitor on Vapen there will be a choice as to the next system in range.  I have no idea which path we should take...",
       "context": "story_4_system / /System/Messages[1]/Message[15]/m[1]",
-      "translation": "看来确实如此……斯卡斯，如果我们能摧毁瓦彭星上的抑制器，就能在航程内的下一个星系中做出选择。我完全不知道该选哪条路……",
+      "translation": "看来确实如此……斯卡斯，如果我们能摧毁瓦彭星上的抑制器，就得在航程所及的几个星系之间选择下一站。我完全不知道该选哪条路……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7613,7 +7613,7 @@
       "id": "text.c85768b37526a022",
       "source": "Alright, I'll initiate ground actions and secure this world.  Looks like some Emitters and some Slip-Emitters.  Those Ticon Towers, perhaps they are inactive?",
       "context": "Chanson / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "好，我开始地面行动，压制这个世界。看起来有一些发射源和滑移发射源。那些泰肯防御塔，也许未处于激活状态？",
+      "translation": "好，我开始地面行动，夺下这个世界。看起来有一些发射源和滑移发射源。那些泰肯防御塔，也许未处于激活状态？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7697,7 +7697,7 @@
       "id": "text.62718d399a3e7d4f",
       "source": "Destruction of the Ticon Towers would prevent the creation of new Gliders.  Of course any unit that gets in range of a Glider will be destroyed.  The only weapon in our arsenal that might damage a Glider would be the Sniper.",
       "context": "Chanson / /Game/Info[1]/Messages[1]/Message[15]/m[1]",
-      "translation": "摧毁泰肯防御塔能阻止新滑翔机的生成。当然，任何进入滑翔机射程的单位都会被摧毁。我们军备库中唯一可能对滑翔机造成伤害的武器就是狙击手。",
+      "translation": "摧毁泰肯防御塔能阻止新滑翔机的生成。当然，任何进入滑翔机射程的单位都会被摧毁。我们军备库中唯一可能对滑翔机造成伤害的武器就是狙击炮。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7709,7 +7709,7 @@
       "id": "text.f6cbc2d7a7a724af",
       "source": "The focused beam from the Sniper was designed to penetrate the Creeper infused shells of a Runner.  That might be enough to penetrate the shields around the Gliders.  But this is all theoretical... The Glider weapon system was never actually deployed.",
       "context": "Chanson / /Game/Info[1]/Messages[1]/Message[16]/m[1]",
-      "translation": "狙击手的聚焦光束原本是用来穿透奔跑者那注入了爬行体的外壳。这或许足以穿透滑翔机周围的护盾。但这一切都只是理论……滑翔机武器系统从未实际部署过。",
+      "translation": "狙击炮的聚焦光束原本是用来穿透奔跑者那注入了爬行体的外壳。这或许足以穿透滑翔机周围的护盾。但这一切都只是理论……滑翔机武器系统从未实际部署过。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7757,7 +7757,7 @@
       "id": "text.9b163767bc20e1b6",
       "source": "The treatise on Cyclical Eternity from the Seloi?  I recall that the Seloi were the only civilization to contact the Loki and get a response.  They said something about an \"Arc\" and the Loki responded with, \"More so than all others, YOU must perish\".",
       "context": "Chanson / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[3]/m[1]",
-      "translation": "塞洛伊人关于循环永恒的论文？我记得塞洛伊是唯一与洛基接触并得到回应的文明。他们提到了某种“弧”，而洛基回应道：“比起所有人，你们更必须灭绝”。",
+      "translation": "塞洛伊人的《循环永恒论》？我记得塞洛伊是唯一与洛基接触并得到回应的文明。他们提到了某种“弧”，而洛基回应道：“比起其他所有生灵，你们更该灭亡！”",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7781,7 +7781,7 @@
       "id": "text.59a7cf90421e68c5",
       "source": "So the first part of the treatise on Cyclical Eternity proposed that it is possible to create a device... something unique and singular to each universe.  ",
       "context": "Chanson / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "循环永恒论文的第一部分提出，有可能制造出一种装置……对每个宇宙而言都是独一无二的存在。",
+      "translation": "所以《循环永恒论》的第一部分提出，有可能制造出一种装置……对每个宇宙而言都是独一无二的存在。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7853,7 +7853,7 @@
       "id": "text.ef5486b8140d1aaa",
       "source": "Yes, emitters arrived in ever more insidious ways.  Dropping from orbit, appearing directly out of Rift Space, subspace slips...",
       "context": "Seedet / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "是的，发射源到来的方式越来越隐蔽了。从轨道空投、直接从裂隙空间出现、亚空间跃迁……",
+      "translation": "是的，发射源的出现越来越让人防不胜防了。从轨道空投、直接从裂隙空间现身、亚空间滑移……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7973,7 +7973,7 @@
       "id": "text.74542cb050869c8c",
       "source": "A single statement; \"More so than all others, YOU must perish\".",
       "context": "Seedet / /Game/Info[1]/Messages[1]/Message[12]/m[1]",
-      "translation": "只有短短一句话：“比起所有其他生灵，你们更必须毁灭”。",
+      "translation": "只有短短一句话：“比起其他所有生灵，你们更该灭亡！”",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -7997,7 +7997,7 @@
       "id": "text.1df2c54639ff5c6c",
       "source": "Skars, this world contains two extinct volcanoes.  Emitters have taken up residence in each one .  I suggest you pick up the Strafer Tech Artifact on this world.",
       "context": "Seedet / /Game/Info[1]/Messages[1]/Message[14]/m[1]",
-      "translation": "斯卡斯，这个世界上有两座死火山。每座火山里都盘踞着发射源。我建议你获取这个世界上的扫射机科技神石。",
+      "translation": "斯卡斯，这个世界上有两座死火山。每座火山里都盘踞着发射源。我建议你获取这个世界上的扫射机科技神器。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8275,7 +8275,7 @@
       "id": "text.6e73358adc488f54",
       "source": "Tormented Space",
       "context": "story_sector / /Sector/Stars[1]/Wormhole[1]/n[1]",
-      "translation": "受折磨空间",
+      "translation": "折磨星区",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8311,7 +8311,7 @@
       "id": "text.0c2f9db195477655",
       "source": "What in Odin's name....",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "这到底是搞什么……",
+      "translation": "奥丁在上，这到底……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8323,7 +8323,7 @@
       "id": "text.c1f6e33a0c0dd4c6",
       "source": "This used to be 'Flick', a world that supported a population of over 10 billion.  It was torn apart by a collision... a big one.  Something that the planetary shield couldn't stop.",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "这里曾是“弗利克”，一个容纳了超过百亿人口的世界。一场撞击将它彻底撕裂……一场行星护盾都无法阻挡的剧烈撞击。",
+      "translation": "这里曾是“弗里克”，一个容纳了超过百亿人口的世界。一场撞击将它彻底撕裂……一场行星护盾都无法阻挡的剧烈撞击。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8347,7 +8347,7 @@
       "id": "text.b4cfdfbb315d1b8f",
       "source": "There appears to only be one emitter left on one of the larger asteroids, along with an intact Shield Key and a new Tech Artifact.",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "较大的一颗小行星上似乎只剩下一个发射源，此外还有一个完好的护盾密钥和一件新的科技构件。",
+      "translation": "较大的一颗小行星上似乎只剩下一个发射源，此外还有一个完好的护盾钥匙和一件新的科技神器。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8359,7 +8359,7 @@
       "id": "text.249382bd6163a278",
       "source": "Look more carefully, Skars.  This emitter has deployed Subspace-Slip Emitters.  These aren't true emitters, but are channels in subspace that the Master Emitter uses to dispense Creeper.",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "仔细看看，斯卡斯。这个发射源部署了亚空间滑跃发射源。它们并非真正的发射源，而是主发射源用来分发爬行体的亚空间通道。",
+      "translation": "仔细看看，斯卡斯。这个发射源部署了亚空间滑移发射源。它们并非真正的发射源，而是主发射源用来分发爬行体的亚空间通道。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8383,7 +8383,7 @@
       "id": "text.ac51aa6653e309ec",
       "source": "Can these Slip-Emitters be destroyed with Nullifiers?",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[7]/m[1]",
-      "translation": "这些滑跃发射源能用消除器摧毁吗？",
+      "translation": "这些滑移发射源能用消除器摧毁吗？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8407,7 +8407,7 @@
       "id": "text.af5b4b9e89cf14ba",
       "source": "The best you can do is to establish a foothold on surrounding asteroids, then deploy weapons and AntiCreeper to hold the Slip-Emitters at bay.",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[9]/m[1]",
-      "translation": "你目前所能做的，就是在周围的小行星上建立立足点，然后部署武器和反爬行体来压制这些滑跃发射源。",
+      "translation": "你目前所能做的，就是在周围的小行星上建立立足点，然后部署武器和反爬行体来压制这些滑移发射源。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8419,7 +8419,7 @@
       "id": "text.f5f0a6872dea3174",
       "source": "The Bomber Tech Artifact should prove useful.  These air/space craft can deliver AC remotely.",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[10]/m[1]",
-      "translation": "轰炸机科技构件应该会派上用场。这种空天飞行器可以远程投送反爬行体。",
+      "translation": "轰炸机科技神器应该会派上用场。这种空天飞行器可以远程投送反爬行体。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8431,7 +8431,7 @@
       "id": "text.e0eb61466d15da45",
       "source": "Yes... I'll saturate these asteroids with AC.  Then, we'll get out of here.  There is nothing left here but death and destruction.",
       "context": "Flick / /Game/Info[1]/Messages[1]/Message[11]/m[1]",
-      "translation": "是的……我会用反爬行体浸透这些小行星。然后，我们就离开这里。此地除了死亡与毁灭，已一无所有。",
+      "translation": "是的……我会用反爬行体铺满这些小行星。然后，我们就离开这里。此地除了死亡与毁灭，已一无所有。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8443,7 +8443,7 @@
       "id": "text.bde4d7eba42fe821",
       "source": "Bombers are aircraft that deliver AntiCreeper.\\nBuild Bombers to saturate remote islands.\\nMake sure to collect plenty of Ore!",
       "context": "Flick / Tutorial.crpl / ShowMessage",
-      "translation": "轰炸机是投送反爬行体的飞行器。\\n建造轰炸机以压制偏远岛屿。\\n请确保收集充足的矿石！",
+      "translation": "轰炸机是投送反爬行体的飞行器。\\n建造轰炸机，用反爬行体覆盖远处的岛屿。\\n请确保收集充足的矿石！",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -8481,7 +8481,7 @@
       "id": "text.c4dcb589e53ccd3a",
       "source": "We've arrived in the Andere system, as it was last called.  Sensors are off the charts, and need recalibrating...",
       "context": "story_5_system / /System/Messages[1]/Message[1]/m[1]",
-      "translation": "我们已经抵达安德雷星系，这是它最近的名字。传感器读数爆表了，需要重新校准……",
+      "translation": "我们已经抵达安德雷星系，这是它最后的名字。传感器读数爆表了，需要重新校准……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8505,7 +8505,7 @@
       "id": "text.47689bf0dbd87145",
       "source": "It isn't interference, it's information.  There are billions of data streams across billions of channels all carrying vast amounts of data... it's too... it's too much...",
       "context": "story_5_system / /System/Messages[1]/Message[3]/m[1]",
-      "translation": "不是干扰，是信息。数以亿计的频道上流淌着数十亿股数据流，全都携带着海量数据……太……太多了……",
+      "translation": "不是干扰，是信息。数十亿个频道上流淌着数十亿股数据流，全都携带着海量数据……太……太多了……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8589,7 +8589,7 @@
       "id": "text.35d8204bd2122858",
       "source": "It seems to be everything, Skars?  Just 'everything'.",
       "context": "story_5_system / /System/Messages[1]/Message[11]/m[1]",
-      "translation": "它似乎包含了一切，斯卡斯。就是“一切”。",
+      "translation": "它似乎包含了一切，斯卡斯？就是“一切”。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8613,7 +8613,7 @@
       "id": "text.11f277f9f3bdb538",
       "source": "Everything that has ever been.  It's exact state information... it's... think of it like a very precise plan for how to make everything that has ever existed.",
       "context": "story_5_system / /System/Messages[1]/Message[13]/m[1]",
-      "translation": "曾经存在过的一切。那是极其精确的状态信息……就像……想象成一份如何造就曾存在过的一切事物的精确蓝图。",
+      "translation": "曾经存在过的一切。那是精确的状态信息……这……你可以把它想成一份极其精确的蓝图，记录着如何造出曾存在过的一切事物。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8625,7 +8625,7 @@
       "id": "text.259edd09673cb881",
       "source": "Every leaf on every tree that has ever existed on every world, every grain of sand, every star, every molecule of every atmosphere that has bent the light of its star into a sunset...",
       "context": "story_5_system / /System/Messages[1]/Message[14]/m[1]",
-      "translation": "每个世界上曾存在过的每棵树上的每片叶子、每粒沙子、每颗恒星、将星光折射成日落的每一缕大气分子……",
+      "translation": "每个世界上曾存在过的每棵树上的每片叶子、每粒沙子、每颗恒星，以及每片曾将恒星光芒折射成日落的大气中的每一个分子……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8637,7 +8637,7 @@
       "id": "text.737071f0577a1428",
       "source": "Do this, enable visual spectrum sensors only for this System.  Let's look at the system with just our eyes...",
       "context": "story_5_system / /System/Messages[1]/Message[15]/m[1]",
-      "translation": "这样，只开启这个星系的可视光谱传感器。我们只用肉眼来观察这个星系……",
+      "translation": "这样做，只开启这个星系的可见光传感器。我们只用肉眼来观察这个星系……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8649,7 +8649,7 @@
       "id": "text.4073f4aebfa85472",
       "source": "OK, looks like two worlds, one shielded and one not.  My records indicate these worlds were last called Otrav and Farbor.  There was nothing particularly remarkable about either world over the last few billion years.",
       "context": "story_5_system / /System/Messages[1]/Message[16]/m[1]",
-      "translation": "好的，看起来有两个世界，一个有护盾，另一个没有。我的记录显示这两个世界最近被称为奥特拉夫和法博尔。在过去的几十亿年里，这两个世界并没有什么特别值得注意的地方。",
+      "translation": "好的，看起来有两个世界，一个有护盾，另一个没有。我的记录显示，这两个世界最后的名字是奥特拉夫和法博尔。在过去的几十亿年里，这两个世界并没有什么特别值得注意的地方。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8685,7 +8685,7 @@
       "id": "text.fc992d064d6e5395",
       "source": "The focus appears to be changing slightly so that the signals are at their peak over Farbor.  The signal focus is somehow tracking the orbit of that world.",
       "context": "story_5_system / /System/Messages[1]/Message[19]/m[1]",
-      "translation": "焦点似乎在微调，使得信号在法博星上空达到峰值。信号焦点不知为何正在追踪那个世界的轨道。",
+      "translation": "焦点似乎在微调，使得信号在法博尔上空达到峰值。信号焦点不知为何正在追踪那个世界的轨道。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -8853,7 +8853,7 @@
       "id": "text.116ba05c44d1b31f",
       "source": "Excellent... That pod from planet Tempus contained a shield key for this planet.  Obtaining it allowed us to lower the shield and access this planet.",
       "context": "Carcere / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "太好了……来自坦普斯星的逃生舱里存有这颗星球的护盾密钥。拿到它后，我们就能关闭护盾进入这颗星球了。",
+      "translation": "太好了……来自坦普斯星的舱体里存有这颗星球的护盾钥匙。拿到它后，我们就能关闭护盾进入这颗星球了。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9149,7 +9149,7 @@
       "id": "text.4be8d44e9d86010d",
       "source": "I'm sorry Skars....  All I know is that 'now' is when I was to awaken you.  I, and this ship, are now at your disposal.  My only instructions from this point forward are to follow your commands.",
       "context": "story_0_system / /System/Messages[1]/Message[12]/m[1]",
-      "translation": "我很抱歉，斯卡斯……我只知道“现在”就是我该唤醒你的时刻。我，以及这艘飞船，现在都任凭您调遣。从此刻起，我唯一的指令就是听从您的指挥。",
+      "translation": "我很抱歉，斯卡斯……我只知道“现在”就是我该唤醒你的时刻。我，以及这艘飞船，现在都听你调遣。从此刻起，我唯一的指令就是服从你的命令。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9173,7 +9173,7 @@
       "id": "text.35f4e0a15bc788ad",
       "source": "Correct, I warped the ship to a nearby star system to begin the reactivation process.  Unfortunately, there appears to be a warp inhibitor in this system so we are stuck here till you do something about it.",
       "context": "story_0_system / /System/Messages[1]/Message[14]/m[1]",
-      "translation": "没错，我把飞船跃迁到了附近的一个星系，以启动重启程序。遗憾的是，这个星系中似乎存在跃迁抑制器，所以在你解决它之前，我们只能困在这里。",
+      "translation": "没错，我把飞船跃迁到了附近的一个星系，开始恢复运作。遗憾的是，这个星系中似乎存在跃迁抑制器，所以在你解决它之前，我们只能困在这里。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9245,7 +9245,7 @@
       "id": "text.20d6e1705450bf10",
       "source": "In the south there are three Spore Towers, along with three emitters.  Fortunately, there is a Beam Tech Artifact on the central island.",
       "context": "Jojo / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "南部有三座孢子塔，以及三个发射源。幸运的是，中央岛屿上有一个光束科技神器。",
+      "translation": "南部有三座孢子塔，以及三个发射源。幸运的是，中央岛屿上有一个光束炮科技神器。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9293,7 +9293,7 @@
       "id": "text.dd233bfe98c80b54",
       "source": "I see.  I'll collect that Beam Tech Artifact and construct several Beam units to defend our base.  That should protect the units while I take out the emitters and towers.",
       "context": "Jojo / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "我明白了。我去回收那个光束科技神器，并建造几座光束单位来防守基地。这样就能在我摧毁发射源和高塔时保护好各单位。",
+      "translation": "我明白了。我去回收那个光束炮科技神器，并建造几座光束炮来防守基地。这样就能在我摧毁发射源和高塔时保护好各单位。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9305,7 +9305,7 @@
       "id": "text.da796e8ac347e453",
       "source": "Collect the Beam Tech Artifact.\\nPlace Beams around your base to defend against Spore attacks.",
       "context": "Jojo / Tutorial.crpl / ShowMessage",
-      "translation": "收集光束科技神器。\\n在基地周围部署光束塔以防御孢子攻击。",
+      "translation": "收集光束炮科技神器。\\n在基地周围部署光束炮以防御孢子攻击。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -9439,7 +9439,7 @@
       "id": "text.159c4b37312cf661",
       "source": "I'll land a Command Node in the center of the base and focus on defense and energy... lots of it.  Let's hope those shields are useful against these random slip emitters.",
       "context": "Choix / /Game/Info[1]/Messages[1]/Message[11]/m[1]",
-      "translation": "我会把指挥节点降落在基地中心，重点放在防御和能量上……大量的能量。希望那些护盾能有效抵挡这些随机出现的跃迁发射源。",
+      "translation": "我会把指挥节点降落在基地中心，重点放在防御和能量上……大量的能量。希望那些护盾能有效抵挡这些随机出现的滑移发射源。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9487,7 +9487,7 @@
       "id": "text.d888bac711c4917d",
       "source": "This world has been designed to concentrate Creeper on each hill top in sequence.  That old Ticon facility in the east is projecting dual attraction fields that rove over the terrain.",
       "context": "Otrav / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "这个世界被设计成依次将爬行体聚集在各个山顶上。东边那座古老的泰康设施正在投射双重引力场，在地表上四处巡弋。",
+      "translation": "这个世界被设计成依次将爬行体聚集在各个山顶上。东边那座古老的泰肯设施正在投射双重引力场，在地表上四处巡弋。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9583,7 +9583,7 @@
       "id": "text.20da8658bde2a699",
       "source": "Skars, if all of the Creeper from across the universe is the source of the signals it means the Creeper doesn't just destroy things.  It also remembers things in exacting detail. It would only be bound by the uncertainty principle, unless...",
       "context": "Otrav / /Game/Info[1]/Messages[1]/Message[12]/m[1]",
-      "translation": "斯卡斯，如果全宇宙的爬行体都是这些信号的源头，那就意味着爬行体不仅仅是在毁灭万物。它还在极其精确地记录着一切。除非……它原本只受测不准原理的约束。",
+      "translation": "斯卡斯，如果全宇宙的爬行体都是这些信号的源头，那就意味着爬行体不仅仅是在毁灭万物。它还记得一切，细节精确无比。这种精度应该只受测不准原理的限制，除非……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9907,7 +9907,7 @@
       "id": "text.f32fcf6fe7991177",
       "source": "There is also another matter of concern here, Skars.  I show an Air Exclusion (AE) structure on that hill to the south west.",
       "context": "Crosslaw / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "这里还有另一件令人担忧的事，斯卡斯。我检测到西南方向的山丘上有一座防空禁飞（AE）建筑。",
+      "translation": "这里还有另一件令人担忧的事，斯卡斯。我检测到西南方向的山丘上有一座禁空（AE）建筑。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9955,7 +9955,7 @@
       "id": "text.6fe26b091a4ef0f4",
       "source": "Yes, now it simply blocks your air units.  You can't use Strafers or Bombers over the area covered by the AE field.",
       "context": "Crosslaw / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "没错，现在它只会压制你的空中单位。在禁飞场覆盖的区域内，你无法使用扫射机或轰炸机。",
+      "translation": "没错，现在它只会压制你的空中单位。在禁空场覆盖的区域内，你无法使用扫射机或轰炸机。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9979,7 +9979,7 @@
       "id": "text.cf52ca061f45e5de",
       "source": "No, they slip in under the field... just barely.  So you are only prevented from using Air units under the area covered by the AE field.",
       "context": "Crosslaw / /Game/Info[1]/Messages[1]/Message[10]/m[1]",
-      "translation": "不会，它们的弹道正好能从力场下方擦过……勉强可以。所以只有禁飞场覆盖范围内的空中单位会受到限制。",
+      "translation": "不会，它们的弹道正好能从力场下方擦过……勉强可以。所以只有禁空场覆盖范围内的空中单位会受到限制。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10183,7 +10183,7 @@
       "id": "text.94b413275269b065",
       "source": "Lia.... we are on the verge of a great realization, I can feel it in my.... That's odd.",
       "context": "Crosslaw / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[16]/m[1]",
-      "translation": "莉娅……我们即将迎来一个伟大的顿悟，我能深深地感觉到……真奇怪。",
+      "translation": "莉娅……我们就快明白一件大事了，我能感觉到，就在我的……真奇怪。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10231,7 +10231,7 @@
       "id": "text.b5bc633c9bd4652b",
       "source": "This is Tiplex, a machine world.  It was engineered by the Ticon Empire as a defensive outpost.",
       "context": "Tiplex / /Game/Info[1]/Messages[1]/Message[3]/m[1]",
-      "translation": "这里是蒂普莱克斯，一个机械世界。它是由泰肯帝国建造的防御前哨。",
+      "translation": "这里是提普莱克斯，一个机械世界。它是由泰肯帝国建造的防御前哨。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10435,7 +10435,7 @@
       "id": "text.b3408d7c68ac63a6",
       "source": "This is most unusual, Skars.  Message Artifacts almost never survive contact with the Creeper.  This one seems strangely immune. It's almost as if the Creeper intentionally does not destroy certain objects.",
       "context": "Tiplex / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "这极不寻常，斯卡斯。信息神石在接触爬行体后几乎不可能完好无损。但这一个似乎奇迹般地免疫了。简直就像爬行体故意不摧毁某些特定物体一样。",
+      "translation": "这极不寻常，斯卡斯。信息神器在接触爬行体后几乎不可能完好无损。但这一个似乎奇迹般地免疫了。简直就像爬行体故意不摧毁某些特定物体一样。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10513,7 +10513,7 @@
       "id": "text.7ee5c5c34cfd42df",
       "source": "You can hide the white Digitalis growth area by pressing\\nthe Visibility Button, then unchecking 'Show D-Growth'.",
       "context": "Tiplex / Tutorial.crpl / ShowMessage",
-      "translation": "你可以点击“可见性”按钮，\\n然后取消勾选“显示数字生化质生长区”，以隐藏白色的生长区域。",
+      "translation": "你可以点击“可见性”按钮，\\n然后取消勾选“显示生长区”，以隐藏数字生化质的白色生长区。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -10527,7 +10527,7 @@
       "id": "text.4000d23e61f247d9",
       "source": "Oh My... this world is Ormos. It was occupied by the very last human civilization.  That civilization went to extreme and extraordinary measures to survive the Creeper.",
       "context": "Ormos / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "天哪……这个星球是奥尔莫斯。曾有人类最后的文明在此居住。那个文明为了从爬行体手中存活下来，采取了极其极端且非同寻常的手段。",
+      "translation": "天哪……这个星球是奥尔莫斯。人类最后的文明曾在此定居。那个文明为了在爬行体的侵袭下生存，采取了极端而又非同寻常的手段。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10635,7 +10635,7 @@
       "id": "text.ba964f467131eef8",
       "source": "Yes, but Skars... don't underestimate this Creeper.  The Tech Artifacts here are for a Siphon and a Terp.  The siphon will let you extract resources from Resource Packs.",
       "context": "Ormos / /Game/Info[1]/Messages[1]/Message[10]/m[1]",
-      "translation": "是的，但斯卡斯……千万别小看这些爬行体。这里的科技神器是虹吸器和地形改造仪。虹吸器能让你从资源包中抽取资源。",
+      "translation": "是的，但斯卡斯……千万别小看这些爬行体。这里的科技神器是虹吸器和塑地机。虹吸器能让你从资源包中抽取资源。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10659,7 +10659,7 @@
       "id": "text.f373f747e1bbbd31",
       "source": "The Terp will allow you to terraform the land.  I recommend you repair the damage to the walls of the old ruins.  That will keep the Creeper at bay while you build up offensive strength.",
       "context": "Ormos / /Game/Info[1]/Messages[1]/Message[12]/m[1]",
-      "translation": "地形改造仪能让你改变地貌。我建议你修复旧遗迹破损的墙壁。这样能在你积蓄进攻力量的同时挡住爬行体。",
+      "translation": "塑地机能让你改变地貌。我建议你修复旧遗迹破损的墙壁。这样能在你积蓄进攻力量的同时挡住爬行体。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10671,7 +10671,7 @@
       "id": "text.bc862d2acea00dfe",
       "source": "Once you build a Terp, the Terraform Section of your Command Interface will appear.  Just click that button and paint the terrain in a few places to raise or lower it.  Any nearby Terps will then go to work.",
       "context": "Ormos / /Game/Info[1]/Messages[1]/Message[13]/m[1]",
-      "translation": "建造地形改造仪后，指挥界面的地形改造栏就会出现。只需点击该按钮，在几个位置涂抹地形即可升高或降低地面。附近的地形改造仪随后就会开始工作。",
+      "translation": "建造塑地机后，指挥界面的地形改造栏就会出现。只需点击该按钮，在几个位置涂抹地形即可升高或降低地面。附近的塑地机随后就会开始工作。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10709,7 +10709,7 @@
       "id": "text.e899206405a060fe",
       "source": "Build Terps to terraform land.\\nBuild around 5 terps now.\\nSpread them around near the edge of the old ruins.",
       "context": "Ormos / Tutorial.crpl / ShowMessage",
-      "translation": "建造地形改造仪来改造地形。\\n现在建造大约5台地形改造仪。\\n将它们分散布置在古老废墟的边缘附近。",
+      "translation": "建造塑地机来改造地形。\\n现在建造大约5台塑地机。\\n将它们分散布置在古老废墟的边缘附近。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -10737,7 +10737,7 @@
       "id": "text.23d02ac3b340d9b8",
       "source": "Click the Terraform Button then paint where to change the terrain.\\nNearby Terps will automatically act on nearby terrain.\\nSelect a brush size of 1, and a terrain height of 9.\\nFill in the gaps in the ruin walls and watch the Terps terraform the land.",
       "context": "Ormos / Tutorial.crpl / ShowMessage",
-      "translation": "点击“地形改造”按钮，然后在要改变地形的位置涂画。\\n附近的地形改造仪会自动改造周边的地形。\\n选择笔刷大小为 1，地形高度为 9。\\n填补遗迹墙体的缺口，观察地形改造仪改造地貌。",
+      "translation": "点击“地形改造”按钮，然后在要改变地形的位置涂画。\\n附近的塑地机会自动改造周边的地形。\\n选择笔刷大小为 1，地形高度为 9。\\n填补遗迹墙体的缺口，观察塑地机改造地貌。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -10847,7 +10847,7 @@
       "id": "text.03e699acf2e95e49",
       "source": "Upgrade?  Weapons, production, packet speed, things like that I hope...?",
       "context": "Lemal / /Game/Info[1]/Messages[1]/Message[9]/m[1]",
-      "translation": "升级？武器、产能、能量包传输速度，希望是这类升级吧……？",
+      "translation": "升级？武器、产能、物资包传输速度，希望是这类升级吧……？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11027,7 +11027,7 @@
       "id": "text.46c3bfc18fed0773",
       "source": "I see it at 'Starsync' but it is shielded....  The threat these people faced must have been truly terrifying.  Looks like Telos is our only option.  I'll fly the ship there and initiate ground actions.",
       "context": "story_1_system / /System/Messages[1]/Message[7]/m[1]",
-      "translation": "我在“星步”看到了，但它被护盾保护着……这些人曾面临的威胁一定非常可怕。看来泰洛斯是我们唯一的选择了。我这就开飞船过去并展开地面行动。",
+      "translation": "我在“恒星同步”看到了，但它被护盾保护着……这些人曾面临的威胁一定非常可怕。看来特洛斯是我们唯一的选择了。我这就开飞船过去并展开地面行动。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11111,7 +11111,7 @@
       "id": "text.5ca6c7c3809325ce",
       "source": "The Tech Artifact doesn't show any signatures of Ticon or any other civilization we have encountered.... it appears to be a rather mundane tech.",
       "context": "Ruine / /Game/Info[1]/Messages[1]/Message[7]/m[1]",
-      "translation": "这个科技神石没有显示出泰肯或我们遇过的任何其他文明的特征……看起来只是一项相当普通的技术。",
+      "translation": "这个科技神器没有显示出泰肯或我们遇过的任何其他文明的特征……看起来只是一项相当普通的技术。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11123,7 +11123,7 @@
       "id": "text.eb706bf152b2fa06",
       "source": "The Guppy tech... I have been hoping we would encounter this.  Simple as the tech may be, it should prove very useful across these asteroids.  Guppies confine and contain packets for remote delivery.",
       "context": "Ruine / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "孔雀鱼技术……我一直希望能遇到它。这项技术虽然简单，但在这群小行星间会非常有用。孔雀鱼可以装载并容纳数据包进行远程运送。",
+      "translation": "运输艇技术……我一直希望能遇到它。这项技术虽然简单，但在这群小行星间会非常有用。运输艇可以装载并容纳物资包进行远程运送。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11135,7 +11135,7 @@
       "id": "text.13fb772f055a299c",
       "source": "Ahhh... very clever.  So we can use them to build structures remotely where our network can't reach.  That will allow us to build nullifiers on those small asteroids that have Spore Towers on them.",
       "context": "Ruine / /Game/Info[1]/Messages[1]/Message[9]/m[1]",
-      "translation": "啊……真聪明。这样我们就能用它们在我们网络无法覆盖的地方远程建造建筑了。这样我们就能在那些有孢子塔的小行星上建造消除器了。",
+      "translation": "啊……真聪明。这样我们就能用它们在网络无法覆盖的地方远程建造建筑，在那些有孢子塔的小行星上建造消除器了。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11147,7 +11147,7 @@
       "id": "text.190431519b883f03",
       "source": "Speaking of Spore Towers, my circuits are now operating properly and I have reviewed the scans. The wreckage of this world is littered with Spore Towers.  You will need to bring Beam defenses on-line rapidly. Collect the Guppy Tech Artifact, and eliminate the spore threat as soon as possible.",
       "context": "Ruine / /Game/Info[1]/Messages[1]/Message[10]/m[1]",
-      "translation": "说到孢子塔，我的回路现在运转正常，并且我已经审查了扫描结果。这个世界的残骸上布满了孢子塔。你需要尽快让光束防御上线。收集孔雀鱼科技神石，并尽快消除孢子威胁。",
+      "translation": "说到孢子塔，我的回路现在运转正常，也复核了扫描结果。这个世界的残骸上布满了孢子塔。你需要尽快部署光束炮防御。收集运输艇科技神器，并尽快消除孢子威胁。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11183,7 +11183,7 @@
       "id": "text.bc1e04cf57862fb3",
       "source": "This is fascinating...  This artifact contains an instruction manual for the Guppy, volumes of literature, art, and video from old Earth, and a treatise from the 144th C.E. on the prospects of cyclical eternity.",
       "context": "Ruine / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "真不可思议……这个神器中包含一份孔雀鱼的操作手册、来自旧地球的大量文学、艺术与影像资料，以及一篇写于第144纪元、关于周期性永恒前景的论文。",
+      "translation": "真不可思议……这个神器中包含一份运输艇的操作手册、来自旧地球的大量文学、艺术与影像资料，以及一篇写于第144纪元、关于循环永恒前景的论文。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11195,7 +11195,7 @@
       "id": "text.d3874a0166a4800b",
       "source": "An odd collection of materials?  Scan through it all looking for anything unusual.",
       "context": "Ruine / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "真是奇怪的内容组合。全部扫描一遍，看看有没有什么反常之处。",
+      "translation": "真是奇怪的内容组合？全部扫描一遍，看看有没有什么反常之处。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11243,7 +11243,7 @@
       "id": "text.46d8d0767515f569",
       "source": "The treatise on cyclical eternity was written during the time of the Seloi, the sole civilization that ever contacted the Loki.  The treatise proposes something that is most certainly impossible.",
       "context": "Ruine / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[6]/m[1]",
-      "translation": "那篇关于周期性永恒的论文写于塞洛伊时代，塞洛伊是唯一曾与洛基接触过的文明。这篇论文提出了一种绝无可能成立的设想。",
+      "translation": "那篇关于循环永恒的论文写于塞洛伊时代，塞洛伊是唯一曾与洛基接触过的文明。这篇论文提出了一种绝无可能成立的设想。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11327,7 +11327,7 @@
       "id": "text.f90e8754c9f1174e",
       "source": "Shield Keys and other Artifacts must be connected\\nto a Command Node to be collected.\\nGuppies can not collect them.",
       "context": "Ruine / Tutorial.crpl / ShowMessage",
-      "translation": "护盾钥匙及其他神器必须连接到\\n指挥节点才能被收集。\\n孔雀鱼无法收集它们。",
+      "translation": "护盾钥匙及其他神器必须连接到\\n指挥节点才能被收集。\\n运输艇无法收集它们。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -11341,7 +11341,7 @@
       "id": "text.a75ee2f3fcc2fb1d",
       "source": "Telos... this is a world that has been silent for over 100 thousand earth standard years.",
       "context": "Telos / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "泰洛斯……这是一个沉寂了十万多个地球标准年的世界。",
+      "translation": "特洛斯……这是一个沉寂了十万多个地球标准年的世界。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11377,7 +11377,7 @@
       "id": "text.3c86d45423cf3fca",
       "source": "(Perhaps this is my punishment.  Perhaps I died many years ago...  could this be the mythological cursed realm of Helheim my ancestors believed in? Impossible...)",
       "context": "Telos / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "（也许这就是对我的惩罚。也许我很多年前就已经死了……难道这就是我祖先信仰的神话中被诅咒的海姆冥界？不可能……）",
+      "translation": "（也许这就是对我的惩罚。也许我很多年前就已经死了……难道这就是我祖先信仰的神话中被诅咒的赫尔海姆？不可能……）",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11389,7 +11389,7 @@
       "id": "text.d55a6696144bbf12",
       "source": "Skars, there is a Reactor Tech Artifact on this world.  Pick that up as soon as possible.  We can use it to generate energy in confined regions.",
       "context": "Telos / /Game/Info[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "斯卡斯，这个世界上有一个反应堆科技神石。尽快拿到它。我们可以用它在狭窄区域产生能量。",
+      "translation": "斯卡斯，这个世界上有一个反应堆科技神器。尽快拿到它。我们可以用它在狭窄区域产生能量。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11441,7 +11441,7 @@
       "id": "text.1865e78c0f045e7a",
       "source": "Power Zones are left when you destroy enemies.\\nMove units onto the glowing circular Power Zones to get extra abilities.",
       "context": "Telos / Tutorial.crpl / ShowMessage",
-      "translation": "消灭敌人后会留下能量区。\\n将单位移动到发光的环形能量区上可获得额外能力。",
+      "translation": "消灭敌人后会留下强化区。\\n将单位移动到发光的环形强化区上可获得额外能力。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -11469,7 +11469,7 @@
       "id": "text.ce82ac61f873dbf5",
       "source": "'Far York'... I know this place.",
       "context": "Far York / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "“遥远约克”……我认得这里。",
+      "translation": "“远约克”……我认得这里。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11481,7 +11481,7 @@
       "id": "text.fb51d3f9ff9e26e6",
       "source": "You no doubt remember one epoch of this world.  Far York was a mighty world and served as the center of commerce for 13 different civilizations.",
       "context": "Far York / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "你无疑还记得这个世界的某一个纪元。遥远约克曾是一个强盛的世界，担任过13个不同文明的贸易中心。",
+      "translation": "你无疑还记得这个世界的某一个纪元。远约克曾是一个强盛的世界，担任过13个不同文明的贸易中心。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11725,7 +11725,7 @@
       "id": "text.68d5c4785f1515bc",
       "source": "So that Prism ship can receive the signals being directed at this system, then pack the information into a smaller region of space than is otherwise possible?",
       "context": "Farbor / /Game/Info[1]/Messages[1]/Message[12]/m[1]",
-      "translation": "所以那艘棱镜飞船能接收定向发送至这个星系的信息，然后将它们压缩进一个超出常规的小空间里？",
+      "translation": "所以那艘棱镜飞船能接收发往这个星系的信号，再将信息压缩进比通常所能达到的还要小的空间里？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11773,7 +11773,7 @@
       "id": "text.fbd63e1fe702fe1e",
       "source": "Yes...?",
       "context": "Farbor / /Game/Info[1]/Messages[1]/Message[16]/m[1]",
-      "translation": "对……怎么了？",
+      "translation": "然后呢……？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11941,7 +11941,7 @@
       "id": "text.6e975a4bd0982d03",
       "source": "It's a wormhole to the Prospector Zone!  I lost track of this wormhole many eons ago.  I see it parked itself outside this little system.",
       "context": "story_8_system / /System/Messages[1]/Message[5]/m[1]",
-      "translation": "这是一个通往探矿者星区的虫洞！在数个纪元前我就跟丢了这个虫洞。看来它停驻在了这个小星系的外围。",
+      "translation": "这是一个通往勘探者地带的虫洞！在数个纪元前我就跟丢了这个虫洞。看来它停驻在了这个小星系的外围。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11953,7 +11953,7 @@
       "id": "text.2366d076e44c106b",
       "source": "The 'Prospector Zone'?",
       "context": "story_8_system / /System/Messages[1]/Message[6]/m[1]",
-      "translation": "“探矿者星区”？",
+      "translation": "“勘探者地带”？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11989,7 +11989,7 @@
       "id": "text.5e44fe7ec6d05920",
       "source": "I'll engage operations at Krig and take out whatever is inhibiting further warp travel.",
       "context": "story_8_system / /System/Messages[1]/Message[9]/m[1]",
-      "translation": "我会在克里格展开行动，消灭阻碍进一步跃迁的一切阻碍。",
+      "translation": "我会在克里格展开行动，摧毁阻止我们继续跃迁的东西。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12073,7 +12073,7 @@
       "id": "text.5ee88f0c89789b71",
       "source": "I'm not sure what approach would be best here Skars.... wait, I detect two Tech Artifacts.  Excellent....",
       "context": "Starsync / /Game/Info[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "我不确定这里最好采取什么策略，斯卡斯……等等，我探测到了两个科技神石。太好了……",
+      "translation": "我不确定这里最好采取什么策略，斯卡斯……等等，我探测到了两个科技神器。太好了……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12085,7 +12085,7 @@
       "id": "text.862d46960af3db03",
       "source": "I see them on the scanners.  Ore Miner and Sprayer?",
       "context": "Starsync / /Game/Info[1]/Messages[1]/Message[6]/m[1]",
-      "translation": "我在扫描仪上看到了。是采矿机和喷射器？",
+      "translation": "我在扫描仪上看到了。是采矿机和喷洒器？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12097,7 +12097,7 @@
       "id": "text.9a5b775c97729628",
       "source": "Yes, build ore mines on those ore deposits you see.  They will send ore to the Command Node.  From there, it will be processed into Anti-Creeper.",
       "context": "Starsync / /Game/Info[1]/Messages[1]/Message[7]/m[1]",
-      "translation": "是的，在你看到的矿脉上建造采矿机。它们会把矿石运送到指挥节点。在那里，矿石将被加工成反爬行体。",
+      "translation": "是的，在你看到的矿脉上建造矿井。它们会把矿石运送到指挥节点。在那里，矿石将被加工成反爬行体。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12109,7 +12109,7 @@
       "id": "text.b64a154082a4dfa6",
       "source": "Ahhh yes, Anti-Creeper.  It was my daughter Alia.... (sigh)\nIt was my daughter Aliana, who unlocked the secrets of Anti-Creeper long ago.",
       "context": "Starsync / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "啊，没错，反爬行体。那是我女儿阿莉娅……（叹气）\n很久以前，正是我女儿阿莉安娜解开了反爬行体的秘密。",
+      "translation": "啊，没错，反爬行体。那是我女儿阿利亚……（叹气）\n很久以前，正是我女儿阿利亚娜解开了反爬行体的秘密。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12121,7 +12121,7 @@
       "id": "text.8a62ce58012594e9",
       "source": "I assume the Sprayer will deliver Anti-Creeper to the battlefield?",
       "context": "Starsync / /Game/Info[1]/Messages[1]/Message[9]/m[1]",
-      "translation": "我猜喷射器就是用来将反爬行体投放到战场的吧？",
+      "translation": "我猜喷洒器就是用来将反爬行体投放到战场的吧？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12185,7 +12185,7 @@
       "id": "text.f5909a355ac4d357",
       "source": "Build Sprayers to make Anti-Creeper.\\nDeploy sprayers near Creeper and they will fire blobs into the Creeper.\\nThis can be useful for securing a beachhead.",
       "context": "Starsync / Tutorial.crpl / ShowMessage",
-      "translation": "建造喷射器来制造反爬行体。\\n在爬行体附近部署喷射器，它们会朝爬行体发射液滴。\\n这对建立滩头阵地很有帮助。",
+      "translation": "建造喷洒器来制造反爬行体。\\n在爬行体附近部署喷洒器，它们会朝爬行体发射液滴。\\n这对建立滩头阵地很有帮助。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -12357,7 +12357,7 @@
       "id": "text.237a3fecb29b4bb9",
       "source": "More ancient historical volumes... more references to the \"Arc\"?",
       "context": "Vapen / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "更多古老史籍……更多关于“方舟”的记载？",
+      "translation": "又是古老史籍……又是关于“弧”的记载？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12405,7 +12405,7 @@
       "id": "text.8b872c82d98bda96",
       "source": "It seems to be a technical specification for the field device on this world.  I was right, this tech was a test for a part of a device being constructed elsewhere.",
       "context": "Vapen / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[6]/m[1]",
-      "translation": "这似乎是该星球上野外设备的技术规格说明。我猜得没错，这项技术只是在别处建造的某种设备部件的测试版本。",
+      "translation": "这似乎是这颗星球上那台装置的技术规格说明。我猜得没错，这项技术是在测试某种装置的一个部件，而那台装置正在别处建造。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12429,7 +12429,7 @@
       "id": "text.c3c4f7d4993b3098",
       "source": "Skars, the designator that appears within the contents appears to translate to; \"16th Transient Regiment, 4th Ephemeral Division, Loki Hive\".",
       "context": "Vapen / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "斯卡斯，内容中出现的标识翻译过来似乎是：“洛基蜂巢，第4短暂师，第16瞬态团”。",
+      "translation": "斯卡斯，内容中出现的标识翻译过来似乎是：“洛基蜂群，第4短暂师，第16瞬态团”。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12501,7 +12501,7 @@
       "id": "text.79a017a00bee24bc",
       "source": "So there will be a massive Creeper tide from helheim... that's what you are saying.",
       "context": "Mistet / /Game/Info[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "所以届时会爆发一场来自地狱般的爬行体巨浪……你是这个意思吧。",
+      "translation": "所以届时会爆发一场来自赫尔海姆的爬行体巨浪……你是这个意思吧。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12609,7 +12609,7 @@
       "id": "text.05f51c867a86fa01",
       "source": "Yes!  Colony Prime... it seems like I just left there Lia...  Without Dax and Varro, we would never have rebuilt humanity... nothing that came after would have been possible.",
       "context": "Mistet / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "是的！母星殖民地……莉娅，感觉我才刚刚离开那里不久……若没有达克斯和瓦罗，我们永远不可能重建人类文明……之后的一切都不复存在。",
+      "translation": "是的！母星殖民地……莉娅，感觉我才刚刚离开那里不久……若没有达克斯和瓦罗，我们永远不可能重建人类文明……之后的一切都不可能发生。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12765,7 +12765,7 @@
       "id": "text.ac6633265cb99232",
       "source": "You see it too, then.  These six stations are receiving incomprehensible amounts of data from across the universe, and they are feeding it to a central core.",
       "context": "Arca / /Game/Info[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "那看来你也感觉到了。这六座基站正从全宇宙接收难以估量的数据，并将它们输送给核心。",
+      "translation": "那看来你也注意到了。这六座基站正从全宇宙接收难以估量的数据，并将它们输送给中央核心。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12993,7 +12993,7 @@
       "id": "text.d001d1a7f00a063a",
       "source": "Move Nexus with WASD or Arrow keys.\\nFire by holding down Left Mouse Button.",
       "context": "Arca / RingBuilder.crpl / ShowMessage",
-      "translation": "使用WASD或方向键移动枢纽。\\n按住鼠标左键进行开火。",
+      "translation": "使用WASD或方向键移动枢纽。\\n按住鼠标左键开火。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -13129,7 +13129,7 @@
       "id": "text.500db31423fa318b",
       "source": "AE Tower",
       "context": "Managed display v9 / method 100667088 / instruction 331",
-      "translation": "永恒之弧防御塔",
+      "translation": "禁空塔",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13165,7 +13165,7 @@
       "id": "text.adcd92cd3a94d110",
       "source": "Bertha",
       "context": "Managed display v9 / method 100667088 / instruction 259",
-      "translation": "贝尔莎加农炮",
+      "translation": "贝尔莎炮",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13405,7 +13405,7 @@
       "id": "text.c59bb4d7ff3a85b3",
       "source": "Guppy",
       "context": "Managed display v9 / method 100667088 / instruction 149",
-      "translation": "孔雀鱼",
+      "translation": "运输艇",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13645,7 +13645,7 @@
       "id": "text.fa3cea27dd19c318",
       "source": "Packet Speed",
       "context": "Managed display v9 / method 100669961 / instruction 409",
-      "translation": "数据包速度",
+      "translation": "物资包速度",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13777,7 +13777,7 @@
       "id": "text.01cce4d9ec977039",
       "source": "Siphon",
       "context": "Managed display v9 / method 100667088 / instruction 127",
-      "translation": "虹吸管",
+      "translation": "虹吸器",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13789,7 +13789,7 @@
       "id": "text.b6243b8470f6bc32",
       "source": "Siphon",
       "context": "Managed display v9 / method 100667088 / instruction 284",
-      "translation": "虹吸管",
+      "translation": "虹吸器",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13801,7 +13801,7 @@
       "id": "text.051d4e3f8e7eeaa8",
       "source": "Sniper",
       "context": "Managed display v9 / method 100667088 / instruction 237",
-      "translation": "狙击手",
+      "translation": "狙击炮",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -13873,7 +13873,7 @@
       "id": "text.97e17276658993bc",
       "source": "Terp",
       "context": "Managed display v9 / method 100667088 / instruction 138",
-      "translation": "地形改造仪",
+      "translation": "塑地机",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -14149,7 +14149,7 @@
       "id": "text.644ef65fa994f5f5",
       "source": "Seloi Science Academy, Standing Council Directors",
       "context": "Managed display v10 / method 100666401 / instruction 83",
-      "translation": "塞洛伊科学院常务理事会理事们",
+      "translation": "塞洛伊科学院常务理事会各位理事",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15649,7 +15649,7 @@
       "id": "text.377d38a738978d47",
       "source": "The backbone of any network.\n Collects energy based on green soylent field it projects.",
       "context": "Managed display v10 / method 100670848 / instruction 2",
-      "translation": "网络的基础。\n根据覆盖的绿色区域收集能量。",
+      "translation": "网络的基础。\n根据其覆盖的绿色采能区收集能量。",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15661,7 +15661,7 @@
       "id": "text.67d384da6cb8d5da",
       "source": "Relays creates long distance connections,\nbut only to other Relays.\nRelays also double packet speed.",
       "context": "Managed display v10 / method 100670848 / instruction 7",
-      "translation": "中继器可建立远距离连接，\n但仅限与其他中继器相连。\n中继器还会使数据包速度翻倍。",
+      "translation": "中继器可建立远距离连接，\n但仅限与其他中继器相连。\n中继器还会使物资包速度翻倍。",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15697,7 +15697,7 @@
       "id": "text.038aafede0266933",
       "source": "Ore Mines extract ore from ore deposits.\nOre is used to make Anti-Creeper (AC)",
       "context": "Managed display v10 / method 100670848 / instruction 22",
-      "translation": "采矿机从矿床中开采矿石。\n矿石用于制造反爬行体（AC）",
+      "translation": "矿井从矿床中开采矿石。\n矿石用于制造反爬行体（AC）",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15721,7 +15721,7 @@
       "id": "text.22c45ba229551f92",
       "source": "Terps terraform land.\nPaint terrain by pressing the Terraform button.",
       "context": "Managed display v10 / method 100670848 / instruction 32",
-      "translation": "地形改造仪用于改造土地。\n按下“改造地形”按钮即可绘制地形。",
+      "translation": "塑地机用于改造土地。\n按下“地形改造”按钮即可绘制地形。",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15733,7 +15733,7 @@
       "id": "text.e3b75c92f4db9666",
       "source": "Packet trasporter.\nLand in remote locations to provide packets.",
       "context": "Managed display v10 / method 100670848 / instruction 37",
-      "translation": "数据包运输机。\n降落在偏远地点以输送数据包。",
+      "translation": "物资包运输艇。\n降落在偏远地点以输送物资包。",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15805,7 +15805,7 @@
       "id": "text.3030ac298774a4c7",
       "source": "Sprayers fire Anti-Creeper.\nSprayers can also collect AC and dispatch as ore.",
       "context": "Managed display v10 / method 100670848 / instruction 67",
-      "translation": "喷洒器喷射反爬行体。\n喷洒器也可以收集AC并转化为矿石发出。",
+      "translation": "喷洒器喷射反爬行体。\n也可回收反爬行体，并转为矿石运出。",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15829,7 +15829,7 @@
       "id": "text.ac304aaeb0191f38",
       "source": "Anti Runner and special enemy unit.",
       "context": "Managed display v10 / method 100670848 / instruction 77",
-      "translation": "对抗奔行者和特殊敌方单位。",
+      "translation": "对抗奔跑者和特殊敌方单位。",
       "target": {
         "kind": "managed",
         "stage": "v10",
@@ -15985,7 +15985,7 @@
       "id": "text.14f035fb12250fa0",
       "source": "Oh this is bad.... There are a ton of emitters here.. and there is no safe location to start operating from...",
       "context": "alpha_4.2 an old friend / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "噢，这下糟了……这里有大量的发射器……而且根本没有能安全展开行动的地方……",
+      "translation": "噢，这下糟了……这里有大量的发射源……而且根本没有能安全展开行动的地方……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -15997,7 +15997,7 @@
       "id": "text.d648e78d93f43fba",
       "source": "Commander, that Emitter on the Black Rock seems to emit Anti-Creeper",
       "context": "alpha_4.2 an old friend / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "指挥官，黑石上的那个发射器似乎在喷发反爬行体",
+      "translation": "指挥官，黑石上的那个发射源似乎在喷发反爬行体",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16057,7 +16057,7 @@
       "id": "text.e181b66147039890",
       "source": "Just like you she is after their most powerful Nexus. At that moment, I want to hope you're doing better as she has done back then...",
       "context": "alpha_4.2 an old friend / /Game/Info[1]/Messages[1]/Message[7]/m[1]",
-      "translation": "和你一样，她也在追寻它们最强大的枢纽。在那个时刻，我希望你能比她当年的表现更好……",
+      "translation": "和你一样，她也在追击它们最强大的枢纽。到那时，我希望你能比她当年做得更好……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16129,7 +16129,7 @@
       "id": "text.cc38a1e8ef5f83f1",
       "source": "Well, the young girl remembers at least something. I am quite sure, the next time we meet she will know me again... I will leave this Emitter here, maybe it helps you... ",
       "context": "alpha_4.2 an old friend / /Game/Info[1]/Messages[1]/Message[13]/m[1]",
-      "translation": "嗯，小姑娘至少还记得些事情。我敢肯定，下次再见面时她一定会重新认出我……我会把这个发射器留在这里，也许对你们有所帮助…… ",
+      "translation": "嗯，小姑娘至少还记得些事情。我敢肯定，下次再见面时她一定会重新认出我……我会把这个发射源留在这里，也许对你们有所帮助…… ",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16225,7 +16225,7 @@
       "id": "text.24f330a1481240ea",
       "source": "This is our testing facility. Here you can test out weapons and discover the power of powerzones. Spores can get pretty intense here so make sure you build a few more beams.",
       "context": "alpha_childs play / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "这是我们的测试设施。在这里你可以测试武器，并发掘能量区域的强大威力。此处的孢子攻击会相当激烈，所以请务必多造几台光束炮。",
+      "translation": "这是我们的测试设施。在这里你可以测试武器，并发掘强化区的强大威力。此处的孢子攻击会相当激烈，所以请务必多造几台光束炮。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16369,7 +16369,7 @@
       "id": "text.e0f19a7381f84e64",
       "source": "According to my scanners, the best place to land would be on the bottom left area because the emitter appears to be damaged and won't start untill 60 seconds after we land.",
       "context": "alpha_hopping / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "根据我的扫描，最佳着陆点是在左下角区域，因为那里的发射器似乎受损了，在我们着陆后60秒才会开始运作。",
+      "translation": "根据我的扫描，最佳着陆点是在左下角区域，因为那里的发射源似乎受损了，在我们着陆后60秒才会开始运作。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16489,7 +16489,7 @@
       "id": "text.14007b8ad43fa917",
       "source": "Addictionally, when you nullify one of the four structures, all units on those four islands will die immediatly. Once you've nullified them all, you can take advantages of the totems and power zones.",
       "context": "alpha_megaland / /Game/Info[1]/Messages[1]/Message[7]/m[1]",
-      "translation": "此外，当你清除四座建筑中的任意一座时，那四座岛屿上的所有单位都会立即阵亡。一旦将它们全部清除，你就能利用图腾和能量区域了。",
+      "translation": "此外，当你用消除器清除四座建筑中的任意一座时，那四座岛屿上的所有单位都会立即毁灭。一旦将它们全部消除，你就能利用图腾和强化区了。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16501,7 +16501,7 @@
       "id": "text.89139981b909ec4a",
       "source": "2 emitters should appear the the big rocks on the left and the right. Destroy those and you'll pass this test.",
       "context": "alpha_megaland / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "左侧和右侧的大岩石上应该会出现2个发射器。摧毁它们，你就能通过这场考验。",
+      "translation": "左侧和右侧的大岩石上应该会出现2个发射源。摧毁它们，你就能通过这场考验。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16525,7 +16525,7 @@
       "id": "text.1f6585a585462d6c",
       "source": "This world is unstable. Build all units in your main base in the center and be prepared to lose all units on other islands. Also remember that before you nullify a tower, make sure your main base is pretty well defended.",
       "context": "alpha_megaland / /Game/Info[1]/Messages[1]/Message[10]/m[1]",
-      "translation": "这个世界很不稳定。把所有单位都建造在中央的主基地中，并做好失去其他岛屿上所有单位的准备。另外记住，在清除一座防御塔之前，确保你的主基地有相当严密的防御。",
+      "translation": "这个世界很不稳定。把所有单位都建造在中央的主基地中，并做好失去其他岛屿上所有单位的准备。另外记住，在用消除器清除一座防御塔之前，确保你的主基地有相当严密的防御。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16573,7 +16573,7 @@
       "id": "text.f2a0dc4674498a7e",
       "source": "They won't work here, so I temporary removed them from your control panel. Scanners say that the creeper also reacts different here. Experiment to find a way to push back the creeper.",
       "context": "alpha_megaland 2 / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "它们在这里不起作用，所以我暂时从你的控制面板中移除了。扫描器显示这里的爬行体反应也不同寻常。试着找出击退爬行体的方法吧。",
+      "translation": "它们在这里不起作用，所以我暂时将它们从你的控制面板中移除了。扫描仪显示这里的爬行体反应也不同寻常。试着摸索出击退爬行体的方法吧。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16609,7 +16609,7 @@
       "id": "text.f5a8c02b85b65ad4",
       "source": "So whats on the scanners?",
       "context": "alpha_roundup / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "那么扫描器上有什么发现？",
+      "translation": "那么扫描仪上有什么发现？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16621,7 +16621,7 @@
       "id": "text.be6aca2a293a489e",
       "source": "Scanners are showing something I have not seen before...  I'm checking on it now commander.",
       "context": "alpha_roundup / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "扫描器显示出一种我从未见过的东西……指挥官，我正在进行核查。",
+      "translation": "扫描仪侦测到一种我从未见过的东西……指挥官，我正在进行核查。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16633,7 +16633,7 @@
       "id": "text.58d9f4bc4485e31f",
       "source": "Scan complete: This area has underground tunnels that emitters will use to dig their way to the surface like in CW2.",
       "context": "alpha_roundup / /Game/Info[1]/Messages[1]/Message[3]/m[1]",
-      "translation": "扫描完成：该区域有地下隧道，发射器会利用这些隧道挖出通往地表的路径，就像在CW2中那样。",
+      "translation": "扫描完成：该区域有地下隧道，发射源会利用这些隧道挖出通往地表的路径，就像在CW2中那样。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16657,7 +16657,7 @@
       "id": "text.5b1b8349a24a3df3",
       "source": "It appears you can use TERPs to slow down their digging procedure, or to cover a hole left behind a nullified emitter.  Also the emitters will use the tunnels to release creeper in other locations.",
       "context": "alpha_roundup / /Game/Info[1]/Messages[1]/Message[5]/m[1]",
-      "translation": "看来你可以使用地形改造仪（TERP）来减缓它们的挖掘进度，或者填补消除器清除发射器后留下的洞穴。此外，发射器还会利用这些隧道在其他位置释放爬行体。",
+      "translation": "看来你可以使用塑地机（TERP）来减缓它们的挖掘进度，或者填补消除器清除发射源后留下的洞穴。此外，发射源还会利用这些隧道在其他位置释放爬行体。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16693,7 +16693,7 @@
       "id": "text.df587e1ce81d5889",
       "source": "The first spore will come in one minute. Digitalis will slowly enter your base. You might want to enable show digi growth area to see the progress.",
       "context": "alpha_super tower / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "第一枚孢子将在一分钟后到达。数字生化质会缓慢侵入你的基地。你可能需要开启“显示数字生化质生长区域”来观察进度。",
+      "translation": "第一枚孢子将在一分钟后到达。数字生化质会缓慢侵入你的基地。你可能需要开启“显示生长区”来观察进度。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16753,7 +16753,7 @@
       "id": "text.4cb76769d7e04845",
       "source": "No. My records say that in this place humanity tried to kill a single emitter. They used their own cores to create anti-creeper and AC spores, slowly growing stronger and stronger.",
       "context": "alpha_super tower 2 / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "不。我的记录显示，人类曾在这个地方试图消灭单个发射器。他们用自己的核心来制造反爬行体和反爬行体孢子，慢慢变得越来越强。",
+      "translation": "不。我的记录显示，人类曾在这个地方试图消灭单个发射源。他们用自己的核心来制造反爬行体和反爬行体孢子，慢慢变得越来越强。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16825,7 +16825,7 @@
       "id": "text.dab9ac95961d4cb6",
       "source": "Be prepared for a lot of spores and build a few mortars to keep the creeper density's low.",
       "context": "alpha_super tower 2 / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "做好应对大量孢子的准备，并建造几门迫击炮来抑制爬行体的密度。",
+      "translation": "做好应对大量孢子的准备，并建造几门迫击炮来压低爬行体的密度。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16837,7 +16837,7 @@
       "id": "text.fd85d05b4244d1f5",
       "source": "Thanks to Virgil for the scripts and images (that i shamelessly \"borrowed\" from the meso map).\nThe idols have quite high energy demand, make sure you can run them before you hook them up!",
       "context": "alpha_teks005 pyramid power / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "感谢 Virgil 提供的脚本和图像（我毫不客气地从 meso 地图里“借”来的）。\n神像的能量需求相当高，接入之前确保你能带得动它们！",
+      "translation": "感谢 Virgil 提供的脚本和图像（我毫不客气地从梅索地图里“借”来的）。\n神像的能量需求相当高，接入之前确保你能带得动它们！",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16849,7 +16849,7 @@
       "id": "text.b1dbe714445b5c5a",
       "source": "go north or go east, it's up to you, but connecting point to point will give you what you need to win. (scripts from meso, thanks again Virgil, i love these powered idols!)",
       "context": "alpha_teks008 point to point / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "往北走还是往东走，由你决定，但只要点对点连接起来，就能获得获胜所需的一切。（脚本来自 meso，再次感谢 Virgil，我太喜欢这些充能神像了！）",
+      "translation": "往北走还是往东走，由你决定，但只要点对点连接起来，就能获得获胜所需的一切。（脚本来自梅索，再次感谢 Virgil，我太喜欢这些充能神像了！）",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16861,7 +16861,7 @@
       "id": "text.2417fe4d0bb6fc34",
       "source": "tek tip! packet speed is probably a good idea!",
       "context": "alpha_teks008 point to point / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "小贴士！提升数据包速度大概是个好主意！",
+      "translation": "小贴士！提升物资包速度大概是个好主意！",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17029,7 +17029,7 @@
       "id": "text.6f96e9c2781f6c94",
       "source": "(PZ) Terps are key",
       "context": "alpha_the pit / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "（能量区 PZ）地形改造器是关键",
+      "translation": "（强化区 PZ）塑地机是关键",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17065,7 +17065,7 @@
       "id": "text.30d8556c4ecd56b6",
       "source": "Hello Trainee! I am CAIN, Comand Node Artifical Intelligence. I trust that you can get yourself through the mission, so I wil be mostly silent and just take notes on your performance.",
       "context": "alpha_the start / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "你好，受训者！我是 CAIN，指挥节点人工智能。我相信你能独立完成任务，所以我基本上会保持沉默，只记录你的表现。",
+      "translation": "你好，受训者！我是该隐（CAIN），指挥节点人工智能。我相信你能独立完成任务，所以我基本上会保持沉默，只记录你的表现。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17077,7 +17077,7 @@
       "id": "text.dde79f94f6419b65",
       "source": "Mission Report: Many emitters are in this world but you get some high ground to start. Runners and an air tower block your path. Collect the tech artifacts for more assistance on your battle.",
       "context": "alpha_the start / /Game/Info[1]/Messages[1]/Message[3]/m[1]",
-      "translation": "任务简报：这个世界中有许多发射器，不过开局你有一些高地优势。疾行体和一座防空塔挡住了去路。收集科技神器，为你的战斗获取更多援助。",
+      "translation": "任务简报：这个世界中有许多发射源，不过开局你有一些高地优势。奔跑者和一座禁空塔挡住了去路。收集科技神器，为你的战斗获取更多援助。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17149,7 +17149,7 @@
       "id": "text.0fb3ca4862f77111",
       "source": "Simulation Number 84497884 is almost complete preparing to stop simulation machine. ",
       "context": "alpha_the start / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "第 84497884 号模拟即将完成，准备停机模拟设备。 ",
+      "translation": "第 84497884 号模拟即将完成，准备停止模拟设备运行。 ",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17161,7 +17161,7 @@
       "id": "text.9b1ca26af0d0000b",
       "source": "There must be something wrong here. That emitter is showing extreme activity.",
       "context": "alpha_the totem 2 / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "这里肯定有问题。那个发射器表现出异常强烈的活动迹象。",
+      "translation": "这里肯定有问题。那个发射源表现出异常强烈的活动迹象。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17173,7 +17173,7 @@
       "id": "text.4cbc566fbfdde2f7",
       "source": "It recieves energy from unactivated totems. Try to connect (and arm!) all totems before attacking that emitter.",
       "context": "alpha_the totem 2 / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "它从尚未激活的图腾中汲取能量。在攻击那个发射器之前，尽量连接（并装载满能量！）所有图腾。",
+      "translation": "它从尚未激活的图腾中汲取能量。在攻击那个发射源之前，尽量连接（并充能！）所有图腾。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17281,7 +17281,7 @@
       "id": "text.059e198269c69892",
       "source": "(Several Hours later)\nOur ultimate weapons aren't in shape to fight the enemy directly... he is too strong for taht either. \nWe need to get our ranged weapon going.",
       "context": "alpha_unknown scenario - part 2 / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "（数小时后）\n我们的终极武器现状无法直接迎战敌人……对手也太强大了。\n我们必须让远程武器运转起来。",
+      "translation": "（数小时后）\n我们的终极武器还没准备好直接迎战敌人……况且对手也太强大了。\n我们必须让远程武器运转起来。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17317,7 +17317,7 @@
       "id": "text.162132fba919f861",
       "source": "Welcome to the Alpha Sector!  Here you will find a collection of varied and assorted worlds. These maps were made throughout the development of the game by beta testers.",
       "context": "alpha_virgilw_system / /System/Messages[1]/Message[1]/m[1]",
-      "translation": "欢迎来到 Alpha 星区！这里汇集了形形色色、丰富多彩的世界。这些地图由测试人员在游戏开发期间陆续制作。",
+      "translation": "欢迎来到阿尔法星区！这里汇集了形形色色、丰富多彩的世界。这些地图由测试人员在游戏开发期间陆续制作。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17513,7 +17513,7 @@
       "id": "text.17a85dee0cbc329c",
       "source": "Hit continue to check the answer\n\tIf the answer is wrong, you'll get a 4-second penalty\n\tand you will have to try again\n\tThe penalty increases with one seconds each time",
       "context": "alpha_electricity quiz / Quizmaster_electricity.crpl / show_message / line 540",
-      "translation": "点击“继续”以检查答案。\n\t如果答案错误，你将受到 4 秒的惩罚，\n\t并且必须重试。\n\t每次重试惩罚时间都会增加一秒。",
+      "translation": "摧毁“继续”收集器以检查答案。\n\t如果答案错误，你将受到 4 秒的惩罚，\n\t并且必须重试。\n\t惩罚时间每次都会增加一秒。",
       "target": {
         "kind": "crpl_display",
         "file": "CW3_Data/resources.assets",
@@ -17583,7 +17583,7 @@
       "id": "text.69b4fd52019ec4d5",
       "source": "The left emitter emits creeper proportional to your energy generated",
       "context": "alpha_nowasteland / Help1.crpl / show_message / line 5",
-      "translation": "左侧发射器排放的爬行体与你的发电量成正比",
+      "translation": "左侧发射源排放的爬行体与你的发电量成正比",
       "target": {
         "kind": "crpl_display",
         "file": "CW3_Data/resources.assets",
@@ -17597,7 +17597,7 @@
       "id": "text.78ced20957074ff7",
       "source": "The right emitter emits creeper proportional to your ore mined",
       "context": "alpha_nowasteland / Help2.crpl / show_message / line 5",
-      "translation": "右侧发射器排放的爬行体与你的矿石开采量成正比",
+      "translation": "右侧发射源排放的爬行体与你的矿石开采量成正比",
       "target": {
         "kind": "crpl_display",
         "file": "CW3_Data/resources.assets",
@@ -17639,7 +17639,7 @@
       "id": "text.03be529f15074040",
       "source": "Look at those fragments.  In their midst, the plans for the mightiest vessel ever constructed, the Thor!  We must obtain those schematics, they will hold the secret to destroying the Nexus.",
       "context": "arca / CrashingThor.crpl / conversation / line 97",
-      "translation": "看看那些残骸。在它们正中，有着有史以来建造的最强飞船——托尔号的蓝图！我们必须拿到那些图纸，里面藏着摧毁枢纽的秘密。",
+      "translation": "看看那些残骸。在它们正中，有着有史以来建造的最强战舰——雷神号的蓝图！我们必须拿到那些图纸，里面藏着摧毁枢纽的秘密。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -17709,7 +17709,7 @@
       "id": "text.c4075613e15e8642",
       "source": "But, the Loki have prepared for this possibility, Aliana.  They have surrounded their Nexus with a shield.  This shield is impervious to any of the weapons we have, including the Thor.",
       "context": "arca / CrashingThor.crpl / conversation / line 108",
-      "translation": "但是，阿利亚娜，洛基早就防着这一手了。他们在枢纽周围布下了护盾。包括托尔在内，我们现有的任何武器都无法穿透这层护盾。",
+      "translation": "但是，阿利亚娜，洛基早就防着这一手了。他们在枢纽周围布下了护盾。包括雷神战舰在内，我们现有的任何武器都无法穿透这层护盾。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -17779,7 +17779,7 @@
       "id": "text.d8518617777f3872",
       "source": "Yes, the structures are the remains of ancient and primitive weapons, missile silos from a primitive culture.  If we terraform down to level 1, we can access these remains.  I can program the nano-construction packets to rebuild them.",
       "context": "arca / CrashingThor.crpl / conversation / line 113",
-      "translation": "是的，这些结构体是古老原始武器的遗迹，属于某个原始文明的导弹发射井。如果我们把地形平整下挖至1级，就能接触到这些遗迹。我可以对纳米建造数据包进行编程来重构它们。",
+      "translation": "是的，这些建筑是古老原始武器的遗迹，是某个原始文明留下的导弹发射井。如果我们把地形降至1级，就能接触到这些遗迹。我可以对纳米建造包进行编程，重建这些发射井。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -17807,7 +17807,7 @@
       "id": "text.9000b785b4eea056",
       "source": "I'll indicate the location of the silos, Father.  We must secure those locations and terraform them to level 1.  Once excavated, hook up our network and arm the silos.",
       "context": "arca / CrashingThor.crpl / conversation / line 115",
-      "translation": "我会标出发射井的位置，父亲。我们必须控制这些区域，并将地形平整至1级。挖掘出来后，连接上我们的网络，并为发射井装填弹药。",
+      "translation": "我会标出发射井的位置，父亲。我们必须控制这些区域，并将地形降至1级。挖掘出来后，接入我们的网络，为发射井装填弹药。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -17821,7 +17821,7 @@
       "id": "text.4c7704d38de230d4",
       "source": "The Thor may not be able to penetrate the Nexus shield, Aliana... but I sure bet it will help secure the area around those missile silos!",
       "context": "arca / CrashingThor.crpl / conversation / line 116",
-      "translation": "阿利亚娜，托尔也许穿不透枢纽的护盾……但我敢说它绝对能在夺取那些导弹发射井周围的区域时派上大用场！",
+      "translation": "阿利亚娜，雷神战舰也许穿不透枢纽的护盾……但我敢说它绝对能在夺取那些导弹发射井周围的区域时派上大用场！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18017,7 +18017,7 @@
       "id": "text.7551ed2505e65295",
       "source": "Imperator, you mush perish along with the Loki.  But you had the right idea in one respect.  The Arc is now under my protection and with it I will choose to remake some things as I see fit.",
       "context": "arca / Nexus.crpl / conversation / line 119",
-      "translation": "统御者，你必须和洛基一同毁灭。但你在某一点上说得没错。永恒弧现在由我守护，而我将凭借它随心重塑部分事物。",
+      "translation": "统御者，你必须和洛基一同毁灭。但你在某一点上说得没错。永恒之弧现在由我守护，而我将凭借它随心重塑部分事物。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18101,7 +18101,7 @@
       "id": "text.18cdb1b6a54ac62b",
       "source": "Now, we will use the main cannons of the mighty Thor and destroy the Nexus!",
       "context": "arca / Nexus.crpl / conversation / line 177",
-      "translation": "现在，我们将动用强大的托尔号主炮，彻底摧毁枢纽！",
+      "translation": "现在，我们将动用强大的雷神号主炮，彻底摧毁枢纽！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18213,7 +18213,7 @@
       "id": "text.c9b2a7ac0e121b42",
       "source": "I'm not so sure about that Father.  The Arc once made, cannot be unmade.  It is here and stands at your disposal.",
       "context": "arca / Nexus.crpl / conversation / line 420",
-      "translation": "我对此可不太确定，父亲。永恒弧一旦被铸成，便无法被逆转消弭。它就在这里，任凭你调遣。",
+      "translation": "我对此可不太确定，父亲。永恒之弧一旦被铸成，便无法被逆转消弭。它就在这里，任凭你调遣。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18269,7 +18269,7 @@
       "id": "text.e712214a9d3936a3",
       "source": "The Arc allows you to visit any time, any place, in any alternate reality.  You can go anywhere at any time.",
       "context": "arca / Nexus.crpl / conversation / line 424",
-      "translation": "永恒弧能让您造访任何时间、任何地点、任何平行现实。您可以随时去往任何地方。",
+      "translation": "永恒之弧能让您造访任何时间、任何地点、任何平行现实。您可以随时去往任何地方。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18381,7 +18381,7 @@
       "id": "text.f46e152c71d0e21d",
       "source": "At last, the Loki speak.  Now that you shall never have access to the Arc, what will you do?",
       "context": "arca / RingBuilder.crpl / conversation / line 92",
-      "translation": "洛基终于开口了。既然你们永远也无法接触到永恒弧，你们又打算做什么？",
+      "translation": "洛基终于开口了。既然你们永远也无法接触到永恒之弧，你们又打算做什么？",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18423,7 +18423,7 @@
       "id": "text.c50af7b6c2e0bb41",
       "source": "We will wait another 10 billion years, then another, then another if necessary.  And when we finally reveal the Arc Eternal we will save you, our Imperator.  We will save you... [Loki Transmission Terminated]",
       "context": "arca / RingBuilder.crpl / conversation / line 95",
-      "translation": "我们会再等100亿年，如有必要，就再等一个又一个100亿年。当我们最终揭示永恒弧之时，我们终将拯救你，我们的统御者。我们将拯救你……[洛基通讯中断]",
+      "translation": "我们会再等100亿年，如有必要，就再等一个又一个100亿年。当我们最终揭示永恒之弧之时，我们终将拯救你，我们的统御者。我们将拯救你……[洛基通讯中断]",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18451,7 +18451,7 @@
       "id": "text.917ec319f8d70b0b",
       "source": "I'm not sure, but perhaps there are other eventualities that the Loki sense.  Something about this all seems uncertain... as if there were other possible outcomes... parallel realities.",
       "context": "arca / RingBuilder.crpl / conversation / line 97",
-      "translation": "我不确定，但也许多元变局正是洛基所感知到的。这一切似乎都透着不确定……就仿佛存在着其他可能的结果……平行现实。",
+      "translation": "我不确定，但也许洛基感知到了其他可能发生的情况。这一切似乎都透着不确定……就仿佛存在着其他可能的结果……平行现实。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18507,7 +18507,7 @@
       "id": "text.daa79770abb0c4e6",
       "source": "When we came to this world, I began to see things more clearly.  As we fought to prevent the Arc from being built, everything became clear to me.  Just as I knew that Lia was but a mask for your true self, I also know that I am no longer a physical being.",
       "context": "arca / RingBuilder.crpl / conversation / line 101",
-      "translation": "当我们来到这个世界时，我开始看得更清楚了。随着我们奋战阻止永恒弧的建造，一切对我而言都变得明朗起来。正如我知道莉娅只是你真实自我的伪装一样，我也明白自己已不再是一个实体存在了。",
+      "translation": "当我们来到这个世界时，我开始看得更清楚了。随着我们奋战阻止永恒之弧的建造，一切对我而言都变得明朗起来。正如我知道莉娅只是你真实自我的伪装一样，我也明白自己已不再是一个实体存在了。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18535,7 +18535,7 @@
       "id": "text.f7328acacc6ab5d6",
       "source": "It makes sense... each of us aren't very different from the Loki, or Platius. We never have been.  We each exist outside a single physical form.  This battle... this success... for some reason it awoke a great wealth of knowledge within me.",
       "context": "arca / RingBuilder.crpl / conversation / line 103",
-      "translation": "这说得通……我们彼此与洛基或普拉提乌斯并没有太大的不同。一直以来都是如此。我们都存在于单一的实体之外。这场战斗……这次胜利……出于某种原因，唤醒了我体内庞大的知识宝库。",
+      "translation": "这说得通……我们每个人与洛基或普拉提乌斯并没有太大的不同。一直以来都是如此。我们都不局限于单一的实体形态。这场战斗……这次胜利……出于某种原因，唤醒了我体内庞大的知识宝库。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18633,7 +18633,7 @@
       "id": "text.ba47b3144bab0030",
       "source": "That's right... I did what I must to stop you.  I destroyed my orbital ship, and converted it into defenses that will deny you the Arc forever!",
       "context": "arca / RingBuilder.crpl / conversation / line 149",
-      "translation": "没错……我做了必须做的事来阻止你。我摧毁了我的轨道飞船，并将其转化为防御设施，彻底断绝你染指永恒弧的可能！",
+      "translation": "没错……我做了必须做的事来阻止你。我摧毁了我的轨道飞船，并将其转化为防御设施，彻底断绝你染指永恒之弧的可能！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18689,7 +18689,7 @@
       "id": "text.f71506c78c5e51c2",
       "source": "The anomaly has also deployed itself directly over the Arc...  It has created a shield around the Arc, that our weapons will not penetrate!",
       "context": "arca / RingBuilder.crpl / conversation / line 153",
-      "translation": "那个异常体还直接部署在永恒弧的正上方……它在永恒弧周围构建了一层护盾，我们的武器无法穿透！",
+      "translation": "那个异常体还直接部署在永恒之弧的正上方……它在永恒之弧周围构建了一层护盾，我们的武器无法穿透！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18801,7 +18801,7 @@
       "id": "text.acf914f8988e4c57",
       "source": "Once her shield is down, I will flood the area with Creeper until she is destroyed!  Then I will control the Arc and all of reality will be at my command!",
       "context": "arca / RingBuilder.crpl / conversation / line 161",
-      "translation": "一旦她的护盾瓦解，我就会让爬行体淹没整个区域，直至将她毁灭！到那时，我将掌控永恒弧，现实中的一切都将任我差遣！",
+      "translation": "一旦她的护盾瓦解，我就会让爬行体淹没整个区域，直至将她毁灭！到那时，我将掌控永恒之弧，现实中的一切都将任我差遣！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18843,7 +18843,7 @@
       "id": "text.c61cba25f568baf9",
       "source": "BEHOLD!  All that has transpired has done so exactly as foretold!  The Arc Eternal is revealed at last!  Bear witness to our mighty Nexus!",
       "context": "arca / RingBuilder.crpl / conversation / line 218",
-      "translation": "看哪！发生的一切全都分毫不差地应验了预言！永恒弧终于现世！见证我们强大的枢纽吧！",
+      "translation": "看哪！发生的一切全都分毫不差地应验了预言！永恒之弧终于现世！见证我们强大的枢纽吧！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -18941,7 +18941,7 @@
       "id": "text.e79e6bcde66135ea",
       "source": "She is right Loki, you are trying to deceive me!",
       "context": "arca / RingBuilder.crpl / conversation / line 229",
-      "translation": "她说得没错，洛基，你在试图欺骗我！",
+      "translation": "她说得没错，洛基，你们在试图欺骗我！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19095,7 +19095,7 @@
       "id": "text.d62dd072f5da84c0",
       "source": "Ha ha ha ha...  we found YOU, Imperator.  YOU were who we found.  You told us of the Arc and of its potential.  You showed us our purpose and laid out the path for all that would follow.",
       "context": "arca / RingBuilder.crpl / conversation / line 240",
-      "translation": "哈哈哈哈……我们找到的是你，统御者。我们找到的人就是你。你告诉了我们永恒弧的存在及其潜能。是你向我们揭示了我们的宿命，并铺平了随后发生的一切道路。",
+      "translation": "哈哈哈哈……我们找到的是你，统御者。我们找到的人就是你。你告诉了我们永恒之弧的存在及其潜能。是你向我们揭示了我们的使命，并为后来发生的一切指明了道路。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19179,7 +19179,7 @@
       "id": "text.d983d4ef5f39687b",
       "source": "Nonsense!  Imperator, all that has transpired has done so according to your plan!  We have revealed the Arc Eternal for you!  Now, join with us as you have foretold!",
       "context": "arca / RingBuilder.crpl / conversation / line 246",
-      "translation": "荒谬！统御者，发生的一切皆是按照您的计划进行的！我们已为您揭示了永恒弧！现在，遵照您的预言，与我们融合吧！",
+      "translation": "荒谬！统御者，发生的一切皆是按照您的计划进行的！我们已为您揭示了永恒之弧！现在，遵照您的预言，与我们融合吧！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19207,7 +19207,7 @@
       "id": "text.5aa7ab9ceddaf212",
       "source": "Father!  Something just dropped out of Warp in this system.  It's badly damaged and heading for this planet!",
       "context": "arca / RingBuilder.crpl / conversation / line 257",
-      "translation": "父亲！有东西刚刚脱离曲速进入了这个星系。它受损严重，正朝这颗星球冲来！",
+      "translation": "父亲！有东西刚刚脱离跃迁进入了这个星系。它受损严重，正朝这颗星球冲来！",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19263,7 +19263,7 @@
       "id": "text.afcd62c3b5e76d53",
       "source": "I choose this form.  I will not join with you, nor will I allow you to control the Arc.",
       "context": "arca / RingBuilder.crpl / conversation / line 338",
-      "translation": "我选择这个形态。我不会与你们融合，也绝不允许你们掌控永恒弧。",
+      "translation": "我选择这个形态。我不会与你们融合，也绝不允许你们掌控永恒之弧。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19291,7 +19291,7 @@
       "id": "text.a3d616a7d708548e",
       "source": "So long as we are here, you cannot control the Arc and use it for your purposes.",
       "context": "arca / RingBuilder.crpl / conversation / line 340",
-      "translation": "只要我们还在这里，你就休想掌控永恒弧并将其据为己用。",
+      "translation": "只要我们还在这里，你就休想掌控永恒之弧并将其据为己用。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19319,7 +19319,7 @@
       "id": "text.f91b523f33168a34",
       "source": "Thank you father.... thank you for choosing the right path. ",
       "context": "arca / RingBuilder.crpl / conversation / line 342",
-      "translation": "谢谢你，父亲……谢谢你选择了正确的道路。 ",
+      "translation": "谢谢您，父亲……谢谢您选择了正确的道路。 ",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19487,7 +19487,7 @@
       "id": "text.8932bc3d13372cf2",
       "source": "Fath... Imperator, you leave me no choice.  I must destroy your Nexus.  You cannot be allowed to control the Arc.",
       "context": "arca / RingBuilder.crpl / conversation / line 361",
-      "translation": "父……统御者，你让我别无选择。我必须摧毁你的枢纽。绝不能让你控制永恒弧。",
+      "translation": "父……统御者，你让我别无选择。我必须摧毁你的枢纽。绝不能让你控制永恒之弧。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19515,7 +19515,7 @@
       "id": "text.e438990aa560fc46",
       "source": "Lia, we failed!  The Prism Ship has been completed and is launching. Nothing can stop it now...",
       "context": "farbor / MotherShip.crpl / conversation / line 96",
-      "translation": "莉娅，我们失败了！棱镜战舰已经完工并且正在发射。现在谁也阻止不了它了……",
+      "translation": "莉娅，我们失败了！棱镜飞船已经完工并且正在发射。现在谁也阻止不了它了……",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -20213,7 +20213,7 @@
       "id": "text.59a95f28d018fcd7",
       "source": "Packet Speed",
       "context": "GUI caption / System.Void EditMapGUI::DoTechSettings(System.Boolean,System.Boolean) / instruction 163",
-      "translation": "数据包速度",
+      "translation": "物资包速度",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -20777,7 +20777,7 @@
       "id": "text.a03cad43e13c403f",
       "source": "Requests Packets",
       "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1171",
-      "translation": "请求数据包",
+      "translation": "请求物资包",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -20789,7 +20789,7 @@
       "id": "text.d51616a07de32655",
       "source": "Requests AC Packets",
       "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1192",
-      "translation": "请求反爬行体数据包",
+      "translation": "请求反爬行体包",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -20813,7 +20813,7 @@
       "id": "text.47eb22e0dd23ab51",
       "source": "Packet Request Delay",
       "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1234",
-      "translation": "数据包请求延迟",
+      "translation": "物资包请求延迟",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -20825,7 +20825,7 @@
       "id": "text.ec90c976bf94b074",
       "source": "AC Packet Request Delay",
       "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1280",
-      "translation": "反爬行体数据包请求延迟",
+      "translation": "反爬行体包请求延迟",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -20861,7 +20861,7 @@
       "id": "text.67581f8e0fcff114",
       "source": "Create Power Zone",
       "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1420",
-      "translation": "生成能量区域",
+      "translation": "生成强化区",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -21173,7 +21173,7 @@
       "id": "text.5c491bca18072894",
       "source": "Runner Emit Interval",
       "context": "GUI caption / System.Void EditMapGUI::DoRunnerNest(System.Boolean) / instruction 66",
-      "translation": "奔跑者发射间隔",
+      "translation": "奔跑者生成间隔",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -21881,7 +21881,7 @@
       "id": "text.1762b97c93b4914e",
       "source": "Scores",
       "context": "GUI caption / System.Void ColonialSpaceManager::DoColonialSpaceWindow(System.Int32) / instruction 862",
-      "translation": "得分数",
+      "translation": "成绩数",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -22073,7 +22073,7 @@
       "id": "text.4040b8ec016070da",
       "source": "Num:",
       "context": "GUI caption / System.Void ColonialSpaceManager::DrawMapBox(ColonialSpaceManager/MapEntry,System.Boolean,System.Boolean) / instruction 631",
-      "translation": "数量：",
+      "translation": "人数：",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -22085,7 +22085,7 @@
       "id": "text.bba6d9ae3221e9ac",
       "source": "Mine:",
       "context": "GUI caption / System.Void ColonialSpaceManager::DrawMapBox(ColonialSpaceManager/MapEntry,System.Boolean,System.Boolean) / instruction 669",
-      "translation": "我制作的：",
+      "translation": "自评：",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -22097,7 +22097,7 @@
       "id": "text.6942d076d2c2a790",
       "source": "Scores:",
       "context": "GUI caption / System.Void ColonialSpaceManager::DrawMapBox(ColonialSpaceManager/MapEntry,System.Boolean,System.Boolean) / instruction 710",
-      "translation": "得分：",
+      "translation": "成绩数：",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -22109,7 +22109,7 @@
       "id": "text.f0c7869566ce0135",
       "source": "Scores",
       "context": "GUI caption / System.Void ColonialSpaceManager::DrawMapBox(ColonialSpaceManager/MapEntry,System.Boolean,System.Boolean) / instruction 734",
-      "translation": "得分数",
+      "translation": "排行榜",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -22253,7 +22253,7 @@
       "id": "text.953eba24c151d4be",
       "source": "Play",
       "context": "GUI caption / System.Void ColonialSpaceManager::DrawMapBox(ColonialSpaceManager/MapEntry,System.Boolean,System.Boolean) / instruction 1293",
-      "translation": "播放",
+      "translation": "游玩",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -22433,7 +22433,7 @@
       "id": "text.31ea6bae6b13caae",
       "source": "Play",
       "context": "GUI caption / System.Void WorldMachineManager::DoWorldMachineWindow(System.Int32) / instruction 237",
-      "translation": "播放",
+      "translation": "游玩",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -23297,7 +23297,7 @@
       "id": "text.b04b1223714189b8",
       "source": "Play",
       "context": "GUI caption / System.Void MySectorGUI::DoFinalizedEditorWindow(System.Int32) / instruction 369",
-      "translation": "播放",
+      "translation": "游玩",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -23837,7 +23837,7 @@
       "id": "text.a6fb146749d114f0",
       "source": "Prospector Zone : ",
       "context": "Mission title display prefix; raw missionTitle unchanged",
-      "translation": "勘探者区： ",
+      "translation": "勘探者地带： ",
       "target": {
         "kind": "label_display",
         "key": "Prospector Zone : ",
@@ -23849,7 +23849,7 @@
       "id": "text.cd77910ea4ca3703",
       "source": "Tormented Space : ",
       "context": "Mission title display prefix; raw missionTitle unchanged",
-      "translation": "苦难空间： ",
+      "translation": "折磨星区： ",
       "target": {
         "kind": "label_display",
         "key": "Tormented Space : ",
@@ -24256,7 +24256,7 @@
       "id": "text.20f451c36394db35",
       "source": "During the game, your current score, as well as the time until the next\ntrain are displayed in the upper-right hand corner. You have 3 minutes to\nset up your terps before the first train. You win when your score is 100",
       "context": "alpha_troublesome trains 01 - tutorial / Train_Scores.crpl / ShowMessage output 10",
-      "translation": "游戏中，当前得分和距离下一班列车发车的时间\n显示在右上角。第一班列车发车前，你有 3 分钟\n布置地形改造仪。得分达到 100 时获胜。",
+      "translation": "游戏中，当前得分和距离下一班列车发车的时间\n显示在右上角。第一班列车发车前，你有 3 分钟\n布置塑地机。得分达到 100 时获胜。",
       "target": {
         "kind": "crpl_output",
         "file": "CW3_Data/resources.assets",
@@ -24517,7 +24517,7 @@
       "id": "text.17aabb16ec30f9ca",
       "source": "During the game, your current score, as well as the time until the next\ntrain are displayed in the upper-right hand corner. You have 3 minutes to\nset up your terps before the first train. You win when your score is 100",
       "context": "alpha_troublesome trains 02 - freeplay / Train_Scores.crpl / ShowMessage output 10",
-      "translation": "游戏中，当前得分和距离下一班列车发车的时间\n显示在右上角。第一班列车发车前，你有 3 分钟\n布置地形改造仪。得分达到 100 时获胜。",
+      "translation": "游戏中，当前得分和距离下一班列车发车的时间\n显示在右上角。第一班列车发车前，你有 3 分钟\n布置塑地机。得分达到 100 时获胜。",
       "target": {
         "kind": "crpl_output",
         "file": "CW3_Data/resources.assets",
@@ -24916,7 +24916,7 @@
       "id": "text.952b3c7488b5b8e5",
       "source": "Siphon",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 94",
-      "translation": "虹吸管",
+      "translation": "虹吸器",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -24928,7 +24928,7 @@
       "id": "text.4b4828ff39f60503",
       "source": "Terp",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 103",
-      "translation": "地形改造仪",
+      "translation": "塑地机",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -24940,7 +24940,7 @@
       "id": "text.aa6b9ffb56b570b6",
       "source": "Guppy",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 112",
-      "translation": "孔雀鱼",
+      "translation": "运输艇",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -25036,7 +25036,7 @@
       "id": "text.98cf08e8cd47c67b",
       "source": "Sniper",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 184",
-      "translation": "狙击手",
+      "translation": "狙击炮",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -25060,7 +25060,7 @@
       "id": "text.cf2e1268c41d597b",
       "source": "Bertha",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 202",
-      "translation": "贝尔莎加农炮",
+      "translation": "贝尔莎炮",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -25084,7 +25084,7 @@
       "id": "text.fac8daf3b9d27e07",
       "source": "Siphon",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 223",
-      "translation": "虹吸管",
+      "translation": "虹吸器",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -25132,7 +25132,7 @@
       "id": "text.331efe6a5070f524",
       "source": "AE Tower",
       "context": "Native event caption / System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2) / instruction 262",
-      "translation": "永恒之弧防御塔",
+      "translation": "禁空塔",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -25516,7 +25516,7 @@
       "id": "text.99cb9ddc30accb2a",
       "source": "Upgrade to Lvl: ",
       "context": "UILabel caption / System.Void CommandCenter::UnitsSelected() / instruction 517",
-      "translation": "升级到等级： ",
+      "translation": "升至等级： ",
       "target": {
         "kind": "managed",
         "stage": "v9",
@@ -25630,6 +25630,1206 @@
         "stage": "v9",
         "method_token": 100666622,
         "instruction_index": 72
+      }
+    },
+    {
+      "id": "text.cf53a500f775a97c",
+      "source": "Unit Settings",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 38",
+      "translation": "单位设置",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 38
+      }
+    },
+    {
+      "id": "text.e26262cb47b5bde4",
+      "source": "Scripts",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 59",
+      "translation": "脚本",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 59
+      }
+    },
+    {
+      "id": "text.beb1838b7486f2b0",
+      "source": "Custom Images",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 80",
+      "translation": "自定义图像",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 80
+      }
+    },
+    {
+      "id": "text.b3039520674163c7",
+      "source": "Custom Characters",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 101",
+      "translation": "自定义角色",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 101
+      }
+    },
+    {
+      "id": "text.9b14052a199cd64d",
+      "source": "Sounds",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 122",
+      "translation": "音效",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 122
+      }
+    },
+    {
+      "id": "text.3e9b12180e928f6b",
+      "source": "Tech Levels",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 143",
+      "translation": "科技等级",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 143
+      }
+    },
+    {
+      "id": "text.44d0e12a93ccfe2e",
+      "source": "Properties",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 196",
+      "translation": "属性",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 196
+      }
+    },
+    {
+      "id": "text.83ced5c2a135a531",
+      "source": "Conversation",
+      "context": "GUI caption / System.Void EditMapGUI::OnGUI(System.Collections.Generic.List`1<UnitManager>) / instruction 234",
+      "translation": "对话",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666009,
+        "instruction_index": 234
+      }
+    },
+    {
+      "id": "text.ac5ac4e34bb37c4e",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 32",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 32
+      }
+    },
+    {
+      "id": "text.8a96d5512387d3cd",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 41",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 41
+      }
+    },
+    {
+      "id": "text.d5810d1c181c64f1",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 53",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 53
+      }
+    },
+    {
+      "id": "text.db27e38ed9d8de63",
+      "source": "Custom",
+      "context": "GUI caption / System.Void EditMapGUI::DrawCustomTexturePicker(System.Int32,UnityEngine.Texture2D) / instruction 65",
+      "translation": "自定义",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666018,
+        "instruction_index": 65
+      }
+    },
+    {
+      "id": "text.4275b7d5ef049c42",
+      "source": "ALERT:",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 22",
+      "translation": "警告：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 22
+      }
+    },
+    {
+      "id": "text.8e2dc4c71200d520",
+      "source": "OK",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 50",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 50
+      }
+    },
+    {
+      "id": "text.85fa8baf551cba87",
+      "source": "Confirm Deletion:",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 84",
+      "translation": "确认删除：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 84
+      }
+    },
+    {
+      "id": "text.6828822f114e30f6",
+      "source": "OK",
+      "context": "GUI caption / System.Void EditMapGUI::DoScripts() / instruction 100",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666025,
+        "instruction_index": 100
+      }
+    },
+    {
+      "id": "text.e49539d8ef66aa18",
+      "source": "UNKNOWN",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1589",
+      "translation": "未知",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1589
+      }
+    },
+    {
+      "id": "text.d71152ce83fa13a7",
+      "source": "DEFAULT",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1596",
+      "translation": "默认",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1596
+      }
+    },
+    {
+      "id": "text.fef80ffa633b22c9",
+      "source": "NONE",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1603",
+      "translation": "无",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1603
+      }
+    },
+    {
+      "id": "text.c8a3e6c9cd3cefb9",
+      "source": "FLASH",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1611",
+      "translation": "闪光",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1611
+      }
+    },
+    {
+      "id": "text.d909982b5baf211d",
+      "source": "EXPLOSION w/SOUND",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1619",
+      "translation": "爆炸（带音效）",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1619
+      }
+    },
+    {
+      "id": "text.ef638946c2fce7b4",
+      "source": "EXPLOSION",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1627",
+      "translation": "爆炸",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1627
+      }
+    },
+    {
+      "id": "text.1893da94c033f21f",
+      "source": "Confirm Removal:",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1770",
+      "translation": "确认移除：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1770
+      }
+    },
+    {
+      "id": "text.e97268f83fe738d4",
+      "source": "OK",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 1789",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 1789
+      }
+    },
+    {
+      "id": "text.d1a6a7336b1ee943",
+      "source": "Up",
+      "context": "GUI caption / System.Void EditMapGUI::DoCRPLTower(System.Boolean) / instruction 2034",
+      "translation": "上移",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666030,
+        "instruction_index": 2034
+      }
+    },
+    {
+      "id": "text.fec2eb328e03e294",
+      "source": "KEY(no edit)",
+      "context": "GUI caption / System.Void EditMapGUI::DoShieldKey(System.Boolean) / instruction 41",
+      "translation": "护盾钥匙（不可编辑）",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666037,
+        "instruction_index": 41
+      }
+    },
+    {
+      "id": "text.8a4ea1ed165b8ff8",
+      "source": "Freeze",
+      "context": "GUI caption / System.Void EditMapGUI::DoProspectorArtifact(System.Boolean) / instruction 55",
+      "translation": "冻结",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666042,
+        "instruction_index": 55
+      }
+    },
+    {
+      "id": "text.12a2231b73807235",
+      "source": "Mass",
+      "context": "GUI caption / System.Void EditMapGUI::DoProspectorArtifact(System.Boolean) / instruction 62",
+      "translation": "质量",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666042,
+        "instruction_index": 62
+      }
+    },
+    {
+      "id": "text.10c79cfa063f05a5",
+      "source": "Convert",
+      "context": "GUI caption / System.Void EditMapGUI::DoProspectorArtifact(System.Boolean) / instruction 69",
+      "translation": "转换",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666042,
+        "instruction_index": 69
+      }
+    },
+    {
+      "id": "text.2b2e0ea662ace29d",
+      "source": "Packet",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 69",
+      "translation": "数据包",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 69
+      }
+    },
+    {
+      "id": "text.6528c81d02e47b9f",
+      "source": "AC",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 76",
+      "translation": "反爬行体",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 76
+      }
+    },
+    {
+      "id": "text.92fbd2265c32adea",
+      "source": "Energy",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 83",
+      "translation": "能量",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 83
+      }
+    },
+    {
+      "id": "text.ea3aa0f043fe8f10",
+      "source": "Ore",
+      "context": "GUI caption / System.Void EditMapGUI::DoSupplyDroneLandingPad(System.Boolean) / instruction 90",
+      "translation": "矿石",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666044,
+        "instruction_index": 90
+      }
+    },
+    {
+      "id": "text.6babdc12be3a5b29",
+      "source": "Resize Map",
+      "context": "GUI caption / System.Void ResizeMapManager::OnGUI() / instruction 37",
+      "translation": "调整地图大小",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666457,
+        "instruction_index": 37
+      }
+    },
+    {
+      "id": "text.57724640d7164017",
+      "source": "Resizing the map will increase or decrease the amount of land.\nIf you decrease either dimension, terrain/units will get clipped on the right and/or the bottom.  Any clipped items will be lost!\n\nNOTE THAT THE GAME WILL BE AUTOMATICALLY SAVED AND RELOADED AFTER YOU APPLY.  SO MAKE A BACKUP COPY FIRST!",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 0",
+      "translation": "调整地图大小会增减地形面积。\n缩小宽度或高度时，右侧或底部超出范围的地形和单位将被裁掉，无法保留！\n\n应用后会自动保存并重新载入地图。请先备份！",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 0
+      }
+    },
+    {
+      "id": "text.68696437f14e97f2",
+      "source": "New Width (20-256):",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 9",
+      "translation": "新宽度（20-256）：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 9
+      }
+    },
+    {
+      "id": "text.5a3a2c56a67cc9aa",
+      "source": "New Height (20-256):",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 29",
+      "translation": "新高度（20-256）：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 29
+      }
+    },
+    {
+      "id": "text.bf9c46ad66a9b6a6",
+      "source": "Apply",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 49",
+      "translation": "应用",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 49
+      }
+    },
+    {
+      "id": "text.6acc9fbe1da211bc",
+      "source": "Cancel",
+      "context": "GUI caption / System.Void ResizeMapManager::DoResizeMapWindow(System.Int32) / instruction 222",
+      "translation": "取消",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666458,
+        "instruction_index": 222
+      }
+    },
+    {
+      "id": "text.72126cae7a4a0c33",
+      "source": "Finalizing a map will create a copy of the map in your finalized list.  From there you can play, post scores, and optionally upload the mission to share with others.",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::OnPress(System.Boolean) / instruction 585",
+      "translation": "定稿会在已定稿地图列表中创建副本。之后可游玩、提交成绩，也可选择上传关卡与他人分享。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666484,
+        "instruction_index": 585
+      }
+    },
+    {
+      "id": "text.9b0e3e791be92bb2",
+      "source": "OK",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::OnPress(System.Boolean) / instruction 587",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666484,
+        "instruction_index": 587
+      }
+    },
+    {
+      "id": "text.7b9fe76a9e5ec809",
+      "source": "Cancel",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::OnPress(System.Boolean) / instruction 588",
+      "translation": "取消",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666484,
+        "instruction_index": 588
+      }
+    },
+    {
+      "id": "text.79c5ea36c680605d",
+      "source": "Collector",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "收集器",
+      "target": {
+        "kind": "label_display",
+        "key": "Collector",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.208df12742e37199",
+      "source": "Relay",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "中继器",
+      "target": {
+        "kind": "label_display",
+        "key": "Relay",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.b8a621abb07708c4",
+      "source": "Reactor",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "反应堆",
+      "target": {
+        "kind": "label_display",
+        "key": "Reactor",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.a0979922f11a8e2f",
+      "source": "Shield",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "护盾",
+      "target": {
+        "kind": "label_display",
+        "key": "Shield",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.e5309c663956d3c9",
+      "source": "Ore Mine",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "矿井",
+      "target": {
+        "kind": "label_display",
+        "key": "Ore Mine",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.5cbb25dcc023570a",
+      "source": "Siphon",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "虹吸器",
+      "target": {
+        "kind": "label_display",
+        "key": "Siphon",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.0bd069718f2bb8aa",
+      "source": "Terp",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "塑地机",
+      "target": {
+        "kind": "label_display",
+        "key": "Terp",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.e566d6518bd18706",
+      "source": "Guppy",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "运输艇",
+      "target": {
+        "kind": "label_display",
+        "key": "Guppy",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.541543b25e931e26",
+      "source": "Pulse Cannon",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "脉冲加农炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Pulse Cannon",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.776c4626a2d86fde",
+      "source": "Mortar",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "迫击炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Mortar",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.38157e7d34aeef48",
+      "source": "Strafer",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "扫射机",
+      "target": {
+        "kind": "label_display",
+        "key": "Strafer",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.d57cc5b6e996489f",
+      "source": "Bomber",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "轰炸机",
+      "target": {
+        "kind": "label_display",
+        "key": "Bomber",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.0b215c8ca5da053e",
+      "source": "Nullifier",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "消除器",
+      "target": {
+        "kind": "label_display",
+        "key": "Nullifier",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.2175c2dd1ec47f5e",
+      "source": "Beam",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "光束炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Beam",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.de7963dd806ad605",
+      "source": "Sprayer",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "喷洒器",
+      "target": {
+        "kind": "label_display",
+        "key": "Sprayer",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.9fbce0a9ae1d6ad1",
+      "source": "Sniper",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "狙击炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Sniper",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.3142dc67bb0a5558",
+      "source": "Forge",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "锻造厂",
+      "target": {
+        "kind": "label_display",
+        "key": "Forge",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.11f0eb194889895b",
+      "source": "Bertha",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "贝尔莎炮",
+      "target": {
+        "kind": "label_display",
+        "key": "Bertha",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.1d7655613f3c0b23",
+      "source": "Thor",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "雷神",
+      "target": {
+        "kind": "label_display",
+        "key": "Thor",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.5d43e7cd1ac6fed8",
+      "source": "Emitter",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "发射源",
+      "target": {
+        "kind": "label_display",
+        "key": "Emitter",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.1c157721ba89891a",
+      "source": "Spore Tower",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "孢子塔",
+      "target": {
+        "kind": "label_display",
+        "key": "Spore Tower",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.62c6b4c48001beb0",
+      "source": "Air Exclusion",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "禁空建筑",
+      "target": {
+        "kind": "label_display",
+        "key": "Air Exclusion",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.d486437171fdc885",
+      "source": "Runner Nest",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "奔跑者巢穴",
+      "target": {
+        "kind": "label_display",
+        "key": "Runner Nest",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.36d5e3ef1b7a0ab0",
+      "source": "Inhibitor",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "抑制器",
+      "target": {
+        "kind": "label_display",
+        "key": "Inhibitor",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.cf46abd881773bce",
+      "source": "CRPLCore",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "CRPL 核心",
+      "target": {
+        "kind": "label_display",
+        "key": "CRPLCore",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.4bfeb5146a6368d2",
+      "source": "AntiEmitter",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "反爬行体发射源",
+      "target": {
+        "kind": "label_display",
+        "key": "AntiEmitter",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.95945cc685bab0b9",
+      "source": "Totem",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "图腾",
+      "target": {
+        "kind": "label_display",
+        "key": "Totem",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.098e6054681e1a5f",
+      "source": "Ore Deposit",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "矿床",
+      "target": {
+        "kind": "label_display",
+        "key": "Ore Deposit",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.4ff12dc76f0667e6",
+      "source": "Resource Pack",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "资源包",
+      "target": {
+        "kind": "label_display",
+        "key": "Resource Pack",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.2e6f4c24a1eafc13",
+      "source": "Power Zone",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "强化区",
+      "target": {
+        "kind": "label_display",
+        "key": "Power Zone",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.616a46b79588da2e",
+      "source": "Tech Artifact",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "科技神器",
+      "target": {
+        "kind": "label_display",
+        "key": "Tech Artifact",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.72bae1d78e8369f5",
+      "source": "Message Artifact",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "信息神器",
+      "target": {
+        "kind": "label_display",
+        "key": "Message Artifact",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.5489d31f11b93c49",
+      "source": "Shield Key",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "护盾钥匙",
+      "target": {
+        "kind": "label_display",
+        "key": "Shield Key",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.38875d47ec3048d3",
+      "source": "Orbital Weapon",
+      "context": "Editor unit caption display; native label text remains the CreateUnit type key",
+      "translation": "轨道武器",
+      "target": {
+        "kind": "label_display",
+        "key": "Orbital Weapon",
+        "selector": "UnitToBuildLabel",
+        "match": "exact"
+      }
+    },
+    {
+      "id": "text.72b9f5508289545c",
+      "source": "A finalized map with the name '",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 28",
+      "translation": "名为 '",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 28
+      }
+    },
+    {
+      "id": "text.c0ad883d606bc403",
+      "source": "' already exists! Are you sure you want to overwrite?  All auto saves for this map will also be deleted!",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 30",
+      "translation": "' 的已定稿地图已存在！确定覆盖吗？该地图的所有自动存档也会删除！",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 30
+      }
+    },
+    {
+      "id": "text.0e691599fd103ce9",
+      "source": "OK",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 33",
+      "translation": "确定",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 33
+      }
+    },
+    {
+      "id": "text.542a99742d55fd4d",
+      "source": "Cancel",
+      "context": "UILabel caption / System.Void TerraformMenuHandlers::ExportCallback(System.Int32) / instruction 34",
+      "translation": "取消",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666490,
+        "instruction_index": 34
+      }
+    },
+    {
+      "id": "text.5b934ef1653caaf1",
+      "source": "Texture Picker",
+      "context": "GUI caption / System.Void TexturePickerManager::OnGUI() / instruction 37",
+      "translation": "地图纹理",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666530,
+        "instruction_index": 37
+      }
+    },
+    {
+      "id": "text.a3aeea7781622a7d",
+      "source": "Select a terrain level, then select a texture below from the palette.\nClick the 'APPLY IMAGE TO TERRAIN' button to assign the image to the selected terrain level.\nOnce finished, click the 'Close and Apply Changes' button to apply all changes to the map.\nThe numbers under each terrain level are brightness. 0 is dark, 100 is bright, 50 is normal",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 57",
+      "translation": "先选择地形层级，再从下方选取纹理。\n点击“将图像应用到地形”，为所选层级指定图像。\n完成后点击“关闭并应用更改”，将更改应用到地图。\n层级下方的数值为亮度：0 最暗，100 最亮，50 为正常。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 57
+      }
+    },
+    {
+      "id": "text.b450bef4b0929b0c",
+      "source": "Lvl: ",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 70",
+      "translation": "层级：",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 70
+      }
+    },
+    {
+      "id": "text.18b38f06af07ee7f",
+      "source": "Texture Palette.  Chose any texture below.",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 233",
+      "translation": "纹理库：选择下方任意纹理。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 233
+      }
+    },
+    {
+      "id": "text.7db84b2001021a5d",
+      "source": "Custom Images. Must be 256x256 png files. Click 'Pick' to load image.",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 351",
+      "translation": "自定义图像须为 256x256 PNG 文件。点击“选择”载入图像。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 351
+      }
+    },
+    {
+      "id": "text.6f15209f117af747",
+      "source": "Select current terrain image from above.",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 387",
+      "translation": "从上方选择当前地形图像。",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 387
+      }
+    },
+    {
+      "id": "text.1964c0159dd7b4f2",
+      "source": "APPLY IMAGE TO TERRAIN",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 420",
+      "translation": "将图像应用到地形",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 420
+      }
+    },
+    {
+      "id": "text.a9c20661e8a7171b",
+      "source": "Close and Apply Changes",
+      "context": "GUI caption / System.Void TexturePickerManager::DoTexturePickerWindow(System.Int32) / instruction 441",
+      "translation": "关闭并应用更改",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666536,
+        "instruction_index": 441
+      }
+    },
+    {
+      "id": "text.8344814c200ad79c",
+      "source": "Pick",
+      "context": "GUI caption / System.Void TexturePickerManager::DoImageButton(System.Int32,System.Boolean) / instruction 69",
+      "translation": "选择",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100666538,
+        "instruction_index": 69
+      }
+    },
+    {
+      "id": "text.4532b83d18ca9ed1",
+      "source": "U/D",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrainPanel/VerticalForceLabel",
+      "translation": "上/下",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 5940
+      }
+    },
+    {
+      "id": "text.956d742d3a71e4bf",
+      "source": "i",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label2",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 5987
+      }
+    },
+    {
+      "id": "text.dce7908df9465f4c",
+      "source": "R/L",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrainPanel/HorizontalForceLabel",
+      "translation": "右/左",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 6101
+      }
+    },
+    {
+      "id": "text.2442c305f82f6f70",
+      "source": "r",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label3",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 6628
+      }
+    },
+    {
+      "id": "text.aa5d22436229cabb",
+      "source": "t",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label3",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7268
+      }
+    },
+    {
+      "id": "text.d2500f533eee5a85",
+      "source": "Alpha",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrainPanel/EditingOverlayLabel",
+      "translation": "透明度",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7307
+      }
+    },
+    {
+      "id": "text.8cb5d5e149c53e8e",
+      "source": "n",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label1",
+      "translation": "位",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7316
+      }
+    },
+    {
+      "id": "text.4fbd576c35857115",
+      "source": "Emitter",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitPanel/UnitToBuildLabel",
+      "translation": "发射源",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7580
+      }
+    },
+    {
+      "id": "text.59e7e7c1bb8656d1",
+      "source": "e",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label1",
+      "translation": "形",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 7642
+      }
+    },
+    {
+      "id": "text.365fc71680c7de5c",
+      "source": "U",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/UnitButton/Label0",
+      "translation": "单",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 8265
+      }
+    },
+    {
+      "id": "text.4f89f4679cae1da7",
+      "source": "r",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label2",
+      "translation": " ",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 8373
+      }
+    },
+    {
+      "id": "text.6b2b3f4203a88b66",
+      "source": "T",
+      "context": "CW3_Data/level3 / UI Root (2D)/Camera/TerraFormPanelAnchor/TerraformPanel/TerrButton/Label0",
+      "translation": "地",
+      "target": {
+        "kind": "label",
+        "file": "CW3_Data/level3",
+        "object_id": 8383
       }
     }
   ]

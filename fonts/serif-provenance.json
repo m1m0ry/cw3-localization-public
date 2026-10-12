@@ -1,0 +1,11 @@
+{
+  "font_source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifsc/NotoSerifSC%5Bwght%5D.ttf",
+  "source_sha256": "050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9",
+  "source_git_blob": "eab063faf229160a52d3760f5555150e4eb9e5bf",
+  "upstream_commit_from_metadata": "985fa52c81c1d6692ccdd82bc3656e8fb932fd89",
+  "license": "SIL OFL 1.1",
+  "static_weight": 400,
+  "family": "CW3 Serif SC External 050080d9255a",
+  "coverage": "fonts/codepoints.json; a control with missing Serif glyphs falls back to the full Sans font",
+  "subset_sha256": "4a14c2957eba121c0e29365ceec205b1b1257803ea6b6f981f6507f2cffd147d"
+}

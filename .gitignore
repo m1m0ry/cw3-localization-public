@@ -22,3 +22,4 @@ __pycache__/
 
 # OFL-only generated subset, accompanied by its license
 !fonts/CW3SansSC-Regular.ttf
+!fonts/CW3SerifSC-Regular.ttf

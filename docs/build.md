@@ -1,6 +1,6 @@
 # 本地构建与安装
 
-源码、译文和构建脚本只在本公开仓库维护。私有 `m1m0ry/cw3-localization` 是固定输入与手动云端构建后台，不维护另一条源码主线。
+本仓库包含源码、译文和构建脚本。
 
 目标为 Windows Steam 2.12 / build 22453699 / Unity 5.2.3f1。构建已验证于 macOS + CrossOver（wine-mono 10.4.1），需要 Python 3.10+、`requirements-build.txt` 中的依赖及自备的匹配原版游戏文件。原版输入与构建产物保存在 `local-only/`，不提交 Git。
 
@@ -25,11 +25,7 @@ python3 tools/package_player.py \
 
 安装和恢复步骤见 [README](../README.md)。基础补丁安装后，只改 `CW3Localization/zh-CN.json` 的 `translation`，保留其他字段、标签和占位符。退出后替换，重启生效。新增显示目标须重新审计和构建；新增字形须更新字体。
 
-```sh
-python3 tools/update_runtime.py --config local-only/independent-next/install-config.json
-```
-
-更新器检查固定目标、格式及实际字体，并同步恢复文件；该工具使用 CrossOver 进程检查。Windows 可在退出游戏后手动替换词典，恢复使用包内安装器。
+升级使用新版完整包的安装入口；兼容备份可直接更新，跨类型补丁按安装器提示先恢复。包内不含用户字号配置和自定义字体，覆盖或升级会保留它们。词典可在退出游戏后直接替换，重启生效；构建校验留在开发端。
 
 ## 开发检查
 
@@ -52,36 +48,11 @@ python3 tools/audit_managed_display.py \
   --output local-only/managed-review-new.json
 ```
 
-`--suite` 可重复、去重，只运行选定 C# 套件及必要夹具；不指定时运行全套。IL 审计只读枚举原版 `ldstr`，区分已有绑定、显示候选、明确内部键及未知；候选不等于确认漏译，不自动改译文。配置须指向对应 `managed/render.dll`，输出使用新的 `local-only` 路径。静态检查不证明实际画面或点击正常。
+`--suite` 可重复、去重，只运行所选 C# 套件；不指定时运行全套。IL 审计区分已有绑定、显示候选、内部键及未知，不自动改译文。配置须指向对应 `managed/render.dll`，输出使用新的 `local-only` 路径。
 
 漏译候选采集默认关闭。创建游戏目录下的 `CW3Localization/discover.enabled` 并重启可启用，删除后重启关闭；结果写入同目录 `candidates.json`，需人工审核，不自动翻译或上传。
 
+
+`tools/verify_package.py --config local-only/候选/install-config.json --package local-only/候选包.zip --inspect-only` 检查 ZIP 清单、文件大小与哈希、安装器和说明，不创建游戏副本。没有构建用 EXE 时只核对目标指纹；安装器始终检查实际 EXE。
+
 [贡献译文](../CONTRIBUTING.md) · [可选调试](debug.md) · [许可](licensing.md)
-
-## 维护者云端构建与发布
-
-先将修改合并到本仓库 `main`，选定完整的 40 位 commit SHA。在私有后台手动触发：
-
-```sh
-gh workflow run release.yml --repo m1m0ry/cw3-localization --ref main \
-  -f source_commit=<公开完整SHA> -f tag=v12.6
-```
-
-后台仅接受本仓库 `main` 已包含的提交，不接受分支名、短 SHA 或未合并 PR。原版输入按私有锁校验；仅构建，不启动游戏、不安装、不创建 Release。成功后从对应 run 下载唯一的 `cw3-package-<SHA>` artifact：
-
-```sh
-gh run download <run-id> --repo m1m0ry/cw3-localization \
-  -n cw3-package-<公开完整SHA> -D local-only/release-v12.6
-```
-
-核对 `build-info.json` 的版本与公开 SHA，用 `SHA256SUMS.txt` 校验 ZIP；检查 ZIP 内 manifest 的 `source_repo`、`source_commit` 和逐文件 `after` 哈希。画面/交互验证按本次改动范围完成。准备简短发行说明到 `local-only/release-v12.6/RELEASE.md`，经本次发布授权后用已有本机认证发布：
-
-```sh
-gh release create v12.6 --repo m1m0ry/cw3-localization-public \
-  --target <同一公开完整SHA> --title 'CW3 简体中文 v12.6' \
-  --notes-file local-only/release-v12.6/RELEASE.md \
-  local-only/release-v12.6/CW3-Windows-v12.6.zip \
-  local-only/release-v12.6/SHA256SUMS.txt
-```
-
-已有版本不覆盖。当前自动化到候选包为止；公开发布仍是维护者手动操作，不需要新增 token 或跨仓 secret。
