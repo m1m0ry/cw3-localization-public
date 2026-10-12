@@ -41,9 +41,15 @@ def main():
     if not a.directory_only:
         archive=out.with_suffix(out.suffix+'.zip')
         assert not archive.exists(),'Keep existing packages'
-        with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED)as z:
-            for path in sorted(out.rglob('*')):
-                if path.is_file():z.write(path,out.name+'/'+str(path.relative_to(out)))
+        with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6)as z:
+            for path in sorted(out.rglob('*'),key=lambda p:p.relative_to(out).as_posix()):
+                if not path.is_file():continue
+                name=path.relative_to(out).as_posix()
+                # Filesystem mtime, timezone and permissions must not change the package.
+                info=zipfile.ZipInfo(out.name+'/'+name,date_time=(1980,1,1,0,0,0))
+                info.create_system=3
+                info.external_attr=(0o100755 if name=='安装或恢复.command' else 0o100644)<<16
+                z.writestr(info,path.read_bytes(),compress_type=zipfile.ZIP_DEFLATED,compresslevel=6)
         print('Player ZIP:',archive,archive.stat().st_size,'bytes')
     print('Prepared',len(build['files']),'verified complete patch files')
 if __name__=='__main__':main()

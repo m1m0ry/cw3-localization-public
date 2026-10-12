@@ -8,5 +8,8 @@
   "subset_bytes": 533784,
   "static_weight": 400,
   "family": "CW3 Sans SC",
-  "subset_sha256": "beb5e4eb35f2eddc722bd1f48bcb364a33a77a2d0eedab723c3ef035cc72c1f4"
+  "subset_sha256": "beb5e4eb35f2eddc722bd1f48bcb364a33a77a2d0eedab723c3ef035cc72c1f4",
+  "subset_head_modified": 3874569476,
+  "external_full_head_modified": 3874289960,
+  "external_full_sha256": "05899186d127a18d57053f86b8db8066e8ebbb1da5fda5a30ca9f2b31470b417"
 }

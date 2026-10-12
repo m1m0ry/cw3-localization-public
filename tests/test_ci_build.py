@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -58,7 +59,7 @@ class PinnedBuild(unittest.TestCase):
             (build/'manifest.json').write_text(json.dumps(manifest))
             config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original),game=str(original))))
             output=root/'local-only/package'
-            subprocess.run([sys.executable,str(root/'tools/package_player.py'),'--config',str(config),'--output',str(output)],check=True,capture_output=True)
+            subprocess.run([sys.executable,str(root/'tools/package_player.py'),'--config',str(config),'--output',str(output)],check=True,capture_output=True,env=dict(os.environ,TZ='UTC'))
             with zipfile.ZipFile(str(output)+'.zip') as z:
                 player=json.loads(z.read('package/manifest.json'))
                 for key,value in provenance.items():self.assertEqual(player[key],value)
@@ -74,6 +75,20 @@ class PinnedBuild(unittest.TestCase):
             checked=subprocess.run([sys.executable,str(ROOT/'tools/verify_package.py'),'--config',str(config),
                                     '--package',str(output)+'.zip','--inspect-only'],check=True,capture_output=True,text=True)
             self.assertIn('Actual executable unavailable',checked.stdout)
+            # Same contents under different filesystem metadata and timezone
+            # must produce the same player archive, including executable mode.
+            for source in root.rglob('*'):
+                if source.is_file() and 'local-only' not in source.relative_to(root).parts:
+                    os.utime(source,(1700000001,1700000001));source.chmod(0o777)
+            repeat=root/'local-only/repeated/package'
+            subprocess.run([sys.executable,str(root/'tools/package_player.py'),'--config',str(config),'--output',str(repeat)],check=True,capture_output=True,env=dict(os.environ,TZ='Pacific/Honolulu'))
+            self.assertEqual(Path(str(output)+'.zip').read_bytes(),Path(str(repeat)+'.zip').read_bytes())
+            with zipfile.ZipFile(str(repeat)+'.zip') as z:
+                self.assertEqual(z.namelist(),sorted(z.namelist()))
+                for info in z.infolist():
+                    self.assertEqual(info.date_time,(1980,1,1,0,0,0))
+                    self.assertEqual(info.create_system,3)
+                    self.assertEqual((info.external_attr>>16)&0o777,0o755 if info.filename.endswith('/安装或恢复.command') else 0o644)
             # Target strings follow the same supported-build metadata in both
             # packaging and verification, rather than duplicating game numbers.
             supported.update(version='9.99 Steam',steam_build='fixture-build',unity_version='fixture-unity')
