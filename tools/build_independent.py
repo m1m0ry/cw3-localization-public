@@ -1,5 +1,6 @@
 """Build the CW3-specific runtime bridge with existing wine-mono and Cecil."""
 from pathlib import Path
+from mono_tools import runtime_sources
 import argparse,json,subprocess,shutil
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--generated',required=True);p.add_argument('--output',required=True);a=p.parse_args();c=json.loads(Path(a.config).read_text())
@@ -18,7 +19,7 @@ def compile(name,files,library=False):
 def exe(name,source,*args):run(compile(name,[source]+([ROOT/'src/runtime/MissionScopePatch.cs',ROOT/'src/runtime/MainMenuClickPatch.cs']+([ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs'] if name=='RuntimePatch' else []) if name in ('RuntimePatch','RuntimeVerify') else [])),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 helper=compile('CW3Rendering',[ROOT/'src/rendering/CW3Rendering.cs'],True);exe('RenderingPatch',ROOT/'src/rendering/Patch.cs',original,helper,g,render);exe('RenderingVerify',ROOT/'src/rendering/Verify.cs',original,render,generated/'empty.tsv')
-helper=compile('CW3Runtime',[ROOT/'src/runtime/CW3Runtime.cs',ROOT/'src/runtime/CaptionLayout.cs',ROOT/'src/runtime/FontRegistry.cs',ROOT/'src/runtime/TextStylePolicy.cs',ROOT/'src/runtime/TextStyles.cs',ROOT/'src/runtime/FontSettingsModel.cs',ROOT/'src/runtime/FontSettingsView.cs',ROOT/'src/runtime/GuiStyles.cs',ROOT/'src/runtime/MessageBindings.cs',ROOT/'src/runtime/ScriptBindings.cs',ROOT/'src/runtime/MissionLoads.cs',ROOT/'src/runtime/Json.cs',ROOT/'src/runtime/FontFile.cs',ROOT/'src/runtime/LocalFontFile.cs',ROOT/'src/runtime/LocalFonts.cs',ROOT/'src/runtime/NativeFontBundle.cs',ROOT/'src/runtime/Candidates.cs',generated/'Definitions.cs',generated/'StyleFonts.cs',generated/'BuildInfo.cs',generated/'NativeFontTemplate.cs'],True)
+helper=compile('CW3Runtime',runtime_sources(generated),True)
 exe('RuntimePatch',ROOT/'src/runtime/PatchRuntime.cs',render,helper,generated/'managed.tsv',final,g,generated/'audit.tsv',original)
 exe('RuntimeVerify',ROOT/'src/runtime/VerifyRuntime.cs',render,final,generated/'audit.tsv')
 

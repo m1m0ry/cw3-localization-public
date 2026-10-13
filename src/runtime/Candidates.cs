@@ -9,7 +9,8 @@ internal sealed class Candidates {
  internal static bool Useful(string source,bool bound=false){
   if(String.IsNullOrEmpty(source)||source.Length>1024)return false;string s=source.Trim();bool latin=false;foreach(char c in s){if(c<' '&&c!='\n'&&c!='\r'&&c!='\t')return false;if((c>='A'&&c<='Z')||(c>='a'&&c<='z'))latin=true;}if(!latin)return false;if(Regex.IsMatch(s,@"^[0-9][0-9\s.,:/%xX+\-]*$"))return false;
   if(s.StartsWith("http",StringComparison.OrdinalIgnoreCase)||s.StartsWith("www.",StringComparison.OrdinalIgnoreCase)||s.StartsWith("file:",StringComparison.OrdinalIgnoreCase)||s.StartsWith("/",StringComparison.Ordinal)||s.StartsWith("\\",StringComparison.Ordinal)||Regex.IsMatch(s,@"^(?:[A-Za-z]:[\\/]|[^\s]+\.(?:cw3|crpl|dll|exe|ttf|xml|json|png|jpg|wav|ogg)$)",RegexOptions.IgnoreCase))return false;
-  if(Regex.IsMatch(s,@"^[^\s@]+@[^\s@]+$")||s.StartsWith(":",StringComparison.Ordinal)||Regex.IsMatch(s,@"^(?:[0-9.-]+\s+)?(?:->|<-)[A-Za-z_]\w*")||s.IndexOf("==",StringComparison.Ordinal)>=0||s.IndexOf(";",StringComparison.Ordinal)>=0&&s.IndexOf('{')>=0)return false;
+  // Reviewed output templates can contain semicolons and {0} placeholders.
+  if(Regex.IsMatch(s,@"^[^\s@]+@[^\s@]+$")||s.StartsWith(":",StringComparison.Ordinal)||Regex.IsMatch(s,@"^(?:[0-9.-]+\s+)?(?:->|<-)[A-Za-z_]\w*")||s.IndexOf("==",StringComparison.Ordinal)>=0||!bound&&s.IndexOf(";",StringComparison.Ordinal)>=0&&s.IndexOf('{')>=0)return false;
   if(!bound&&Regex.IsMatch(s,@"^(?:Alpha[0-9]|F[0-9]{1,2}|Mouse[0-9]|Joystick\w*|Left(?:Shift|Control|Alt)|Right(?:Shift|Control|Alt)|KeyCode\.\w+|ACTIVATE|DEACTIVATE|ARM|DISARM|RESUPPLY|STOP RESUPPLY)$"))return false;
   return true;
  }

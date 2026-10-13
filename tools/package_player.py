@@ -4,6 +4,17 @@ import argparse,hashlib,json,shutil,zipfile
 ROOT=Path(__file__).resolve().parents[1]
 PLAYER_SOURCES={'install.py':'tools/player_install.py','安装或恢复.command':'player/安装或恢复.command','安装或恢复.cmd':'player/安装或恢复.cmd','OFL.txt':'fonts/OFL.txt','LICENSE':'LICENSE','NOTICE.md':'NOTICE.md','字体设置.md':'docs/text-style.md'}
 PLAYER_CONTROLS=set(PLAYER_SOURCES)|{'manifest.json','使用说明.txt'}
+# Independent of generated manifests: only these fixed-target patch files may
+# ship. A self-consistent manifest must not authorize debug modules or logs.
+RELEASE_PAYLOAD={
+    'CW3_Data/Managed/Assembly-CSharp.dll','CW3_Data/Managed/CW3Rendering.dll','CW3_Data/Managed/CW3Runtime.dll',
+    'CW3_Data/level2','CW3_Data/level3','CW3_Data/mainData','CW3_Data/sharedassets0.assets','CW3_Data/sharedassets2.assets',
+    'CW3Localization/zh-CN.json','CW3Localization/font.ttf','CW3Localization/serif.ttf',
+    'CW3Localization/OFL.txt','CW3Localization/Serif-OFL.txt','CW3Localization/fonts.json'}
+def validate_release_payload(names):
+    names=list(names);unexpected=set(names)-RELEASE_PAYLOAD
+    if unexpected:raise ValueError('Unexpected release payload: '+', '.join(sorted(unexpected)))
+    if not names or len(names)!=len(set(names)):raise ValueError('Empty or duplicate release payload')
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 def target_description(supported):
     return 'Windows Steam '+supported['version'].removesuffix(' Steam')+' / build '+supported['steam_build']+' / Unity '+supported['unity_version']
@@ -21,6 +32,7 @@ def main():
         from font_registry import load as load_fonts
         assert set(load_fonts(registry_file)['fonts'])=={'sans','serif'},'Imported user fonts are local-only; never package their bytes'
     assert not any(row['file']=='CW3Localization/text-style.json' for row in build.get('files',[])),'Rebuild without the retired settings template'
+    validate_release_payload(row['file'] for row in build['files'])
     out.mkdir(parents=True)
     for row in build['files']:
         name=row['file'];source=loc('build')/name

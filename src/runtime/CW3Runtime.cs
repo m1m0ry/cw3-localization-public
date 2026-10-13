@@ -113,13 +113,13 @@ public static partial class CW3Runtime {
   }catch(Exception e){Debug.LogWarning("CW3Localization script conversation fallback: "+e.Message);}
  }
  public static string CaptureCrpl(string original,object core){Load();guiId=null;guiArguments=null;guiOriginal=original;guiContext="GameSpace/ShowMessage";try{guiId=ScriptTarget(core,"show",original,out guiContext);}catch(Exception e){Debug.LogWarning("CW3Localization CRPL context fallback: "+e.Message);}return original;}
- public static string ForGuiMessage(string original){Load();if(guiId==null||original!=guiOriginal){Observe(original,"crpl",guiContext,"unbound_script_literal","");return original;}Hashtable d=definitions[guiId];if(S(d,"kind")=="crpl_output"){string target;if(!translations.TryGetValue(guiId,out target))return original;return ScriptBindings.Format(target,guiArguments)??original;}return Text(guiId,S(d,"source")).Replace("\\n","\n").Replace("\\t","\t");}
+ public static string ForGuiMessage(string original){Load();if(guiId==null||original!=guiOriginal){Observe(original,"crpl",guiContext,"unbound_script_literal","");return original;}Hashtable d=definitions[guiId];if(S(d,"kind")=="crpl_output"){string target;if(!translations.TryGetValue(guiId,out target)){Observe(S(d,"source"),"crpl_output",guiContext,"missing_translation",guiId);return original;}return ScriptBindings.Format(target,guiArguments)??original;}return Text(guiId,S(d,"source")).Replace("\\n","\n").Replace("\\t","\t");}
  public static void StyleDiagnostics(bool enabled){TextStyles.Diagnostics(enabled);}
  public static Hashtable StyleReport(Component component){Load();return TextStyles.Report(component);}
  public static Hashtable StyleStatus(){Load();return TextStyles.Status();}
  static void RefreshSizedMesh(TextMesh mesh){
   if(PathOf(mesh).StartsWith("EntryPoints/",StringComparison.Ordinal)&&mesh.transform.parent!=null){var collider=mesh.transform.parent.GetComponent<Collider>();var renderer=mesh.GetComponent<Renderer>();
-   if(collider!=null&&renderer!=null){var role=TextStyles.ActivePolicy().For(TextStylePolicy.Ui);int unit=role.PixelSize>0?role.PixelSize:TextStyles.PixelUnit(role.Family);unit=Math.Max(1,unit);string display=mesh.text;
+   if(collider!=null&&renderer!=null){int unit=Math.Max(1,TextStyles.MeshPixelUnit(mesh));string display=mesh.text;
     // Keep the original clickable region. Pixel fonts step only in whole baseline units.
     while(mesh.fontSize>Math.Max(4,unit)&&(renderer.bounds.size.x>collider.bounds.size.x||renderer.bounds.size.y>collider.bounds.size.y)){mesh.fontSize=Math.Max(Math.Max(4,unit),mesh.fontSize-unit);mesh.text=display;}
     TextStyles.FittedMesh(mesh);
@@ -127,7 +127,7 @@ public static partial class CW3Runtime {
   }MeshFont(mesh);
  }
  internal static Hashtable ApplySizes(TextStylePolicy saved){Load();return TextStyles.ApplySizes(saved,label=>PrepareStyledLabel(label),mesh=>RefreshSizedMesh(mesh));}
- static void FontRebuilt(Font f){if(!TextStyles.Owns(f)||rebuildingFont)return;rebuildingFont=true;try{TextStyles.Rebuilt(f);foreach(var mesh in meshOwners.Values)if(mesh!=null&&mesh.font==f){MeshFont(mesh);mesh.text=mesh.text;}}finally{rebuildingFont=false;}}
+ static void FontRebuilt(Font f){if(!TextStyles.Owns(f)||rebuildingFont)return;rebuildingFont=true;try{TextStyles.Rebuilt(f,PrepareStyledLabel,(mesh,refit)=>{if(refit)RefreshSizedMesh(mesh);else MeshFont(mesh);mesh.text=mesh.text;});}finally{rebuildingFont=false;}}
  internal static void Scan(){Load();Scene();FontSettingsView.Bind();foreach(TextMesh mesh in Resources.FindObjectsOfTypeAll(typeof(TextMesh))){if(mesh==null)continue;int id=mesh.GetInstanceID();if(!meshOriginal.ContainsKey(id))SetMesh(mesh,mesh.text);}}
  internal static void Scene(){messageBindings.Cleanup(owner=>owner is UnityEngine.Object&&(UnityEngine.Object)owner==null);var dead=new List<int>();foreach(var pair in meshOwners)if(pair.Value==null)dead.Add(pair.Key);foreach(int id in dead)ReleaseMesh(id);TextStyles.Cleanup();}
 }

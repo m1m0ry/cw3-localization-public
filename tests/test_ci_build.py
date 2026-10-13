@@ -1,6 +1,8 @@
 """Pinning and package provenance at real Git/ZIP boundaries, without game inputs."""
 from pathlib import Path
 import hashlib
+import copy
+import io
 import json
 import os
 import shutil
@@ -48,14 +50,16 @@ class PinnedBuild(unittest.TestCase):
                 target=root/file;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/file,target)
             original=root/'original';original.mkdir()
             build=root/'build';build.mkdir()
-            (original/'file').write_bytes(b'original');(build/'file').write_bytes(b'patch')
+            payload='CW3_Data/Managed/Assembly-CSharp.dll'
+            (original/payload).parent.mkdir(parents=True);(build/payload).parent.mkdir(parents=True)
+            (original/payload).write_bytes(b'original');(build/payload).write_bytes(b'patch')
             sha=lambda data:hashlib.sha256(data).hexdigest()
             provenance=dict(source_repo='m1m0ry/cw3-localization-public',source_commit='a'*40,
                             source_dirty=False,build_inputs_sha256='b'*64)
             supported=json.loads((root/'resources/supported-build.json').read_text())
             manifest=dict(provenance,format=1,revision='independent-v12-candidate',patch_version='v12.6',
                           steam_build=supported['steam_build'],version=supported['version'],
-                          files=[dict(file='file',before=sha(b'original'),after=sha(b'patch'),bytes=5)])
+                          files=[dict(file=payload,before=sha(b'original'),after=sha(b'patch'),bytes=5)])
             (build/'manifest.json').write_text(json.dumps(manifest))
             config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original),game=str(original))))
             output=root/'local-only/package'
@@ -64,8 +68,8 @@ class PinnedBuild(unittest.TestCase):
                 player=json.loads(z.read('package/manifest.json'))
                 for key,value in provenance.items():self.assertEqual(player[key],value)
                 self.assertEqual(player['files'],manifest['files'])
-                self.assertEqual(sha(z.read('package/file')),player['files'][0]['after'])
-                self.assertEqual({name.split('/',1)[1] for name in z.namelist()},{'file','manifest.json','install.py','安装或恢复.command','安装或恢复.cmd','使用说明.txt','OFL.txt','LICENSE','NOTICE.md','字体设置.md'})
+                self.assertEqual(sha(z.read('package/'+payload)),player['files'][0]['after'])
+                self.assertEqual({name.split('/',1)[1] for name in z.namelist()},{payload,'manifest.json','install.py','安装或恢复.command','安装或恢复.cmd','使用说明.txt','OFL.txt','LICENSE','NOTICE.md','字体设置.md'})
                 with patch.object(verify_package,'ROOT',root):
                     _,inspected=verify_package.inspect_zip(z,manifest,supported,None)
                     self.assertEqual(inspected['source_commit'],provenance['source_commit'])
@@ -75,6 +79,29 @@ class PinnedBuild(unittest.TestCase):
             checked=subprocess.run([sys.executable,str(ROOT/'tools/verify_package.py'),'--config',str(config),
                                     '--package',str(output)+'.zip','--inspect-only'],check=True,capture_output=True,text=True)
             self.assertIn('Actual executable unavailable',checked.stdout)
+            # Even a self-consistent producer/player manifest cannot authorize
+            # development payloads. Exercise both independent release gates.
+            clean_archive=Path(str(output)+'.zip').read_bytes()
+            for extra in ('CW3_Data/Managed/CW3Debug.dll','CW3_Data/output_log.txt'):
+                polluted=copy.deepcopy(manifest);content=b'PRIVATE DEBUG OR LOG'
+                row=dict(file=extra,before=None,after=sha(content),bytes=len(content));polluted['files'].append(row)
+                path=build/extra;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(content)
+                (build/'manifest.json').write_text(json.dumps(polluted))
+                refused=root/'local-only/refused'
+                result=subprocess.run([sys.executable,str(root/'tools/package_player.py'),'--config',str(config),'--output',str(refused)],capture_output=True,text=True)
+                self.assertNotEqual(result.returncode,0);self.assertIn('Unexpected release payload',result.stderr);self.assertFalse(refused.exists())
+                crafted=io.BytesIO()
+                with zipfile.ZipFile(io.BytesIO(clean_archive)) as clean,zipfile.ZipFile(crafted,'w') as z:
+                    for name in clean.namelist():
+                        data=clean.read(name)
+                        if name=='package/manifest.json':
+                            player=json.loads(data);player['files']=polluted['files'];data=json.dumps(player).encode()
+                        z.writestr(name,data)
+                    z.writestr('package/'+extra,content)
+                crafted.seek(0)
+                with zipfile.ZipFile(crafted) as z,self.assertRaisesRegex(ValueError,'Unexpected release payload'):
+                    verify_package.inspect_zip(z,polluted,supported,None)
+            (build/'manifest.json').write_text(json.dumps(manifest))
             # Same contents under different filesystem metadata and timezone
             # must produce the same player archive, including executable mode.
             for source in root.rglob('*'):

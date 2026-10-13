@@ -21,7 +21,11 @@ def digest(path):
     return h.hexdigest()
 def read(path):return json.loads(path.read_text(encoding='utf8'))
 def put_json(path,data):
-    temp=path.with_suffix('.tmp');temp.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf8');os.replace(temp,path)
+    fd,name=tempfile.mkstemp(prefix='.'+path.name+'-',suffix='.tmp',dir=path.parent);temp=Path(name)
+    try:
+        with os.fdopen(fd,'w',encoding='utf8') as output:output.write(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+        os.replace(temp,path)
+    finally:temp.unlink(missing_ok=True)
 def safe(root,name):
     p=Path(name)
     if p.is_absolute() or '..' in p.parts or not p.parts or (p.parts[0]!='CW3_Data' and p.as_posix() not in EXTERNAL):raise ValueError('补丁中存在不安全路径')
@@ -136,10 +140,11 @@ def status(game,manifest,state):
     return 'unknown'
 
 def atomic_copy(source,target):
-    temp=target.with_name(target.name+'.cw3-install-tmp')
-    if temp.exists():raise RuntimeError('存在未完成的临时文件，请先保留并检查：'+str(temp))
+    # Own an exclusive file in the destination directory; fixed temp names can
+    # be pre-existing files or dangling links, and are never ours to overwrite.
+    fd,name=tempfile.mkstemp(prefix='.'+target.name+'-',suffix='.cw3-install-tmp',dir=target.parent);temp=Path(name)
     try:
-        shutil.copyfile(source,temp)
+        with os.fdopen(fd,'wb') as output,source.open('rb') as input_:shutil.copyfileobj(input_,output)
         if digest(source)!=digest(temp):raise RuntimeError('写入校验失败')
         os.replace(temp,target)
     finally:temp.unlink(missing_ok=True)
@@ -172,11 +177,6 @@ def restore(game,state):
         if f['file'] in SETTINGS:continue
         if digest(safe(game,f['file'])) not in allowed[f['file']]:raise RuntimeError('文件已被其他程序修改，拒绝覆盖：'+f['file'])
     idle();ensure_writable(game,rows,max(f['bytes'] for f in rows)+10485760)
-    if journal:
-        for f in rows:
-            temporary=safe(game,f['file']).with_name(Path(f['file']).name+'.cw3-install-tmp')
-            if temporary.is_symlink():raise RuntimeError('恢复临时文件是符号链接，拒绝处理')
-            temporary.unlink(missing_ok=True)
     put_json(folder/'journal.json',{'action':'restore','files':journal['files'] if journal else rows})
     for f in rows:
         if f['file'] in SETTINGS:continue

@@ -11,7 +11,7 @@ import sys
 import tempfile
 import zipfile
 
-from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, target_description
+from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, target_description, validate_release_payload
 from player_install import RUNTIME
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -102,6 +102,7 @@ def inspect_zip(archive, build, supported, exe):
         require(valid_hash(row.get('after')) and type(row.get('bytes')) is int and row['bytes'] >= 0,
                 'Invalid payload hash or size: ' + name)
         payload.add(name)
+    validate_release_payload(payload)
     require(set(files) == payload | set(PLAYER_CONTROLS),
             'ZIP file list differs from payload and player controls; missing=' + str(sorted((payload | set(PLAYER_CONTROLS)) - set(files)))
             + ', extra=' + str(sorted(set(files) - (payload | set(PLAYER_CONTROLS)))))

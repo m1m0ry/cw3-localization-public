@@ -58,6 +58,49 @@ class PlayerPayload(unittest.TestCase):
         return updated
 
     @patch.object(player,'idle')
+    def test_fixed_temporary_links_and_files_are_never_used_or_removed(self,_):
+        for kind in ('file','link','dangling'):
+            with self.subTest(kind=kind),tempfile.TemporaryDirectory() as folder:
+                root=Path(folder);game,package,manifest=self.fixture(root)
+                outside=root/'outside'
+                if kind!='dangling':outside.write_bytes(b'USER FILE')
+                collision=game/'CW3_Data/core.cw3-install-tmp'
+                if kind=='file':collision.write_bytes(b'USER FILE')
+                else:collision.symlink_to(outside)
+                player.install(game,manifest,None,package)
+                backup=game/player.BACKUP
+                for name in ('state.tmp','journal.tmp'):
+                    if kind=='file':(backup/name).write_bytes(b'USER FILE')
+                    else:(backup/name).symlink_to(outside)
+                (game/'CW3Localization/zh-CN.json').write_bytes(b'user dictionary')
+                state=player.preserve_runtime_updates(game,player.backup_info(game),manifest)
+                # Exercise interrupted restore too: old fixed names are not owned
+                # by this invocation, even when a journal exists.
+                player.put_json(backup/'journal.json',dict(action='install',files=manifest['files']))
+                player.restore(game,state)
+                self.assertEqual((game/'CW3_Data/core').read_bytes(),b'original')
+                self.assertFalse((game/'CW3_Data/core').is_symlink())
+                self.assertFalse((backup/'state.json').is_symlink())
+                self.assertEqual(player.read(backup/'state.json')['files'],state['files'])
+                for path in (collision,backup/'state.tmp',backup/'journal.tmp'):
+                    if kind=='file':self.assertEqual(path.read_bytes(),b'USER FILE')
+                    else:self.assertTrue(path.is_symlink());self.assertEqual(path.readlink(),outside)
+                if kind=='dangling':self.assertFalse(outside.exists())
+                else:self.assertEqual(outside.read_bytes(),b'USER FILE')
+                self.assertIn(b'user dictionary',[p.read_bytes() for p in (backup/'runtime-updates').iterdir()])
+                self.assertEqual((game/'save.sentinel').read_bytes(),b'keep')
+
+    def test_failed_atomic_writes_preserve_target_and_remove_only_owned_temp(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);source=root/'source';source.write_bytes(b'new')
+            target=root/'state.json';target.write_bytes(b'old')
+            for write in (lambda:player.put_json(target,dict(value='new')),lambda:player.atomic_copy(source,target)):
+                with patch.object(player.os,'replace',side_effect=OSError('replace failed')):
+                    with self.assertRaisesRegex(OSError,'replace failed'):write()
+                self.assertEqual(target.read_bytes(),b'old')
+                self.assertEqual({p.name for p in root.iterdir()},{'source','state.json'})
+
+    @patch.object(player,'idle')
     def test_missing_settings_use_runtime_defaults_without_installing_a_template(self,_):
         with tempfile.TemporaryDirectory() as folder:
             game,package,manifest=self.fixture(Path(folder))
