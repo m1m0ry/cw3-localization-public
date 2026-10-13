@@ -29,3 +29,8 @@ class MonoTools:
         target=out/name;print('COMPILE '+name,flush=True)
         self.run(self.compiler,['-nologo',*flags,'-out:'+self.win(target),*[self.win(p) for p in sources]])
         self.compilations.append(name);return target
+
+
+def runtime_sources(generated):
+    """The shipped runtime and its generated fixed bindings, also used by contracts."""
+    return [ROOT/'src/runtime/CW3Runtime.cs',ROOT/'src/runtime/CaptionLayout.cs',ROOT/'src/runtime/FontRegistry.cs',ROOT/'src/runtime/TextStylePolicy.cs',ROOT/'src/runtime/TextStyles.cs',ROOT/'src/runtime/FontSettingsModel.cs',ROOT/'src/runtime/FontSettingsView.cs',ROOT/'src/runtime/GuiStyles.cs',ROOT/'src/runtime/MessageBindings.cs',ROOT/'src/runtime/ScriptBindings.cs',ROOT/'src/runtime/MissionLoads.cs',ROOT/'src/runtime/Json.cs',ROOT/'src/runtime/FontFile.cs',ROOT/'src/runtime/LocalFontFile.cs',ROOT/'src/runtime/LocalFonts.cs',ROOT/'src/runtime/NativeFontBundle.cs',ROOT/'src/runtime/Candidates.cs',generated/'Definitions.cs',generated/'StyleFonts.cs',generated/'BuildInfo.cs',generated/'NativeFontTemplate.cs']
