@@ -1,9 +1,38 @@
-import json, sys, unittest
+import json, sys, unittest, tempfile
+from unittest.mock import patch
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import independent
 
 class SlimResources(unittest.TestCase):
+    def test_dirty_output_is_rejected_before_loading_inputs(self):
+        for leftover in ('manifest.json','files/CW3_Data/Managed/CW3Debug.dll','files/CW3_Data/output_log.txt','empty-directory'):
+            with self.subTest(leftover=leftover),tempfile.TemporaryDirectory() as folder:
+                out=Path(folder)/'candidate';target=out/leftover;target.parent.mkdir(parents=True)
+                if leftover=='empty-directory':target.mkdir()
+                else:target.write_bytes(b'KEEP')
+                with self.assertRaisesRegex(ValueError,'empty output directory'):independent.build({},out)
+                if leftover!='empty-directory':self.assertEqual(target.read_bytes(),b'KEEP')
+                self.assertFalse((out/'generated').exists())
+
+    def test_wrong_sans_hash_is_rejected_at_build_entry(self):
+        from fontTools.ttLib import TTFont
+        import text_style
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);(root/'fonts').mkdir();(root/'local-only/independent-font').mkdir(parents=True)
+            (root/'fonts/provenance.json').write_text((independent.ROOT/'fonts/provenance.json').read_text())
+            # Still a valid, correctly named static font, so family/cmap alone
+            # cannot distinguish this unapproved binary from the controlled input.
+            with TTFont(independent.ROOT/'fonts/CW3SansSC-Regular.ttf') as font:
+                for row in font['name'].names:
+                    if row.nameID in (1,16):row.string='CW3 Sans SC External Fixture'.encode(row.getEncoding())
+                font.save(root/'local-only/independent-font/font.ttf')
+            self.assertTrue(text_style.validate_font(root/'local-only/independent-font/font.ttf','sans'))
+            out=root/'candidate'
+            with patch.object(independent,'ROOT',root),self.assertRaisesRegex(ValueError,'Font hash differs'):
+                independent.build({},out)
+            self.assertFalse(out.exists())
+
     def test_only_four_repaired_resources_are_serialized(self):
         layout=json.loads((independent.ROOT/'resources/layout.json').read_text())
         plan=list(independent.resource_plan(layout))
