@@ -121,7 +121,7 @@ def build(config,out):
         target=dest/name;target.parent.mkdir(parents=True,exist_ok=True)
         # Keep every serialized text/script original; retain only actual font/layout repairs.
         raw=(original/name).read_bytes()
-        updated=workflow.resource(raw,[],fixes,(ROOT/'fonts/CW3SansSC-Regular.ttf').read_bytes() if embedded else None)
+        updated=workflow.repair_resource(raw,fixes,(ROOT/'fonts/CW3SansSC-Regular.ttf').read_bytes() if embedded else None)
         if updated==raw:required_originals[name]=layout['original_hashes'][name]
         else:target.write_bytes(updated)
     import style_font_resources
