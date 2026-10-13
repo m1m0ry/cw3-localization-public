@@ -26831,6 +26831,18 @@
         "file": "CW3_Data/level3",
         "object_id": 8383
       }
+    },
+    {
+      "id": "text.45b14c4095787934",
+      "source": "Online Scores",
+      "context": "GUI caption / System.Void ScoreViewerManager::OnGUI() / instruction 30",
+      "translation": "在线积分榜",
+      "target": {
+        "kind": "managed",
+        "stage": "v9",
+        "method_token": 100667946,
+        "instruction_index": 30
+      }
     }
   ]
 }
