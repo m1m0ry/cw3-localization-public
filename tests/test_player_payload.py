@@ -57,6 +57,33 @@ class PlayerPayload(unittest.TestCase):
             row.update(after=sha(content),bytes=len(content))
         return updated
 
+    def test_unknown_missing_and_unmanaged_combinations_refuse_install_without_writes(self):
+        for kind in ('unknown','missing','unmanaged'):
+            with self.subTest(kind=kind),tempfile.TemporaryDirectory() as folder:
+                game,package,manifest=self.fixture(Path(folder));core=game/'CW3_Data/core'
+                if kind=='missing':core.unlink()
+                elif kind=='unknown':core.write_bytes(b'other mod')
+                else:
+                    core.write_bytes(b'patched');dictionary=game/'CW3Localization/zh-CN.json';dictionary.parent.mkdir();dictionary.write_bytes(b'shipped dictionary')
+                # A retired metadata field cannot turn unknown files into an accepted state.
+                manifest['legacy_hashes']={row['file']:player.digest(game/row['file']) for row in manifest['files']}
+                expected='unmanaged' if kind=='unmanaged' else 'unknown'
+                self.assertEqual(player.status(game,manifest,None),expected)
+                before={p.relative_to(game):p.read_bytes() for p in game.rglob('*') if p.is_file()}
+                with self.assertRaises(RuntimeError):player.install(game,manifest,None,package)
+                self.assertEqual({p.relative_to(game):p.read_bytes() for p in game.rglob('*') if p.is_file()},before)
+                self.assertFalse((game/player.BACKUP).exists())
+
+    @patch.object(player,'idle')
+    def test_restore_refuses_unknown_core_and_keeps_backup_and_user_files(self,_):
+        with tempfile.TemporaryDirectory() as folder:
+            game,package,manifest=self.fixture(Path(folder));player.install(game,manifest,None,package)
+            state=player.backup_info(game);(game/'CW3_Data/core').write_bytes(b'other mod')
+            before={p.relative_to(game):p.read_bytes() for p in game.rglob('*') if p.is_file()}
+            with self.assertRaisesRegex(RuntimeError,'文件已被其他程序修改'):player.restore(game,state)
+            self.assertEqual({p.relative_to(game):p.read_bytes() for p in game.rglob('*') if p.is_file()},before)
+            self.assertFalse((game/player.BACKUP/'journal.json').exists())
+
     @patch.object(player,'idle')
     def test_fixed_temporary_links_and_files_are_never_used_or_removed(self,_):
         for kind in ('file','link','dangling'):

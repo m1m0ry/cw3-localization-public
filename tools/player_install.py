@@ -135,8 +135,6 @@ def status(game,manifest,state):
     if state and all(digest(safe(game,f['file']))==f['after'] for f in state['files']):return 'upgrade'
     if state and all(f['before'] is None for f in state['files'] if f['file'] in MUTABLE) and all(digest(safe(game,f['file']))==f['after'] for f in state['files'] if f['file'] not in MUTABLE):return 'customized'
     if all(now[f['file']]==f['before'] for f in rows):return 'original'
-    legacy=manifest.get('legacy_hashes',{})
-    if all(now[f['file']]==legacy.get(f['file']) for f in rows):return 'legacy'
     return 'unknown'
 
 def atomic_copy(source,target):
@@ -192,7 +190,7 @@ def install(game,manifest,state,package=PACKAGE):
     if any(f['file'] in SETTINGS for f in rows):raise RuntimeError('此包包含旧设置模板，请使用新版完整包')
     current=status(game,manifest,state)
     if current=='installed':print('此版本已经安装，全部文件校验通过。');return
-    if current in ('legacy','unmanaged'):raise RuntimeError('检测到已安装的汉化，但不由本安装器备份管理。无需重复安装；若要更换版本，请先用旧恢复入口还原原版。')
+    if current=='unmanaged':raise RuntimeError('检测到已安装的汉化，但不由本安装器备份管理。无需重复安装；若要更换版本，请先用旧恢复入口还原原版。')
     if current=='interrupted':raise RuntimeError('检测到中断的安装/恢复，请先选择恢复原版，再安装')
     if current not in ('original','upgrade','customized'):raise RuntimeError('版本不匹配或文件已被修改；未写入游戏文件')
     if state and (any(f['before'] is not None for f in state['files'] if f['file'] in SETTINGS) or {f['file']:f['before'] for f in state['files'] if f['file'] not in SETTINGS}!={f['file']:f['before'] for f in rows}):raise RuntimeError('不支持跨版本升级。请先用旧入口恢复原版并另存旧备份目录，再安装本包')
