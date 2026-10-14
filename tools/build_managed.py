@@ -13,8 +13,10 @@ def compile(name,library=False):
  if library:flags+=['-target:library','-nostdlib','-r:'+win(G/'mscorlib.dll'),'-r:'+win(G/'UnityEngine.dll')]
  else:flags+=['-r:'+win(m.cecil),'-r:System.Core']
  flags+=['-r:'+win(G/'System.Xml.dll')]
- return m.compile(out,name+'.dll' if library else 'debug-'+name+'.exe',[ROOT/'src/debug'/(name+'.cs')],flags)
+ files=[ROOT/'src/debug'/(name+'.cs')]
+ if name=='Verify':files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ return m.compile(out,name+'.dll' if library else 'debug-'+name+'.exe',files,flags)
 def exe(name,*args):run(compile(name),[win(x) for x in args])
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
-source=path('build')/'CW3_Data/Managed/Assembly-CSharp.dll';helper=compile('CW3Debug',True);dest=out/'Assembly-CSharp.debug.dll';exe('Inject',source,helper,G,dest);empty=out/'empty.tsv';empty.write_text('');exe('Verify',source,dest,empty)
+source=path('build')/'CW3_Data/Managed/Assembly-CSharp.dll';helper=compile('CW3Debug',True);dest=out/'Assembly-CSharp.debug.dll';exe('Inject',source,helper,G,dest);exe('Verify',source,dest)
 (out/'manifest.json').write_text(json.dumps({'base':str(source.relative_to(ROOT)),'base_sha256':sha(source),'debug_sha256':sha(dest),'helper_sha256':sha(helper)},indent=2)+'\n')

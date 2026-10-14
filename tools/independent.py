@@ -1,12 +1,12 @@
 """CW3 2.12 fixed-target runtime dictionary candidate builder (no installation)."""
 from pathlib import Path
-import argparse, json, hashlib, struct, base64, collections, subprocess, shutil, re, xml.etree.ElementTree as ET
+import argparse, json, hashlib, struct, base64, collections, subprocess, shutil, xml.etree.ElementTree as ET
 
 ROOT=Path(__file__).resolve().parents[1]
 def digest(s):return hashlib.sha256(s.encode('utf-8')).hexdigest()
 def definitions(entries,original):
     from unity15_metadata import read_unity15_metadata
-    from resource_text import unpack_script, paths, scripts, crpl_literals
+    from resource_text import unpack_script, paths, scripts, display_calls
     files={}; docs={}; result=[]
     scenes={0:'Splash',1:'MainMenu',2:'Gal',3:'Game',4:'Results',5:'Prelude',6:'Epilogue'}
     def resource(name):
@@ -42,15 +42,15 @@ def definitions(entries,original):
                 code=base64.b64decode(scripts(node.text)[t['script']]).decode('utf-16le')
                 d.update(output_definition(code,t,e['source']))
             elif t['kind'] in ('crpl','crpl_display','crpl_conversation'):
-                code=base64.b64decode(scripts(node.text)[t['script']]).decode('utf-16le');hit=crpl_literals(code)[t['literal_index']]
-                assert hit.group()[1:-1]==e['source']
-                prefix=code[:hit.start()];suffix=code[hit.end():]
-                function=re.search(r'(AddConversationMessage|ShowMessage(?:Dismissible)?)\(\s*[^"()\n]*$',prefix)
-                postfix=re.match(r'\s*(?:-?\d+\s+|(?:Screen\w+\s+|\d+\s+sub\s+))*(AddConversationMessage|ShowMessage(?:Dismissible)?)\b',suffix)
-                assert function or postfix, 'No declared script display call'
-                call_offset=function.start() if function else hit.end()+postfix.start(1)
-                d.update(script=t['script'],script_hash=digest(code),line=code[:hit.start()].count('\n')+1,
-                         literal_index=t['literal_index'],call_line=code[:call_offset].count('\n')+1)
+                code=base64.b64decode(scripts(node.text)[t['script']]).decode('utf-16le')
+                sites={site.literal_index:site for site in display_calls(code,include_comments=True)}
+                assert t['literal_index'] in sites, 'No declared script display call'
+                site=sites[t['literal_index']]
+                assert site.source==e['source']
+                assert site.family==('conversation' if t['kind']=='crpl_conversation' else 'show'), 'Script display family drift'
+                # The literal's line is part of candidate context, not the call line.
+                d.update(script=t['script'],script_hash=digest(code),line=code[:site.literal_offset].count('\n')+1,
+                         literal_index=t['literal_index'],call_line=code[:site.call_offset].count('\n')+1)
             elif node.tag=='m':
                 group=parents[parents[node]];messages=[m.find('m') for m in group if m.tag=='Message'];assert all(n is not None for n in messages)
                 owner=parents[group]
@@ -114,7 +114,7 @@ def build(config,out):
     for e in entries:
         t=e['target']
         if t['kind']=='managed':rows.append('\t'.join([str(t['method_token']),str(t['instruction_index']),e['id'],base64.b64encode(e['source'].encode()).decode(),t['stage'], 'event' if e['context'].startswith('Native event caption / ') else 'gui' if e['context'].startswith('GUI caption / ') else 'label' if e['context'].startswith('UILabel caption / ') else '']))
-    (generated/'managed.tsv').write_text('\n'.join(rows)+'\n');(generated/'empty.tsv').write_text('')
+    (generated/'managed.tsv').write_text('\n'.join(rows)+'\n')
     planned=list(resource_plan(layout));changed_names={name for name,fixes,embedded in planned}
     required_originals={name:sha for name,sha in layout['original_hashes'].items() if '/Managed/' not in name and name not in changed_names}
     for name,fixes,embedded in planned:
