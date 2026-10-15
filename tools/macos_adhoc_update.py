@@ -15,7 +15,6 @@ import sys
 
 import player_install as player
 
-SNAPSHOT='adhoc-bridge-previous'
 SIGNATURE='CW3.app/Contents/_CodeSignature/CodeResources'
 ADDED='CW3Localization/Runtime/CW3ExternalRuntime.dll'
 EXTERNAL_UPDATE={ADDED,'CW3Localization/fonts.json','CW3Localization/zh-CN.json'}
@@ -25,12 +24,16 @@ def external_only(changed):
     return bool(changed) and set(changed)<=EXTERNAL_UPDATE
 
 
-def recovery_folder(game,new,external=False,initial=False):
-    if initial:return game/player.BACKUP/SNAPSHOT
+def recovery_folder(game,new):
     version=new['version']
     if not isinstance(version,str) or not re.fullmatch(r'[A-Za-z0-9._-]{1,80}',version):
         raise RuntimeError('Update version is not a safe recovery name')
-    return game/player.BACKUP/(('external-' if external else 'adhoc-')+version)
+    return game/player.BACKUP/('update-'+version)
+
+
+def recovery_target(game,name,state):
+    if name in (state['executable'],SIGNATURE):return game/name
+    return player.installed_path(game,name,state)
 
 
 def saved_path(folder,name):
@@ -97,14 +100,13 @@ def preflight(game,old_folder,new_folder):
         if player.installed_path(game,name,new).exists():
             raise RuntimeError('New external runtime path already exists')
     changed=[name for name,row in new_rows.items() if name in added or row['after']!=old_rows[name]['after']]
-    if recovery_folder(game,new,external_only(changed),ADDED not in old_rows).exists():
+    if recovery_folder(game,new).exists():
         raise RuntimeError('Previous update snapshot exists; inspect or recover it first')
     return game,old_folder,old,new_folder,new,state,changed,signed
 
 
 def snapshot(game,old,new,state,changed,signed):
-    external=external_only(changed)
-    folder=recovery_folder(game,new,external,ADDED not in {row['file'] for row in old['files']})
+    folder=recovery_folder(game,new)
     folder.mkdir()  # exclusive: never replace a recovery point
     paths=[*changed,old['executable'],SIGNATURE]
     try:
@@ -115,7 +117,7 @@ def snapshot(game,old,new,state,changed,signed):
             if name not in old_names and name==ADDED:
                 records.append(dict(file=name,absent=True,after_sha256=new_rows[name]['after']))
                 continue
-            target=player.installed_path(game,name,old) if name.startswith('CW3_Data/') else game/name
+            target=recovery_target(game,name,old)
             if not target.is_file() or target.is_symlink():raise RuntimeError('Snapshot source missing or linked: '+name)
             saved=saved_path(folder,name)
             saved.parent.mkdir(parents=True,exist_ok=True)
@@ -123,67 +125,103 @@ def snapshot(game,old,new,state,changed,signed):
             records.append(dict(file=name,sha256=player.digest(target),metadata=player.metadata(target),
                                 after_sha256=new_rows[name]['after'] if name in new_rows else player.digest(target)))
         player.atomic_copy(game/player.BACKUP/'state.json',folder/'state.json')
-        player.put_json(folder/'record.json',dict(format=1,old_version=old['version'],files=records,signature=signed,external_only=external,
-                                                  state_sha256=player.digest(folder/'state.json'),phase='ready'))
+        player.put_json(folder/'record.json',dict(format=1,new_version=new['version'],files=records,signature=signed,
+                                                  state_sha256=player.digest(folder/'state.json')))
         return folder
     except BaseException:
         # Keep any partial snapshot for inspection. No game bytes changed yet.
         raise
 
 
-def progress(folder,phase,in_progress=()):
-    player.put_json(folder/'record.json',dict(player.read(folder/'record.json'),phase=phase,in_progress=list(in_progress)))
+def progress(folder,phase=None,in_progress=()):
+    record=player.read(folder/'record.json')
+    record.pop('phase',None)
+    if in_progress:record['phase']=phase
+    player.put_json(folder/'record.json',dict(record,in_progress=list(in_progress)))
 
 
-def retain_dictionary(folder,target):
-    if target.stat().st_size>50000000:raise RuntimeError('Edited dictionary is too large; retain it manually before recovery')
-    history=folder/'user-retained'
-    if history.is_symlink():raise RuntimeError('Dictionary retention directory is linked')
+def retain_current(folder,target,category):
+    if target.stat().st_size>50000000:raise RuntimeError('Changed file is too large; retain it manually before recovery')
+    history=folder/category
+    if history.is_symlink():raise RuntimeError('Retention directory is linked')
     history.mkdir(exist_ok=True)
     expected=player.digest(target);saved=history/(expected+'-'+target.name)
-    if saved.is_symlink():raise RuntimeError('Retained dictionary is linked')
+    if saved.is_symlink():raise RuntimeError('Retained file is linked')
     if not saved.exists():player.atomic_copy(target,saved)
-    if player.digest(saved)!=expected:raise RuntimeError('Retained dictionary hash mismatch')
-    raise RuntimeError('Edited dictionary retained at '+str(saved)+'; current file changed, recovery refused')
+    if player.digest(saved)!=expected or player.digest(target)!=expected:raise RuntimeError('Retained file hash mismatch')
+    return saved
 
 
-def recover(game,folder):
-    player.idle()
+def read_recovery(game,folder):
     record=player.read(folder/'record.json')
     if record.get('format')!=1 or player.digest(folder/'state.json')!=record.get('state_sha256'):
         raise RuntimeError('Update recovery record or old installer state is invalid')
     old_state=player.read(folder/'state.json')
+    if player.target_layout(old_state)['target_id']!=player.MACOS:
+        raise RuntimeError('Recovery snapshot does not target the native Mac player')
     # Old applied snapshots did not carry destination hashes. Their matching
     # installed state is the only additional trusted source of those hashes.
     current=player.read(game/player.BACKUP/'state.json')
-    installed={}
     if record.get('new_version')==current.get('version') and player.target_identity(current)==player.target_identity(old_state):
         installed={r['file']:r['after'] for r in current['files']}
         installed[old_state['executable']]=current.get('adhoc_exe_sha256')
         installed[SIGNATURE]=current.get('adhoc_seal_sha256')
+        for row in record['files']:
+            if not row.get('after_sha256'):row['after_sha256']=installed.get(row['file'])
     pending=record.get('in_progress',[])
     if not isinstance(pending,list) or set(pending)-{r['file'] for r in record['files'] if not r.get('absent')}:
         raise RuntimeError('Invalid interrupted update file list')
     if pending and record.get('phase') not in ('writing','signing','restoring'):
         raise RuntimeError('Invalid interrupted update phase')
+    return record,old_state
+
+
+def find_recovery(game,new=None):
+    # Match retained records, including legacy names, to the complete package.
+    choices=[]
+    for folder in sorted((game/player.BACKUP).iterdir()):
+        if folder.is_symlink() or not (folder/'record.json').is_file():continue
+        try:record,state=read_recovery(game,folder)
+        except (OSError,ValueError,KeyError,RuntimeError):continue
+        if new is not None:
+            if player.target_identity(new)!=player.target_identity(state) or record.get('new_version',new['version'])!=new['version']:continue
+            expected={r['file']:r['after'] for r in state['files']}
+            expected.update({r['file']:r.get('after_sha256') for r in record['files'] if r['file'] not in (state['executable'],SIGNATURE)})
+            if expected!={r['file']:r['after'] for r in new['files']}:continue
+        choices.append(folder)
+    if len(choices)!=1:raise RuntimeError('Expected one verified recovery snapshot; select its matching --new-package')
+    return choices[0]
+
+
+def recover(game,folder):
+    player.idle()
+    record,old_state=read_recovery(game,folder)
+    pending=record.get('in_progress',[])
+    checked=[]
     for row in record['files']:
+        target=recovery_target(game,row['file'],old_state)
+        actual=player.digest(target)
         if row.get('absent'):
-            target=player.installed_path(game,row['file'],old_state)
-            if target.is_symlink() or player.digest(target) not in (None,row['after_sha256']):
+            if target.is_symlink() or actual not in (None,row['after_sha256']):
                 raise RuntimeError('Added runtime changed before recovery')
-            continue
-        target=game/row['file'] if row['file'] in (player.TARGETS[player.MACOS]['executable'],SIGNATURE) else player.installed_path(game,row['file'],player.read(folder/'state.json'))
-        saved=saved_path(folder,row['file'])
-        if player.digest(saved)!=row['sha256'] or not target.is_file() or target.is_symlink():
-            raise RuntimeError('Update recovery source or target changed: '+row['file'])
-        known={row['sha256'],row.get('after_sha256'),installed.get(row['file'])}-{None}
-        partial=row['file'] in pending and player.recoverable_metadata_matches(player.metadata(target),row['metadata'])
-        if player.digest(target) not in known and not partial:
-            if row['file'] in player.RUNTIME:retain_dictionary(folder,target)
-            raise RuntimeError('Update recovery target changed; refusing to overwrite: '+row['file'])
-    for row in record['files']:
+        else:
+            if player.digest(saved_path(folder,row['file']))!=row['sha256'] or not target.is_file() or target.is_symlink():
+                raise RuntimeError('Update recovery source or target changed: '+row['file'])
+            if actual not in {row['sha256'],row.get('after_sha256')}:
+                # A journal identifies a possibly partial controlled file; it
+                # cannot authorize losing unknown bytes or user dictionary edits.
+                if row['file'] in player.RUNTIME:
+                    saved=retain_current(folder,target,'user-retained')
+                    raise RuntimeError('Edited dictionary retained at '+str(saved)+'; current file changed, recovery refused')
+                if row['file'] not in pending:
+                    raise RuntimeError('Update recovery target changed; refusing to overwrite: '+row['file'])
+                retain_current(folder,target,'interrupted-retained')
+            if not player.recoverable_metadata_matches(player.metadata(target),row['metadata']):
+                raise RuntimeError('Update recovery target metadata changed: '+row['file'])
+        checked.append((row,target,actual))
+    for row,target,actual in checked:
+        if player.digest(target)!=actual:raise RuntimeError('Update recovery target changed during preflight: '+row['file'])
         if row.get('absent'):
-            target=player.installed_path(game,row['file'],old_state)
             if target.exists():
                 retained=folder/'added-retained'/row['file']
                 retained.parent.mkdir(parents=True,exist_ok=True)
@@ -192,18 +230,17 @@ def recover(game,folder):
                 player.sync_directory(target.parent)
             continue
         name=row['file']
-        target=game/name if name in (player.TARGETS[player.MACOS]['executable'],SIGNATURE) else player.installed_path(game,name,player.read(folder/'state.json'))
-        if player.digest(target)!=row['sha256']:
+        if actual!=row['sha256']:
             progress(folder,'restoring',sorted(set(pending)|{name}))
             player.write_existing(saved_path(folder,name),target,row['metadata'])
         pending=[item for item in pending if item!=name]
         progress(folder,'restoring',pending)
-    if any(player.digest(game/r['file'] if r['file'] in (player.TARGETS[player.MACOS]['executable'],SIGNATURE) else player.installed_path(game,r['file'],old_state))!=r['sha256'] for r in record['files'] if not r.get('absent')):
+    if any(player.digest(target)!=row['sha256'] for row,target,_ in checked if not row.get('absent')):
         raise RuntimeError('Old signed candidate bytes were not restored')
     if signature(game)!=record['signature']:
         raise RuntimeError('Recovered signature conditions differ from the prior candidate')
     player.atomic_copy(folder/'state.json',game/player.BACKUP/'state.json')
-    player.put_json(folder/'record.json',dict(player.read(folder/'record.json'),phase='recovered',in_progress=[]))
+    progress(folder)
     print('Restored and verified the preceding ad-hoc candidate. Recovery snapshot retained:',folder)
 
 
@@ -219,7 +256,7 @@ def apply(game,old_folder,new_folder):
         if player.status(game,old,state)!='installed':raise RuntimeError('Old payload changed during staging')
         if signature(game)!=signed:raise RuntimeError('Signed bundle changed during staging')
         records=player.read(folder/'record.json')['files']
-        if any(player.digest((game/r['file'] if r['file'] in (player.TARGETS[player.MACOS]['executable'],SIGNATURE) else player.installed_path(game,r['file'],old)))!=r['sha256'] for r in records if not r.get('absent')):
+        if any(player.digest(recovery_target(game,r['file'],old))!=r['sha256'] for r in records if not r.get('absent')):
             raise RuntimeError('Signed bundle changed during staging')
         new_rows={row['file']:dict(row) for row in new['files']}
         old_rows={row['file']:row for row in state['files']}
@@ -235,7 +272,7 @@ def apply(game,old_folder,new_folder):
                 if not player.row_matches(game,before,'after',state):raise RuntimeError('Current file changed: '+name)
                 progress(folder,'writing',[name])
                 player.write_existing(player.safe(new_folder,name),target,before['after_metadata'])
-                progress(folder,'applying')
+                progress(folder)
             new_rows[name]['after_metadata']=player.metadata(target)
         if not external_only(changed):
             progress(folder,'signing',[old['executable'],SIGNATURE])
@@ -244,7 +281,8 @@ def apply(game,old_folder,new_folder):
             record=player.read(folder/'record.json')
             for row in record['files']:
                 if row['file'] in (old['executable'],SIGNATURE):row['after_sha256']=player.digest(game/row['file'])
-            player.put_json(folder/'record.json',dict(record,phase='applying',in_progress=[]))
+            player.put_json(folder/'record.json',record)
+            progress(folder)
         elif any(player.digest(game/r['file'])!=r['sha256'] for r in records if r['file'] in (old['executable'],SIGNATURE)):
             raise RuntimeError('External update changed signed executable or seal')
         if signature(game)!=signed:raise RuntimeError('Signature conditions changed during re-signing')
@@ -256,8 +294,6 @@ def apply(game,old_folder,new_folder):
                      adhoc_seal_sha256=player.digest(game/SIGNATURE))
         if player.status(game,new,updated)!='installed':raise RuntimeError('New payload failed post-sign verification')
         player.put_json(game/player.BACKUP/'state.json',updated)
-        player.put_json(folder/'record.json',dict(player.read(folder/'record.json'),phase='applied',in_progress=[],
-                                                  new_version=new['version']))
         print('Updated',len(changed),'changed payload files; ad-hoc signature structure verified.')
         if external_only(changed):print('Only external runtime/data changed; no signing command was run.')
         else:print('macOS may require a new app-specific approval in System Settings before launch.')
@@ -279,13 +315,7 @@ def main():
     if args.recover:
         if args.apply or args.old_package:parser.error('--recover does not accept --apply or --old-package')
         game=args.game.resolve(strict=True)
-        folder=game/player.BACKUP/SNAPSHOT
-        if args.new_package:
-            new=load_package(args.new_package)[1]
-            choices=[recovery_folder(game,new,side) for side in (False,True)]
-            choices=[path for path in choices if path.is_dir()]
-            if len(choices)!=1:raise RuntimeError('Expected one retained recovery snapshot for that package version')
-            folder=choices[0]
+        folder=find_recovery(game,load_package(args.new_package)[1] if args.new_package else None)
         recover(game,folder)
         return
     if not args.old_package or not args.new_package:parser.error('both package directories are required')
