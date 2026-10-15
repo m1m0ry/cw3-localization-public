@@ -16,12 +16,20 @@ SUPPORTED=json.loads((ROOT/'resources/supported-build.json').read_text())
 
 
 class LegacyFontRetirement(unittest.TestCase):
-    def test_controlled_root_paths_and_generic_local_paths(self):
-        for name in ('font.ttf', 'serif.ttf', 'fonts/pixel.ttf', 'fonts/zpix.ttf'):
+    def test_registry_paths_are_only_the_shipped_faces(self):
+        for name in ('font.ttf', 'serif.ttf'):
             self.assertEqual(font_registry.font_path(name), name)
-        for name in ('zpix.ttf', 'pixel.ttf', 'fonts/../zpix.ttf'):
+        for name in ('zpix.ttf', 'pixel.ttf', 'fonts/pixel.ttf', 'fonts/zpix.ttf', 'fonts/../zpix.ttf'):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 font_registry.font_path(name)
+
+    def test_default_face_cannot_use_the_other_faces_file(self):
+        from player_fixture import registry
+        doc=registry()
+        font_registry.validate(doc)
+        doc['fonts']['serif']['file']='font.ttf'
+        with self.assertRaisesRegex(ValueError,'face/path mismatch'):
+            font_registry.validate(doc)
 
     def test_builder_rejects_retired_option_before_reading_inputs(self):
         result = subprocess.run([sys.executable, str(ROOT / 'tools/independent.py'),
@@ -57,7 +65,7 @@ class LegacyFontRetirement(unittest.TestCase):
             (folder/'fonts.json').write_text(json.dumps(registry))
             argv=['package_player.py','--config',str(config),'--output',str(out)]
             with patch.object(package_player,'ROOT',root),patch.object(sys,'argv',argv):
-                with self.assertRaisesRegex(AssertionError,'never package their bytes'):
+                with self.assertRaisesRegex(ValueError,'only shipped sans/serif'):
                     package_player.main()
             self.assertFalse(out.exists())
 
