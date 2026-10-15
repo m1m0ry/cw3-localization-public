@@ -27,6 +27,11 @@ class TargetBuild(unittest.TestCase):
         for name in ('/CW3_Data/x', 'CW3_Data/../x', 'CW3Localization/x'):
             with self.assertRaises(ValueError):game_target.installed(Path('/game'), name, mac)
 
+    def test_installer_and_builder_lock_the_same_executable_versions(self):
+        import player_install
+        for target_id in (game_target.WINDOWS,game_target.MACOS):
+            self.assertEqual(player_install.FINGERPRINTS[target_id],game_target.load({'target_id':target_id})['exe_sha256'])
+
     def test_snapshot_drift_stops_build_input_verification(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder);file = root / 'CW3_Data/mainData';file.parent.mkdir();file.write_bytes(b'original')

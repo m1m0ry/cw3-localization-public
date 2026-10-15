@@ -20,16 +20,14 @@ def context(game,state):
     if state is None or state.name!='CW3Localization' or not (state/'font-status.json').is_file():
         raise RuntimeError('Pass the existing Unity persistentDataPath/CW3Localization with --state')
     if state.is_symlink():raise RuntimeError('Persistent state path is linked')
-    installed=player.read(game/player.BACKUP/'state.json')
-    if player.target_layout(installed)['target_id']!=player.MACOS:raise RuntimeError('Installed player is not native Mac')
-    rows={row['file']:row for row in installed['files']}
-    if RUNTIME not in rows:raise RuntimeError('The bridge candidate is not installed')
-    runtime=player.installed_path(game,RUNTIME,installed)
-    if runtime.is_symlink() or not runtime.is_file() or player.digest(runtime)!=rows[RUNTIME]['after']:
-        raise RuntimeError('External runtime differs from installed candidate')
+    layout=dict(target_id=player.MACOS,**player.TARGETS[player.MACOS])
+    expected=player.read(player.installed_path(game,'CW3Localization/fonts.json',layout))['runtime_sha256']
+    runtime=player.installed_path(game,RUNTIME,layout)
+    if not re.fullmatch('[0-9a-f]{64}',expected) or not runtime.is_file() or player.digest(runtime)!=expected:
+        raise RuntimeError('External runtime differs from its packaged font registry')
     folder=state/'cw3-debug'
     if folder.is_symlink():raise RuntimeError('Diagnostics directory is linked')
-    return runtime,folder,rows[RUNTIME]['after']
+    return runtime,folder,expected
 
 
 def action(game,state,args,evidence_root):

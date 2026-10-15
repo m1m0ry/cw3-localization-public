@@ -1,4 +1,4 @@
-"""Verify a player ZIP; optionally exercise install/restore on an original fixture."""
+"""Verify a player ZIP; optionally exercise reinstall/cleanup on an isolated fixture."""
 from pathlib import Path, PurePosixPath, PureWindowsPath
 import argparse
 import hashlib
@@ -12,7 +12,7 @@ import tempfile
 import zipfile
 
 from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, instructions, supported_target, target_description, validate_release_payload
-from player_install import MACOS, RUNTIME, atomic_copy, installed_path, metadata, target_identity, target_layout
+from player_install import MACOS, RUNTIME, atomic_copy, installed_path, target_identity, target_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -153,7 +153,6 @@ def exercise_fixture(archive, root, player, original, exe):
         game = tmp / 'game'
         game.mkdir()
         layout = target_layout(player)
-        native = layout['target_id'] == MACOS
         executable = game / layout['executable']
         executable.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(exe, executable)
@@ -165,10 +164,7 @@ def exercise_fixture(archive, root, player, original, exe):
             require(sha(source) == expected, 'Original fixture hash mismatch: ' + name)
             target = installed_path(game, name, player)
             target.parent.mkdir(parents=True, exist_ok=True)
-            # The disposable copy receives its own macOS provenance. Capture
-            # that fixture metadata and require install/restore to keep it.
             atomic_copy(source, target)
-        original_metadata = {name: metadata(installed_path(game, name, player)) for name in originals} if native else {}
         sentinel = game / 'fixture-save.dat'
         sentinel.write_bytes(b'UNCHANGED SAVE SENTINEL')
         def run(action):
@@ -179,14 +175,17 @@ def exercise_fixture(archive, root, player, original, exe):
                      'sys.path.insert(0,sys.argv[1])\n'
                      'import install\n'
                      'sys.argv=["install.py","--game",sys.argv[2],"--action",sys.argv[3]]\n'
-                     'with mock.patch.object(install,"idle"):install.main()\n')
+                     'with mock.patch.object(install,"idle"),mock.patch.object(install,"signing"),mock.patch.object(install.subprocess,"run",return_value=mock.Mock(returncode=0)):install.main()\n')
             subprocess.run([sys.executable, '-c', entry, str(package), str(game), action], check=True, timeout=180)
         run('install')
         require(all(sha(installed_path(game, row['file'], player)) == row['after'] for row in player['files']), 'Fixture installation hash mismatch')
-        run('restore')
-        require(all(sha(installed_path(game, row['file'], player)) == row['before'] for row in player['files']), 'Fixture restoration hash mismatch')
-        require(all(sha(installed_path(game, name, player)) == expected for name, expected in originals.items()), 'Required original changed in fixture')
-        require(all(metadata(installed_path(game, name, player)) == expected for name, expected in original_metadata.items()), 'Original metadata changed in fixture')
+        run('install')
+        require(all(sha(installed_path(game, row['file'], player)) == row['after'] for row in player['files']), 'Fixture reinstallation hash mismatch')
+        run('clean')
+        from player_install import INJECTED
+        require(all(not installed_path(game,name,player).exists() for name in INJECTED), 'Injected program remains after cleanup')
+        require(all(sha(installed_path(game, name, player)) == expected for name, expected in player.get('required_originals',{}).items()), 'Untouched original changed in fixture')
+        # Steam, rather than this installer, restores the patched original assets.
         require(sha(executable) == player['exe_sha256'], 'Fixture executable changed')
         require(sentinel.read_bytes() == b'UNCHANGED SAVE SENTINEL', 'Fixture save sentinel changed')
 
@@ -218,9 +217,9 @@ def main():
     if 'source_commit' in player:
         print('Source commit:', player['source_commit'], '; source_dirty:', player.get('source_dirty'))
     if args.inspect_only:
-        print('Read-only inspection complete; no extraction, game copy or install/restore performed.')
+        print('Read-only inspection complete; no extraction, game copy or install/cleanup performed.')
     else:
-        print('PASS shipped CLI install/restore and every fixture hash; installed game untouched.')
+        print('PASS shipped CLI install/cleanup and every fixture hash; installed game untouched.')
 
 
 if __name__ == '__main__':

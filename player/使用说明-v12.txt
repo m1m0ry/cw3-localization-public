@@ -1,14 +1,11 @@
 CW3 简体中文补丁 v12
-适用 Windows Steam 2.12 / build 22453699。CrossOver 使用同一 Windows Steam 游戏版本，不支持原生 Mac 版。
+适用 Windows Steam 2.12 / build 22453699；CrossOver 使用同一 Windows 游戏版本。
 
-安装：完全退出游戏，解压后运行「安装或恢复.cmd」（Windows）或「安装或恢复.command」（CrossOver）。需要 Python 3.10+，无需额外包。安装器校验文件、备份原版，并提供恢复入口；保留 .cw3-zh-backup。
-兼容版本可直接升级；跨类型补丁按提示先用旧入口恢复原版，将旧 .cw3-zh-backup 另存，再安装。
+退出游戏，解压完整包后运行「安装汉化.cmd」（Windows）或「安装汉化.command」（CrossOver）。需要 Python 3.10+，无需其他包。更新、降级和中断后重试均重装所选版本完整包，不自动回滚。
 
-手工覆盖：先备份 CW3_Data，将包内 CW3_Data 和 CW3Localization 合并覆盖到游戏目录，保留其他文件，不要整体删除文件夹。手工安装的恢复也需手工还原自己的备份，并删除新增的 CW3_Data/Managed/CW3Rendering.dll、CW3_Data/Managed/CW3Runtime.dll，以及 CW3Localization 下的 zh-CN.json、font.ttf、serif.ttf、fonts.json、OFL.txt、Serif-OFL.txt；包内不含 text-style.json 和 fonts 自定义字体目录，覆盖、升级及恢复会保留它们；自改词典先另存。
+CW3Localization/zh-CN.json 是用户词典：首次缺失时从包内初始化，已有文件永不覆盖。只改 translation，保留 ID、原文、标签和占位符。要使用新版默认译文，先将旧词典另存，再重装。text-style.json、自定义 fonts 目录、存档与旧备份均保留。
 
-译文：只改 CW3Localization/zh-CN.json 的 translation，保留其他字段、标签和占位符；退出后替换，重启生效。安装和恢复不改存档。
-漏译采集：创建 CW3Localization/discover.enabled 并重启即开启，删除后重启关闭；候选写入同目录 candidates.json，需人工审核，不自动翻译或上传。
-文件哈希见 manifest.json，字体许可见 OFL.txt 和 CW3Localization/Serif-OFL.txt。
+恢复原版：先在安装入口选择清理汉化程序，再通过 Steam「验证游戏文件完整性」。Steam 不会删除额外注入的 DLL；仅验证不能完整移除汉化。
 
-字体与字号
-默认所有角色使用 Noto Sans SC，字号保持 100%。在游戏设置的「字体与字号」中选择并保存；字号即时生效，字体更换重启生效。自备静态 TTF/OTF 放入 CW3Localization/fonts，加载、缓存与回退由游戏完成，无需构建工具。取消不保存，恢复默认先改变草稿。缺字或加载失败时相应控件回退 Sans。代码输入保留原参数；详见「字体设置.md」。
+默认 sans、100%。在游戏设置「字体与字号」选择并保存；字号即时生效，字体更换重启生效。自备静态 TTF/OTF 放入 CW3Localization/fonts，详见「字体设置.md」。
+文件哈希见 manifest.json，字体许可见 OFL.txt 与 CW3Localization/Serif-OFL.txt。

@@ -20,8 +20,7 @@ class RuntimeDebug(unittest.TestCase):
         manifest=dict(target_id=player.MACOS,**player.TARGETS[player.MACOS])
         runtime=game/debug.RUNTIME;runtime.parent.mkdir(parents=True);runtime.write_bytes(b'fixed runtime')
         digest=hashlib.sha256(b'fixed runtime').hexdigest()
-        manifest['files']=[dict(file=debug.RUNTIME,before=None,after=digest)]
-        backup=game/player.BACKUP;backup.mkdir();(backup/'state.json').write_text(json.dumps(manifest))
+        (game/'CW3Localization/fonts.json').write_text(json.dumps(dict(runtime_sha256=digest)))
         return game,state,runtime
 
     def test_marker_is_locked_to_installed_external_runtime(self):

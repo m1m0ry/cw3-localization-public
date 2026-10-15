@@ -35,31 +35,6 @@ class PlayerPaths(unittest.TestCase):
             player.ensure_writable(game,[{'file':'CW3Localization/zh-CN.json','before':None}],0)
             self.assertFalse((game/'CW3Localization').exists())
 
-    def test_custom_dictionary_is_preserved_before_restore_but_core_changes_are_refused(self):
-        import hashlib
-        with tempfile.TemporaryDirectory() as name:
-            game=Path(name);data=game/'CW3_Data';data.mkdir();core=data/'level1';core.write_bytes(b'patched')
-            external=game/'CW3Localization';external.mkdir();dictionary=external/'zh-CN.json';dictionary.write_bytes(b'user edited dictionary')
-            backup=game/player.BACKUP;original=backup/'original/CW3_Data';original.mkdir(parents=True);(original/'level1').write_bytes(b'original')
-            sha=lambda b:hashlib.sha256(b).hexdigest()
-            rows=[{'file':'CW3_Data/level1','before':sha(b'original'),'after':sha(b'patched'),'bytes':7},{'file':'CW3Localization/zh-CN.json','before':None,'after':sha(b'shipped dictionary'),'bytes':18}]
-            state={'format':1,'install_root':str(game.resolve()),'version':'v12','files':rows};player.put_json(backup/'state.json',state)
-            manifest={'files':rows,'runtime_files':['CW3Localization/zh-CN.json']}
-            self.assertEqual(player.status(game,manifest,state),'customized')
-            core.write_bytes(b'other mod')
-            self.assertEqual(player.status(game,manifest,state),'unknown')
-            self.assertEqual(player.preserve_runtime_updates(game,state,manifest),state)
-            self.assertFalse((backup/'runtime-updates').exists())
-            core.write_bytes(b'patched')
-            with patch.object(player,'idle'):
-                updated=player.preserve_runtime_updates(game,state,manifest)
-                player.restore(game,updated)
-            saved=list((backup/'runtime-updates').iterdir())
-            self.assertEqual([p.read_bytes() for p in saved],[b'user edited dictionary'])
-            self.assertEqual(core.read_bytes(),b'original')
-            self.assertFalse(dictionary.exists())
-            self.assertFalse((backup/'journal.json').exists())
-
     def test_low_space_refused_before_writes(self):
         with tempfile.TemporaryDirectory() as name:
             root=Path(name)
@@ -75,35 +50,5 @@ class PlayerPaths(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError,'文件不可写'):player.ensure_writable(root,[{'file':'CW3_Data/level1'}],0)
                 self.assertEqual(file.read_bytes(),b'original')
             finally:file.chmod(0o644)
-
-    def test_backup_is_bound_to_installation(self):
-        with tempfile.TemporaryDirectory() as name:
-            game=Path(name);backup=game/player.BACKUP;backup.mkdir()
-            player.put_json(backup/'state.json',{'install_root':str(game/'different installation'),'files':[]})
-            with self.assertRaisesRegex(RuntimeError,'另一安装位置'):player.backup_info(game)
-
-
-class SlimOriginalGuards(unittest.TestCase):
-    def test_old_omitted_resource_is_rejected_without_writes(self):
-        import hashlib
-        with tempfile.TemporaryDirectory() as folder:
-            game=Path(folder);data=game/'CW3_Data';data.mkdir()
-            target=data/'kept';target.write_bytes(b'original kept')
-            omitted=data/'omitted';omitted.write_bytes(b'old serialized resource')
-            sha=lambda b:hashlib.sha256(b).hexdigest()
-            row=dict(file='CW3_Data/kept',before=sha(b'original kept'),after=sha(b'new patch'),bytes=9)
-            manifest=dict(files=[row],required_originals={'CW3_Data/omitted':sha(b'original omitted')})
-            before={p.name:p.read_bytes() for p in data.iterdir()}
-            self.assertEqual(player.status(game,manifest,None),'unknown')
-            with self.assertRaisesRegex(RuntimeError,'旧补丁'):
-                player.install(game,manifest,None)
-            self.assertEqual({p.name:p.read_bytes() for p in data.iterdir()},before)
-            self.assertFalse((game/player.BACKUP).exists())
-            omitted.write_bytes(b'original omitted')
-            self.assertEqual(player.status(game,manifest,None),'original')
-            target.write_bytes(b'new patch')
-            self.assertEqual(player.status(game,manifest,{'files':[row]}),'installed')
-            omitted.write_bytes(b'old serialized resource')
-            self.assertEqual(player.status(game,manifest,{'files':[row]}),'unknown')
 
 if __name__=='__main__':unittest.main()

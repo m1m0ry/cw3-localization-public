@@ -21,17 +21,15 @@ python3 tools/package_player.py \
   --output local-only/CW3-local
 ```
 
-构建只写本地产物，不自动安装。完整文件包含安装、恢复入口、外部词典和 OFL 字体。`--external-full` 生成完整静态字体；分发字体须保留 OFL。
+构建只写本地产物，不自动安装。完整文件包含安装、清理入口、外部词典和 OFL 字体。`--external-full` 生成完整静态字体；分发字体须保留 OFL。
 
-`workflow.py` 仅提供 `check` 和 `prepare`；候选统一由 `independent.py` 构建。译文在运行时按固定目标绑定，资源构建只保留字体和布局修复。旧差分生成工具已退役，已分发包内的恢复入口仍可使用。
+`workflow.py` 仅提供 `check` 和 `prepare`；候选统一由 `independent.py` 构建。译文在运行时按固定目标绑定，资源构建只保留字体和布局修复。旧差分生成工具已退役。
 
 确定性复核须保持源码提交、版本参数、游戏及引用 DLL、mcs.exe、Cecil、字体和依赖版本相同。完整 Python 依赖版本固定在 `requirements-build.txt`；字体配方保留受控产物的 OpenType `head.modified` 和输出 SHA256，生成时不读取当前时间。ZIP 固定排序、日期、Unix 权限和 DEFLATE 级别；安装入口保留可执行位。不同 Python/zlib 或 Mono 环境间的字节一致性须另行验证。
 
 ## 安装与更新
 
-安装和恢复步骤见 [README](../README.md)。基础补丁安装后，只改 `CW3Localization/zh-CN.json` 的 `translation`，保留其他字段、标签和占位符。退出后替换，重启生效。新增显示目标须重新审计和构建；新增字形须更新字体。
-
-升级使用新版完整包的安装入口；兼容备份可直接更新，跨类型补丁按安装器提示先恢复。包内不含用户字号配置和自定义字体，覆盖或升级会保留它们。词典可在退出游戏后直接替换，重启生效；构建校验留在开发端。
+安装、重装、降级及原版清理步骤见 [README](../README.md)。`CW3Localization/zh-CN.json` 仅在缺失时从包内初始化，已有词典不覆盖；要采用新版默认译文，先另存旧词典。新增显示目标须重新审计和构建，新增字形须更新字体。
 
 ## 开发检查
 
@@ -59,6 +57,6 @@ python3 tools/audit_managed_display.py \
 漏译候选采集默认关闭。创建游戏目录下的 `CW3Localization/discover.enabled` 并重启可启用，删除后重启关闭；结果写入同目录 `candidates.json`，需人工审核，不自动翻译或上传。
 
 
-`tools/verify_package.py --config local-only/候选/install-config.json --package local-only/候选包.zip --inspect-only` 检查 ZIP 清单、文件大小与哈希、安装器和说明，不创建游戏副本。没有构建用 EXE 时只核对目标指纹；安装器始终检查实际 EXE。
+`tools/verify_package.py --config local-only/候选/install-config.json --package local-only/候选包.zip --inspect-only` 检查 ZIP 清单、文件大小与哈希、安装器和说明，不创建游戏副本。没有构建用 EXE 时只核对目标指纹；安装器核验固定游戏版本及 Mac 签名无关代码指纹。
 
 [贡献译文](../CONTRIBUTING.md) · [可选调试](debug.md) · [许可](licensing.md)

@@ -44,22 +44,27 @@ class PinnedBuild(unittest.TestCase):
     def test_player_zip_retains_source_and_payload_hashes(self):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)
-            for file in ['tools/package_player.py','tools/player_install.py','resources/supported-build.json',
-                         'player/安装或恢复.command','player/安装或恢复.cmd','player/使用说明-v12.txt',
+            for file in ['tools/package_player.py','tools/player_install.py','tools/font_registry.py','tools/translation_contract.py','resources/supported-build.json',
+                         'player/安装汉化.command','player/安装汉化.cmd','player/使用说明-v12.txt',
                          'fonts/OFL.txt','LICENSE','NOTICE.md','docs/text-style.md']:
                 target=root/file;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/file,target)
             original=root/'original';original.mkdir()
             build=root/'build';build.mkdir()
-            payload='CW3_Data/Managed/Assembly-CSharp.dll'
-            (original/payload).parent.mkdir(parents=True);(build/payload).parent.mkdir(parents=True)
-            (original/payload).write_bytes(b'original');(build/payload).write_bytes(b'patch')
+            from player_fixture import registry
+            import player_install as installer
             sha=lambda data:hashlib.sha256(data).hexdigest()
+            rows=[]
+            for payload in sorted(installer.PAYLOAD-{installer.ADDED}):
+                target=build/payload;target.parent.mkdir(parents=True,exist_ok=True)
+                content=json.dumps(registry()).encode() if payload=='CW3Localization/fonts.json' else b'patch'
+                target.write_bytes(content);rows.append(dict(file=payload,before=None,after=sha(content),bytes=len(content)))
+            payload=rows[0]['file']
             provenance=dict(source_repo='m1m0ry/cw3-localization-public',source_commit='a'*40,
                             source_dirty=False,build_inputs_sha256='b'*64)
             supported=json.loads((root/'resources/supported-build.json').read_text())
             manifest=dict(provenance,format=1,revision='independent-v12-candidate',patch_version='v12.6',
                           steam_build=supported['steam_build'],version=supported['version'],
-                          files=[dict(file=payload,before=sha(b'original'),after=sha(b'patch'),bytes=5)])
+                          files=rows)
             (build/'manifest.json').write_text(json.dumps(manifest))
             config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original),game=str(original))))
             output=root/'local-only/package'
@@ -69,7 +74,7 @@ class PinnedBuild(unittest.TestCase):
                 for key,value in provenance.items():self.assertEqual(player[key],value)
                 self.assertEqual(player['files'],manifest['files'])
                 self.assertEqual(sha(z.read('package/'+payload)),player['files'][0]['after'])
-                self.assertEqual({name.split('/',1)[1] for name in z.namelist()},{payload,'manifest.json','install.py','安装或恢复.command','安装或恢复.cmd','使用说明.txt','OFL.txt','LICENSE','NOTICE.md','字体设置.md'})
+                self.assertEqual({name.split('/',1)[1] for name in z.namelist()},{r['file'] for r in rows}|{'manifest.json','install.py','安装汉化.command','安装汉化.cmd','使用说明.txt','OFL.txt','LICENSE','NOTICE.md','字体设置.md'})
                 with patch.object(verify_package,'ROOT',root):
                     _,inspected=verify_package.inspect_zip(z,manifest,supported,None)
                     self.assertEqual(inspected['source_commit'],provenance['source_commit'])
@@ -115,7 +120,7 @@ class PinnedBuild(unittest.TestCase):
                 for info in z.infolist():
                     self.assertEqual(info.date_time,(1980,1,1,0,0,0))
                     self.assertEqual(info.create_system,3)
-                    self.assertEqual((info.external_attr>>16)&0o777,0o755 if info.filename.endswith('/安装或恢复.command') else 0o644)
+                    self.assertEqual((info.external_attr>>16)&0o777,0o755 if info.filename.endswith('/安装汉化.command') else 0o644)
             # Target strings follow the same supported-build metadata in both
             # packaging and verification, rather than duplicating game numbers.
             supported.update(version='9.99 Steam',steam_build='fixture-build',unity_version='fixture-unity')
