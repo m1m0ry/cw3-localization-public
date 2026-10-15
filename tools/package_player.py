@@ -33,7 +33,7 @@ def instructions(supported,version,root=ROOT):
         return (root/'player/使用说明-v12.txt').read_text().replace(' v12\n',' '+version+'\n',1)
     return ('CW3 简体中文补丁 '+version+'\n适用 '+target_description(supported)+'。\n\n'
             '退出游戏后运行「安装汉化.command」。安装、更新、降级和中断后重试均使用所选版本的完整包。包内程序变化时会对 CW3.app 做必要的 ad-hoc 重签；系统阻止启动时，确认来源后按系统提示手动允许。\n'
-            '已有 CW3Localization/zh-CN.json 作为用户词典保留；如需本包默认译文，先将旧词典另存，再重装。字体设置、自定义字体、存档和旧备份不覆盖。\n'
+            '默认译文 CW3Localization/zh-CN.default.json 随包更新；自定义项放在独立 zh-CN.user.json，沿用 format、language、entries 格式，只保留自定义条目及其 ID、原文、translation。未知旧 zh-CN.json 会使安装停止，按提示迁移后重试。字体设置、自定义字体、存档和旧备份保留。\n'
             '恢复原版：先在安装入口选择清理汉化程序，再通过 Steam 验证游戏文件完整性。Steam 不会自动删除注入的 DLL。\n'
             '四角色字体和字号设置见「字体设置.md」。文件哈希见 manifest.json，许可见 OFL.txt 与 CW3Localization/Serif-OFL.txt。\n')
 

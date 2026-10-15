@@ -3,7 +3,7 @@ CW3 简体中文补丁 v12
 
 退出游戏，解压完整包后运行「安装汉化.cmd」（Windows）或「安装汉化.command」（CrossOver）。需要 Python 3.10+，无需其他包。更新、降级和中断后重试均重装所选版本完整包，不自动回滚。
 
-CW3Localization/zh-CN.json 是用户词典：首次缺失时从包内初始化，已有文件永不覆盖。只改 translation，保留 ID、原文、标签和占位符。要使用新版默认译文，先将旧词典另存，再重装。text-style.json、自定义 fonts 目录、存档与旧备份均保留。
+默认译文 CW3Localization/zh-CN.default.json 随完整包更新。自定义项放在 zh-CN.user.json，沿用 format、language、entries 格式，只保留自定义条目；只改 translation，保留 ID、原文、标签和占位符。用户词典、text-style.json、自定义 fonts 目录、存档与旧备份保留。未知旧 zh-CN.json 会使安装停止，按提示迁移后重试。
 
 恢复原版：先在安装入口选择清理汉化程序，再通过 Steam「验证游戏文件完整性」。Steam 不会删除额外注入的 DLL；仅验证不能完整移除汉化。
 

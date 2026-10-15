@@ -1,6 +1,6 @@
 """Native full-package replay and signing boundaries, with tiny Mach-O fixtures."""
 from pathlib import Path
-import copy,io,json,re,shutil,subprocess,sys,tempfile,unittest,zipfile
+import copy,io,json,re,shutil,subprocess,sys,tempfile,unittest,zipfile,os
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
@@ -69,9 +69,33 @@ class NativeInstall(unittest.TestCase):
             with patch.object(player.subprocess,'run',return_value=subprocess.CompletedProcess([],0,'','')):
                 player.install(game,manifest,package)
                 old=copy.deepcopy(manifest);old['files']=[r for r in old['files'] if r['file']!=player.ADDED]
+                row=next(r for r in old['files'] if r['file']==player.DEFAULT_DICTIONARY)
+                row['file']=player.LEGACY_DICTIONARY
+                (package/player.DEFAULT_DICTIONARY).rename(package/player.LEGACY_DICTIONARY)
                 player.install(game,old,package)
             self.assertFalse((game/player.ADDED).exists())
+            self.assertFalse((game/player.DEFAULT_DICTIONARY).exists())
+            self.assertTrue((game/player.LEGACY_DICTIONARY).exists())
             self.assertEqual((game/'save.sentinel').read_bytes(),b'USER SAVE')
+
+    def test_shared_controlled_font_is_refused_before_any_install_write(self):
+        with tempfile.TemporaryDirectory() as folder:
+            game,package,manifest=fixture(Path(folder),native=True)
+            font=game/'CW3Localization/font.ttf';font.parent.mkdir(parents=True,exist_ok=True);font.write_bytes(b'CUSTOM FONT')
+            custom=font.parent/'fonts/custom.ttf';custom.parent.mkdir();os.link(font,custom);before=snapshot(game)
+            with self.assertRaisesRegex(RuntimeError,'硬链接'):player.install(game,manifest,package)
+            self.assertEqual(snapshot(game),before);self.assertEqual(custom.read_bytes(),b'CUSTOM FONT')
+
+    def test_new_hardlink_after_path_check_is_refused_on_open_descriptor(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);font=root/'font.ttf';font.write_bytes(b'CUSTOM FONT');custom=root/'custom.ttf';source=root/'new.ttf';source.write_bytes(b'NEW PROGRAM FONT')
+            expected=player.metadata(font);open_file=Path.open
+            def linked_on_open(path,*args,**kwargs):
+                if path==font and args==('r+b',):os.link(font,custom)
+                return open_file(path,*args,**kwargs)
+            with patch.object(Path,'open',new=linked_on_open),self.assertRaisesRegex(RuntimeError,'硬链接'):
+                player.write_existing(source,font,expected)
+            self.assertEqual(font.read_bytes(),b'CUSTOM FONT');self.assertEqual(custom.read_bytes(),b'CUSTOM FONT')
 
     def test_links_and_wrong_platform_are_refused_before_any_writes(self):
         for kind in ('linked_file','linked_parent','platform'):

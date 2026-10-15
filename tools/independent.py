@@ -165,7 +165,7 @@ def _build(config,out,final_out):
     if layout['platform']==2:
         runtime=dest/'CW3Localization/Runtime/CW3ExternalRuntime.dll';runtime.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(out/'managed/CW3ExternalRuntime.dll',runtime)
-    d=dest/'CW3Localization';d.mkdir(exist_ok=True);shutil.copy2(ROOT/'translations/zh-CN.json',d/'zh-CN.json');shutil.copy2(ROOT/'fonts/OFL.txt',d/'OFL.txt')
+    d=dest/'CW3Localization';d.mkdir(exist_ok=True);shutil.copy2(ROOT/'translations/zh-CN.json',d/'zh-CN.default.json');shutil.copy2(ROOT/'fonts/OFL.txt',d/'OFL.txt')
     # Full OFL source-derived font is prepared separately and hash-checked above.
     font=ROOT/'local-only/independent-font/font.ttf';assert font.exists(),'Prepare the full static OFL font first';shutil.copy2(font,d/'font.ttf')
     shutil.copy2(serif,d/'serif.ttf');shutil.copy2(ROOT/'fonts/Serif-OFL.txt',d/'Serif-OFL.txt')

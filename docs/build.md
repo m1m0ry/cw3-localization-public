@@ -29,7 +29,7 @@ python3 tools/package_player.py \
 
 ## 安装与更新
 
-安装、重装、降级及原版清理步骤见 [README](../README.md)。`CW3Localization/zh-CN.json` 仅在缺失时从包内初始化，已有词典不覆盖；要采用新版默认译文，先另存旧词典。新增显示目标须重新审计和构建，新增字形须更新字体。
+安装、重装、降级及原版清理步骤见 [README](../README.md)。默认译文 `CW3Localization/zh-CN.default.json` 随包更新；独立的 `zh-CN.user.json` 只保存自定义条目，不随包覆盖。新增显示目标须重新审计和构建，新增字形须更新字体。
 
 ## 开发检查
 

@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 POLICY={
     'CandidateContracts':['Candidates.cs','Json.cs'],
     'RuntimeContracts':['Json.cs','FontFile.cs'],
+    'TranslationFileContracts':['Json.cs','TranslationFiles.cs'],
     'LocalFontContracts':['LocalFontFile.cs'],
     'NativeFontBundleContracts':['LocalFontFile.cs','NativeFontBundle.cs'],
     'RuntimePathsContracts':['RuntimePaths.cs'],
@@ -25,7 +26,7 @@ class Contracts:
         if name in POLICY:
             sources=[runtime/s for s in POLICY[name]]+[test/(name+'.cs')]
             args=[]
-            if name in ('CandidateContracts','RuntimePathsContracts'):args=[w(o)]
+            if name in ('CandidateContracts','RuntimePathsContracts','TranslationFileContracts'):args=[w(o)]
             elif name in ('TextStyleContracts','FontSettingsContracts'):pass
             elif name=='NativeFontBundleContracts':
                 import native_font_template

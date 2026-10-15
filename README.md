@@ -14,7 +14,7 @@ python3 tools/player_install.py --package PACKAGE --game GAME --action install
 
 `GAME` 是 Steam「管理 → 浏览本地文件」打开的目录，包含 `CW3.exe` 或 `CW3.app`。原生 Mac 包内程序变化时会做必要的 ad-hoc 重签；如系统阻止启动，确认来源后按系统提示手动允许。
 
-已有 `CW3Localization/zh-CN.json` 作为用户词典保留；如需新版默认译文，先将旧词典另存再重装。字体设置、自定义字体、存档与旧备份均保留。
+`CW3Localization/zh-CN.default.json` 随完整包更新；自定义译文放在独立的 `zh-CN.user.json`，字体设置、自定义字体、存档与旧备份保留。未知旧 `zh-CN.json` 会使本次安装停止，按提示迁移后重试。
 
 恢复原版：先在安装入口选择清理汉化程序，再通过 Steam「验证游戏文件完整性」。Steam 不会自动删除额外注入的 DLL。若提示未覆盖的资源版本不符，也先执行这两步，再安装目标版本。
 
@@ -26,7 +26,7 @@ python3 tools/player_install.py --package PACKAGE --game GAME --action install
 python3 tools/workflow.py check
 ```
 
-已安装补丁的词典位于 `CW3Localization/zh-CN.json`，退出后替换，重启生效。新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
+自定义译文沿用默认文件的 `format`、`language`、`entries` 格式，将要改的条目复制到 `CW3Localization/zh-CN.user.json`，只保留自定义项。仅修改 `translation`，保留 ID、原文、标签和占位符；退出后修改，重启生效。新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
 
 ## 游戏截图
 

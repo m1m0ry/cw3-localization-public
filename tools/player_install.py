@@ -6,13 +6,22 @@ A complete package is reapplied after interruption; user data is never replaced.
 from pathlib import Path, PureWindowsPath
 import argparse, csv, ctypes, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tempfile, struct
 PACKAGE=Path(__file__).resolve().parent
-RUNTIME={'CW3Localization/zh-CN.json'}  # User-owned seed: create only when absent.
-USER_FILES=RUNTIME|{'CW3Localization/text-style.json'}
-EXTERNAL=USER_FILES|{'CW3Localization/font.ttf','CW3Localization/serif.ttf','CW3Localization/OFL.txt','CW3Localization/Serif-OFL.txt','CW3Localization/fonts.json','CW3Localization/Runtime/CW3ExternalRuntime.dll'}
-PAYLOAD={'CW3_Data/Managed/Assembly-CSharp.dll','CW3_Data/Managed/CW3Rendering.dll','CW3_Data/Managed/CW3Runtime.dll','CW3_Data/level2','CW3_Data/level3','CW3_Data/mainData','CW3_Data/sharedassets0.assets','CW3_Data/sharedassets2.assets'}|(EXTERNAL-{'CW3Localization/text-style.json'})
+DEFAULT_DICTIONARY='CW3Localization/zh-CN.default.json'
+LEGACY_DICTIONARY='CW3Localization/zh-CN.json'
+USER_DICTIONARY='CW3Localization/zh-CN.user.json'
+RUNTIME={DEFAULT_DICTIONARY}
+USER_FILES={USER_DICTIONARY,'CW3Localization/text-style.json'}
+EXTERNAL=USER_FILES|RUNTIME|{LEGACY_DICTIONARY,'CW3Localization/font.ttf','CW3Localization/serif.ttf','CW3Localization/OFL.txt','CW3Localization/Serif-OFL.txt','CW3Localization/fonts.json','CW3Localization/Runtime/CW3ExternalRuntime.dll'}
+PAYLOAD={'CW3_Data/Managed/Assembly-CSharp.dll','CW3_Data/Managed/CW3Rendering.dll','CW3_Data/Managed/CW3Runtime.dll','CW3_Data/level2','CW3_Data/level3','CW3_Data/mainData','CW3_Data/sharedassets0.assets','CW3_Data/sharedassets2.assets'}|(EXTERNAL-USER_FILES-{LEGACY_DICTIONARY})
+# SHA256 of translations/zh-CN.json, read from these immutable public commits.
+OFFICIAL_LEGACY_DICTIONARIES={
+    '2991d0527bfee047b7913396478394e8a9936080d4921f5108c55b6a4e098ee7', # 9eaec151cfba9a6c27a949e5389dfcf70e65ae74
+    '433eab06596e9e8c137985796b2a34fbdf1efffbe7f29f699b0d2f15d43ccb25', # eac358661245172c0555075d1e373bd3304b28f4
+    '1cbeeb7f0574297b82ecb8efc72dbf1d5c6c6f50878cc1f4539d20a9d37dcabb', # a4100573e68ed3e277f8ebd20c3194e40fec20a6
+}
 ADDED='CW3Localization/Runtime/CW3ExternalRuntime.dll'
 # Only injected files belong to cleanup. Steam owns its original DLL/assets.
-INJECTED={'CW3_Data/Managed/'+name for name in ('CW3Rendering.dll','CW3Runtime.dll','CW3Debug.dll','CW3Display.dll')}|(EXTERNAL-USER_FILES)
+INJECTED={'CW3_Data/Managed/'+name for name in ('CW3Rendering.dll','CW3Runtime.dll','CW3Debug.dll','CW3Display.dll')}|(EXTERNAL-USER_FILES-{LEGACY_DICTIONARY})
 WINDOWS='windows-steam-22453699'
 MACOS='macos-steam-22453699'
 TARGETS={
@@ -235,6 +244,7 @@ def ensure_writable(game,rows,required,manifest=None):
     for f in rows:
         target=installed_path(game,f['file'],manifest)
         if f['file'] in USER_FILES and target.exists():continue
+        if target.is_file() and target.stat().st_nlink!=1:raise RuntimeError('受控程序文件存在硬链接：'+str(target))
         if target.exists() and not os.access(target,os.W_OK):raise RuntimeError('游戏文件不可写，请检查该安装目录的权限：'+str(target))
         folder=target.parent
         if not folder.is_dir():
@@ -270,6 +280,8 @@ def write_existing(source,target,expected_metadata):
     # Preserve the existing inode, mode and xattrs on native macOS.
     if not metadata_matches(metadata(target),expected_metadata):raise RuntimeError('目标文件元数据已变化：'+str(target))
     with source.open('rb') as input_,target.open('r+b') as output:
+        info=os.fstat(output.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink!=1:raise RuntimeError('受控程序文件存在硬链接或类型变化：'+str(target))
         output.seek(0);shutil.copyfileobj(input_,output);output.truncate();output.flush();os.fsync(output.fileno())
     if digest(target)!=digest(source) or not metadata_matches(metadata(target),expected_metadata):
         raise RuntimeError('原生文件原位写入校验失败：'+str(target))
@@ -277,14 +289,20 @@ def write_existing(source,target,expected_metadata):
 def validate_manifest(manifest):
     layout=target_identity(manifest);rows=manifest.get('files',[])
     if manifest.get('format')!=2 or not isinstance(rows,list) or not rows:raise ValueError('需要完整文件包')
-    names=[r['file'] for r in rows];expected=PAYLOAD if layout['target_id']==MACOS else PAYLOAD-{ADDED}
-    # Old complete Mac packages keep their runtime inside Managed. Reinstalling
-    # one removes the now-unused external helper; no version history is needed.
-    if set(names)-USER_FILES!=expected-USER_FILES and not (layout['target_id']==MACOS and set(names)-USER_FILES==expected-USER_FILES-{ADDED}):raise ValueError('安装包文件列表不完整或含额外程序')
-    if not RUNTIME<=set(names) or len(names)!=len(set(names)):raise ValueError('安装包存在重复路径')
+    names=[r['file'] for r in rows];dictionaries=set(names)&{DEFAULT_DICTIONARY,LEGACY_DICTIONARY}
+    expected=PAYLOAD-{DEFAULT_DICTIONARY,ADDED}
+    if layout['target_id']==MACOS and ADDED in names:expected=expected|{ADDED}
+    if len(dictionaries)!=1 or set(names)-USER_FILES-dictionaries!=expected:raise ValueError('安装包文件列表不完整或含额外程序')
+    if len(names)!=len(set(names)):raise ValueError('安装包存在重复路径')
     for row in rows:
         if not re.fullmatch('[0-9a-f]{64}',row.get('after','')) or type(row.get('bytes')) is not int or not 0<=row['bytes']<=250000000:raise ValueError('安装包哈希或大小无效')
     return rows
+
+def check_legacy_dictionary(game,manifest):
+    legacy=installed_path(game,LEGACY_DICTIONARY,manifest)
+    known=OFFICIAL_LEGACY_DICTIONARIES|{r['after'] for r in manifest['files'] if r['file']==LEGACY_DICTIONARY}
+    if legacy.exists() and digest(legacy) not in known:
+        raise RuntimeError('旧 zh-CN.json 含未知内容；本次安装未改动游戏。请将自定义 entries 移至 zh-CN.user.json，另存并移走旧 zh-CN.json 后重试；不要覆盖已有用户词典')
 
 def check_required_originals(game,manifest):
     for name,expected in manifest.get('required_originals',{}).items():
@@ -298,7 +316,7 @@ def signing(game):
 
 def install(game,manifest,package=PACKAGE):
     rows=validate_manifest(manifest);idle();identity=check_game_identity(game,manifest)
-    check_required_originals(game,manifest);native=identity['target_id']==MACOS
+    check_required_originals(game,manifest);check_legacy_dictionary(game,manifest);native=identity['target_id']==MACOS
     stale=INJECTED-{r['file'] for r in rows}
     for name in stale:
         target=installed_path(game,name,manifest)
@@ -311,12 +329,13 @@ def install(game,manifest,package=PACKAGE):
             source=safe(package,row['file'])
             if digest(source)!=row['after'] or source.stat().st_size!=row['bytes']:raise RuntimeError('安装包损坏：'+row['file'])
             target=safe(stage,row['file']);target.parent.mkdir(parents=True,exist_ok=True);atomic_copy(source,target)
-        idle();check_game_identity(game,manifest);check_required_originals(game,manifest)
+        idle();check_game_identity(game,manifest);check_required_originals(game,manifest);check_legacy_dictionary(game,manifest)
         bundle_changed=False
         for row in rows:
             name=row['file'];target=installed_path(game,name,manifest)
             if name in USER_FILES and target.exists():continue
             if digest(target)==row['after']:continue
+            if name==LEGACY_DICTIONARY:check_legacy_dictionary(game,manifest)
             target.parent.mkdir(parents=True,exist_ok=True)
             if name in USER_FILES:
                 atomic_copy(safe(stage,name),target,create_only=True)
@@ -331,7 +350,7 @@ def install(game,manifest,package=PACKAGE):
         if native:
             valid=subprocess.run(['codesign','--verify','--deep','--strict',str(game/'CW3.app')],capture_output=True,text=True,timeout=60).returncode==0
             if bundle_changed or not valid:signing(game)
-    print('安装完成。已有词典、字体设置、自定义字体和旧备份均保留。')
+    print('安装完成。默认译文已更新；用户覆盖词典、字体设置、自定义字体和旧备份均保留。')
 
 def clean(game,manifest):
     idle();check_game_identity(game,manifest)

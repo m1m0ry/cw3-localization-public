@@ -14,19 +14,37 @@ class CompleteInstall(unittest.TestCase):
     def test_first_repeat_upgrade_and_downgrade_preserve_user_data(self):
         with tempfile.TemporaryDirectory() as folder:
             game,package,manifest=fixture(Path(folder));player.install(game,manifest,package)
-            user=game/'CW3Localization';(user/'zh-CN.json').write_bytes(b'USER TRANSLATION');(user/'text-style.json').write_bytes(b'INVALID USER CONFIG')
+            user=game/'CW3Localization';(user/'zh-CN.user.json').write_bytes(b'USER TRANSLATION');(user/'text-style.json').write_bytes(b'INVALID USER CONFIG')
             (user/'fonts').mkdir();(user/'fonts/custom.ttf').write_bytes(b'USER FONT')
             backup=game/'.cw3-zh-backup';backup.mkdir();(backup/'journal.json').write_bytes(b'OLD INCOMPLETE DATA')
-            preserved={name:(game/name).read_bytes() for name in ('CW3Localization/zh-CN.json','CW3Localization/text-style.json','CW3Localization/fonts/custom.ttf','.cw3-zh-backup/journal.json','save.sentinel')}
+            preserved={name:(game/name).read_bytes() for name in ('CW3Localization/zh-CN.user.json','CW3Localization/text-style.json','CW3Localization/fonts/custom.ttf','.cw3-zh-backup/journal.json','save.sentinel')}
             newer=Path(folder)/'newer';shutil.copytree(package,newer);updated=json.loads(json.dumps(manifest));updated['version']='two'
             for row in updated['files']:
-                if row['file'] in player.RUNTIME:continue
                 path=newer/row['file'];path.write_bytes(b'NEW PROGRAM');row.update(after=sha(b'NEW PROGRAM'),bytes=11)
             for source,doc in ((package,manifest),(newer,updated),(newer,updated),(package,manifest)):
                 player.install(game,doc,source)
                 for row in doc['files']:
-                    if row['file'] not in player.RUNTIME:self.assertEqual(player.digest(player.installed_path(game,row['file'],doc)),row['after'])
+                    self.assertEqual(player.digest(player.installed_path(game,row['file'],doc)),row['after'])
                 for name,content in preserved.items():self.assertEqual((game/name).read_bytes(),content)
+
+    def test_known_legacy_default_upgrades_and_new_defaults_keep_updating(self):
+        with tempfile.TemporaryDirectory() as folder:
+            game,package,manifest=fixture(Path(folder));legacy=game/player.LEGACY_DICTIONARY;legacy.parent.mkdir(parents=True,exist_ok=True);legacy.write_bytes(b'OLD OFFICIAL')
+            user=game/player.USER_DICTIONARY;user.write_bytes(b'USER OVERRIDES')
+            with patch.object(player,'OFFICIAL_LEGACY_DICTIONARIES',{sha(b'OLD OFFICIAL')}):
+                player.install(game,manifest,package)
+                source=package/player.DEFAULT_DICTIONARY;source.write_bytes(b'NEW CORRECTIONS AND ENTRIES')
+                next(r for r in manifest['files'] if r['file']==player.DEFAULT_DICTIONARY).update(after=sha(source.read_bytes()),bytes=source.stat().st_size)
+                player.install(game,manifest,package)
+            self.assertEqual((game/player.DEFAULT_DICTIONARY).read_bytes(),b'NEW CORRECTIONS AND ENTRIES')
+            self.assertEqual(user.read_bytes(),b'USER OVERRIDES');self.assertEqual(legacy.read_bytes(),b'OLD OFFICIAL')
+
+    def test_unknown_legacy_dictionary_stops_before_program_or_user_writes(self):
+        with tempfile.TemporaryDirectory() as folder:
+            game,package,manifest=fixture(Path(folder));legacy=game/player.LEGACY_DICTIONARY;legacy.parent.mkdir(parents=True,exist_ok=True);legacy.write_bytes(b'UNKNOWN USER EDITS')
+            (game/player.USER_DICTIONARY).write_bytes(b'EXISTING OVERRIDES');before=snapshot(game)
+            with self.assertRaisesRegex(RuntimeError,'未知内容'):player.install(game,manifest,package)
+            self.assertEqual(snapshot(game),before)
 
     def test_cli_selects_old_complete_package_without_overwriting_legacy_settings(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -67,7 +85,7 @@ class CompleteInstall(unittest.TestCase):
     def test_cleanup_removes_only_injected_programs_and_requires_steam_for_originals(self):
         with tempfile.TemporaryDirectory() as folder:
             game,package,manifest=fixture(Path(folder));player.install(game,manifest,package)
-            keep=game/'CW3Localization/zh-CN.json';keep.write_bytes(b'USER DICTIONARY')
+            keep=game/'CW3Localization/zh-CN.user.json';keep.write_bytes(b'USER DICTIONARY')
             unknown=game/'CW3_Data/Managed/AnotherMod.dll';unknown.write_bytes(b'OTHER MOD')
             backup=game/'.cw3-zh-backup';backup.mkdir();(backup/'original').write_bytes(b'UNIQUE BACKUP')
             for name in player.INJECTED:
