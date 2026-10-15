@@ -1,6 +1,6 @@
 # 可选调试接口
 
-Windows 的独立调试模块用于开发时检查场景、字体、材质和显示文本，默认关闭，不随发行包提供。启用和停用时必须退出游戏，工具会核对程序集 SHA。原生 Mac 使用常驻但默认关闭的固定接口，见下节。
+调试模块用于开发时检查场景、字体、材质和显示文本，默认关闭，不随发行包提供。启用和停用时必须退出游戏，工具会核对程序集 SHA。
 
 ```sh
 python3 tools/build_managed.py --debug
@@ -38,23 +38,13 @@ python3 tools/debug.py disable
 
 `style_probe` 报告当前字体角色、加载与回退状态；`layout_probe "控件路径"` 查询已存在控件的字号、布局和图集。
 
-## 原生 Mac 候选
+## 原生 macOS
 
-桥接候选的固定诊断接口在外置 `CW3ExternalRuntime.dll` 中，默认关闭。启停只读写 Unity `persistentDataPath/CW3Localization/cw3-debug/enabled.txt`，其内容必须等于已安装外置运行时的 SHA-256。启停前须正常退出游戏；命令仅接受下列白名单，不载入额外 DLL，也不改动 app 签名。显式传入已存在的 State 路径。
+启停前退出游戏；`STATE` 使用[字体配置目录](text-style.md)。
 
 ```sh
-python3 tools/debug.py --config local-only/候选/install-config.json \
-  --state '/path/to/persistentDataPath/CW3Localization' enable
-python3 tools/debug.py --config local-only/候选/install-config.json \
-  --state '/path/to/persistentDataPath/CW3Localization' \
-  command settings_native_open
-# 游戏正常退出后，以相同选项运行 debug.py disable。
+python3 tools/debug.py --config CONFIG --state STATE enable
+# 启动后改为 command runtime_probe；退出后改为 disable。
 ```
 
-`runtime_probe` 包含桥接状态、实际运行版本及译文计数；`style_probe/font_probe` 返回字体状态。`settings_native_open` 返回原设置页核心打开调用耗时；`settings_open/probe/change/save/cancel/defaults` 操作字体设置，probe 也报告已绑定入口的可见性。`settings_change` 只接受四角色、sans/serif 和 75–150% 的 5% 步进；`screenshot` 写入调试 State 目录。停用会将未处理请求改名保留，避免重启后执行旧请求。请求和截图局限在本机固定 State 目录，调用外置运行时代码拥有与游戏相同的本机用户权限，须保护该目录的写权限。
-
-补验命令均不接受参数：`display_probe` 读取当前场景最多 400 个活动文本控件及其实际字体/回退/材质状态；`fonts_probe` 请求所选字体的原生中文字形；`fallback_probe` 在不显示的 TextMesh 上测试固定的 `字体㐀`，用于区分真实缺字回退和正常页面显示。它不是自然剧情中的文本。
-
-`prelude_preview` 从首页直接进入原生序章场景，保留原有时间线与文字显示；不调用首页会写设置的首次启动分支。它是脚本预览，不代表鼠标导航或完整剧情验收。`preview_return` 只从本接口拥有的序章预览返回首页；`quit` 只允许在首页正常退出。`audio_probe` 只读取已载入音频的原生状态和正在播放的来源，不触发声音或改变设置。所有产物保留在本机，不随包分发。
-
-Tempus 的暂停地图曾在临时候选中显示，但任务启动会重新读取原生设置，覆盖内存中的临时数据路径；安全检查拒绝了解除暂停。该教程预览入口已移除，不提供自动启动任务命令。完整教程对话仍需另行验收。
+查询命令：`runtime_probe`、`style_probe`、`display_probe`、`screenshot`。
