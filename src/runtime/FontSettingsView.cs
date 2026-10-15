@@ -18,8 +18,9 @@ internal static class FontSettingsView {
  static Vector2 scroll,choiceScroll;
  static GUIStyle label,button,heading,box;
  static Texture2D background;
- static string folder {get{return Path.GetFullPath(Path.Combine(Application.dataPath,"../CW3Localization"));}}
+ static string folder {get{return RuntimePaths.Current.State;}}
  internal static void Bind(){
+  if(folder==null||!RuntimePaths.Current.EnsureState())return;
   var root=GameObject.Find("UI Root (2D)");if(root==null)return;
   foreach(string path in new[]{"Camera/Anchor/SettingsPanel","Camera/MenuPanelAnchor/MenuPanel"}){
    Transform panel=root.transform.Find(path);if(panel==null||panel.Find("CW3FontSettingsButton")!=null)continue;
@@ -29,10 +30,13 @@ internal static class FontSettingsView {
    go.transform.localPosition=new Vector3(0,bg.localPosition.y-Math.Abs(bg.localScale.y)/2-19,-2);
    var collider=go.AddComponent<BoxCollider>();collider.size=new Vector3(220,30,1);
    var entry=go.AddComponent<CW3FontSettingsEntry>();entry.Owner=panel.gameObject;entry.Camera=root.transform.Find("Camera").GetComponent<Camera>();entries.Add(entry);
-   go.SetActive(panel.gameObject.activeInHierarchy);
+   // The panel is normally closed during binding. Keep the child activeSelf so
+   // it follows the panel when opened; copying activeInHierarchy hides it forever.
+   go.SetActive(true);
   }
  }
  internal static bool Open(GameObject panel){
+  if(folder==null||!RuntimePaths.Current.EnsureState())return false;
   if(owner!=null||releaseFrame>=0||panel==null||!panel.activeInHierarchy)return false;
   try{model=new FontSettingsModel(folder,TextStyles.ActivePolicy());choices=FontSettingsModel.Choices(folder,TextStyles.FontChoices(),model.Saved);
    var root=GameObject.Find("UI Root (2D)");foreach(Component c in root.GetComponentsInChildren<Component>(true))if(c.GetType().Name=="UICamera"){
@@ -104,10 +108,10 @@ internal static class FontSettingsView {
   int missing=(int)r["missing_glyph_controls"],other=(int)r["other_fallback_controls"];
   return result+(missing>0?"；"+missing+" 个已检查控件缺字，使用默认字体":other>0?"；"+other+" 个已检查控件加载回退":(int)r["observed_controls"]>0?"；已加载，控件检查通过":"；已加载，尚无该角色控件状态");
  }
- // Fixed developer probe, called only by the separately enabled debug helper.
- internal static Hashtable Probe(){var rows=new Hashtable();foreach(string role in TextStylePolicy.Roles)rows[role]=TextStyles.RoleState(role);var enabled=new ArrayList();foreach(var c in cameras)if(c.Key!=null)enabled.Add(c.Key.enabled);return new Hashtable{{"open",owner!=null},{"version",CW3BuildInfo.Version},{"saved",model==null?null:model.Saved.Serialize()},{"draft",model==null?null:model.Draft.Serialize()},{"active",TextStyles.ActivePolicy().Serialize()},{"pending_restart",model!=null&&model.Pending},{"size_apply_pending",pendingSizes!=null},{"size_refresh",sizeReport},{"notice",model==null?"":model.Notice},{"camera_enabled",enabled},{"roles",rows}};}
+ // Fixed developer probe, called only by the explicitly enabled local endpoint.
+ internal static Hashtable Probe(){var rows=new Hashtable();foreach(string role in TextStylePolicy.Roles)rows[role]=TextStyles.RoleState(role);var enabled=new ArrayList();foreach(var c in cameras)if(c.Key!=null)enabled.Add(c.Key.enabled);var bound=new ArrayList();foreach(var entry in entries)if(entry!=null)bound.Add(new Hashtable{{"panel",entry.Owner.name},{"active",entry.gameObject.activeInHierarchy},{"rect",entry.ScreenRect().ToString()}});return new Hashtable{{"open",owner!=null},{"entries",bound},{"version",CW3BuildInfo.Version},{"saved",model==null?null:model.Saved.Serialize()},{"draft",model==null?null:model.Draft.Serialize()},{"active",TextStyles.ActivePolicy().Serialize()},{"pending_restart",model!=null&&model.Pending},{"size_apply_pending",pendingSizes!=null},{"size_refresh",sizeReport},{"notice",model==null?"":model.Notice},{"camera_enabled",enabled},{"roles",rows}};}
  internal static Hashtable DebugAction(string action,string arg){
-  if(action=="open"){foreach(var entry in entries)if(entry!=null&&entry.Owner.activeInHierarchy){Open(entry.Owner);break;}}
+  if(action=="open"){foreach(var entry in entries)if(entry!=null&&entry.gameObject.activeInHierarchy){Open(entry.Owner);break;}if(owner==null)throw new InvalidOperationException("No visible font settings entry");}
   else if(action=="probe"){}
   else if(owner==null)throw new InvalidOperationException("Open the native settings first");
   else if(action=="cancel")Close();else if(action=="save")Save();else if(action=="defaults")model.Defaults();

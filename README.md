@@ -1,6 +1,6 @@
 # Creeper World 3 简体中文补丁
 
-面向 **Windows Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。不支持原生 Mac 版。社区内容和地图编辑器可能保留英文。
+面向 **Windows Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。原生 macOS 候选见下节。社区内容和地图编辑器可能保留英文。
 
 ## 下载与安装
 
@@ -14,6 +14,18 @@ Steam 中右键游戏 → 管理 → 浏览本地文件，定位包含 `CW3.exe`
 - CrossOver：`~/Library/Application Support/CrossOver/Bottles/<瓶名>/drive_c/Program Files (x86)/Steam/steamapps/common/Creeper World 3`
 
 手工覆盖须先备份 `CW3_Data`，将包内 `CW3_Data` 和 `CW3Localization` 合并到游戏目录，保留其他文件。恢复自己的备份，并删除新增的 `CW3_Data/Managed/CW3Rendering.dll`、`CW3_Data/Managed/CW3Runtime.dll` 及 `CW3Localization` 中的 `zh-CN.json`、`font.ttf`、`serif.ttf`、`fonts.json`、`OFL.txt`、`Serif-OFL.txt`；包内不含 `text-style.json` 和 `fonts` 自定义字体目录，覆盖、升级及恢复会保留它们；自改词典先另存。安装和恢复不改存档。
+
+## 原生 macOS
+
+仅提供同版本已安装候选的更新与回退，Steam 原版暂无首次安装入口。退出游戏后先预检：
+
+```sh
+python3 tools/macos_adhoc_update.py --game GAME --old-package OLD --new-package NEW
+```
+
+预检通过后追加 `--apply`；回退改用 `--game GAME --recover --new-package NEW`。保留 `.cw3-zh-backup`。字体使用见[字体与字号](docs/text-style.md)。
+
+如系统阻止启动，确认来源后按提示手动允许；卸载恢复原版请通过 Steam 重新安装。
 
 ## 译文与构建
 

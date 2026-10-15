@@ -1,6 +1,9 @@
 # 字体与字号
 
-将自己的静态 `.ttf` 或 `.otf` 放入游戏的 `CW3Localization/fonts` 文件夹，打开游戏“设置”下方的“字体与字号”，分别选择字体和字号，字号保存后即时生效；更换字体后退出并重启游戏。也可编辑 `CW3Localization/text-style.json`。支持中文文件名和空格。无需安装 Python、运行命令、安装系统字体或为每种字体重建补丁。
+打开“设置 → 字体与字号”，分别选择四类文字的字体和字号。字号保存后生效，换字体须重启。自定义静态 TTF/OTF 放入配置目录的 `fonts/`：
+
+- Windows/CrossOver：游戏目录下的 `CW3Localization`。
+- 原生 macOS：`~/Library/Application Support/unity.Knuckle Cracker LLC.Creeper World 3/CW3Localization`。
 
 ```json
 {"format":1,"roles":{

@@ -1,0 +1,65 @@
+"""Target selection and publication boundaries do not require private game files."""
+from pathlib import Path
+import hashlib
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tools'))
+import game_target
+import independent
+
+
+class TargetBuild(unittest.TestCase):
+    def test_target_is_explicit_and_does_not_follow_host(self):
+        windows = game_target.load({})
+        mac = game_target.load({'target_id': game_target.MACOS})
+        self.assertEqual((windows['id'], windows['platform']), (game_target.WINDOWS, 5))
+        self.assertEqual((mac['id'], mac['platform']), (game_target.MACOS, 2))
+        self.assertEqual(game_target.installed(Path('/game'), 'CW3_Data/Managed/Assembly-CSharp.dll', mac),
+                         Path('/game/CW3.app/Contents/Resources/Data/Managed/Assembly-CSharp.dll'))
+        with self.assertRaises(ValueError):game_target.load({'target_id': 'guess'})
+        for name in ('/CW3_Data/x', 'CW3_Data/../x', 'CW3Localization/x'):
+            with self.assertRaises(ValueError):game_target.installed(Path('/game'), name, mac)
+
+    def test_snapshot_drift_stops_build_input_verification(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder);file = root / 'CW3_Data/mainData';file.parent.mkdir();file.write_bytes(b'original')
+            target = {'original_hashes': {'CW3_Data/mainData': hashlib.sha256(b'original').hexdigest()}}
+            game_target.verify_inputs(root, target)
+            file.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'fingerprint mismatch'):game_target.verify_inputs(root, target)
+
+    def test_failed_candidate_is_not_published(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder);output = root / 'candidate'
+            def fail(config, stage, final):
+                stage.mkdir();(stage / 'partial').write_text('diagnostic')
+                raise ValueError('anchor mismatch')
+            with patch.object(independent, '_build', side_effect=fail):
+                with self.assertRaisesRegex(ValueError, 'anchor mismatch'):independent.build({}, output)
+            self.assertFalse(output.exists())
+            self.assertEqual(len(list(root.glob('*.building-*/partial'))), 1)
+
+    def test_optimized_python_cannot_disable_target_verification(self):
+        result = subprocess.run([sys.executable, '-O', '-c',
+            'import sys;sys.path.insert(0,"tools");import game_target;game_target.load({})'], cwd=ROOT, capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('do not use -O', result.stderr)
+
+    def test_native_repairs_include_only_declared_font_dialogue_and_audio_fields(self):
+        target = game_target.load({'target_id': game_target.MACOS})
+        fixes = target['fixed_edits']
+        self.assertEqual(len(fixes), 171)
+        self.assertEqual({f['object_id'] for f in fixes if f['kind']=='raw_fixed'}, {288, 289, 290})
+        dialogue=[f for f in fixes if f['file'] in ('CW3_Data/level2','CW3_Data/level3')]
+        audio=[f for f in fixes if f.get('fields')=={'m_LoadInBackground':{'before':False,'after':True}}]
+        self.assertEqual(len(dialogue),2)
+        self.assertEqual(len(audio),166)
+        self.assertEqual({f['file'] for f in audio},{'CW3_Data/sharedassets2.assets'})
+
+
+if __name__ == '__main__':unittest.main()

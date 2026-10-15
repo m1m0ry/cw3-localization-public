@@ -8,6 +8,8 @@
 
 复制 `config.example.json` 为 `config.local.json`，填写游戏和 CrossOver 路径。游戏须为匹配的干净原版，原版文件按固定 SHA 校验。按 [fonts/provenance.json](../fonts/provenance.json) 的来源与 SHA 准备 Noto Sans SC 源字体。
 
+原生 Mac 配置使用 `target_id: macos-steam-22453699`，`game` 指向 `CW3.app` 父目录；原版输入须来自 Mac。
+
 ```sh
 python3 -m pip install -r requirements-build.txt
 python3 tools/workflow.py prepare

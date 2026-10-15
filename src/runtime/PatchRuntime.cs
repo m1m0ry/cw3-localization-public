@@ -1,12 +1,34 @@
 using System;using System.IO;using System.Linq;using System.Collections.Generic;using Mono.Cecil;using Mono.Cecil.Cil;
 class PatchRuntime {
+ sealed class Site {internal MethodDefinition Method;internal Instruction Instruction;internal string Source,Id;}
  static IEnumerable<TypeDefinition> All(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var v in All(n))yield return v;}
  static void Need(bool b,string s){if(!b)throw new Exception(s);}
  static void Main(string[] a){
  var resolver=new DefaultAssemblyResolver();resolver.AddSearchDirectory(a[4]);resolver.AddSearchDirectory(Path.GetDirectoryName(a[1]));var asm=AssemblyDefinition.ReadAssembly(a[0],new ReaderParameters{AssemblyResolver=resolver});var helper=AssemblyDefinition.ReadAssembly(a[1]);var runtime=helper.MainModule.GetType("CW3Runtime");Func<string,MethodReference> api=n=>asm.MainModule.ImportReference(runtime.Methods.Single(m=>m.Name==n));var originals=asm.MainModule.Types.SelectMany(All).SelectMany(t=>t.Methods).Where(m=>m.HasBody).ToDictionary(m=>m,m=>m.Body.Instructions.ToArray());var records=new List<string>();var pristine=AssemblyDefinition.ReadAssembly(a[6]);var guiMethods=new HashSet<MethodDefinition>();var guiButtons=new HashSet<Instruction>();var boundSites=new HashSet<Instruction>();
  Action<MethodDefinition,Instruction,Instruction[],Instruction[],MethodReference> edit=(m,i,before,after,replace)=>{int ix=Array.IndexOf(originals[m],i);Need(ix>=0,"Original site required");var il=m.Body.GetILProcessor();foreach(var x in before)il.InsertBefore(i,x);Instruction at=i;foreach(var x in after){il.InsertAfter(at,x);at=x;}if(replace!=null){i.OpCode=OpCodes.Call;i.Operand=replace;}records.Add(m.MetadataToken.ToInt32()+"\t"+ix+"\t"+before.Length+"\t"+after.Length+"\t"+(replace==null?"keep":"replace"));};
  Func<string,string,MethodDefinition> method=(t,n)=>asm.MainModule.Types.SelectMany(All).Single(x=>x.FullName==t).Methods.Single(m=>m.Name==n);
- foreach(var line in File.ReadAllLines(a[2])){var c=line.Split('\t');var origin=(MethodDefinition)(c[4]=="v9"?pristine:asm).MainModule.LookupToken(Int32.Parse(c[0]));var m=originals.Keys.Single(x=>x.FullName==origin.FullName);Need(Int32.Parse(c[1])<originals[m].Length,"Site beyond method "+m.FullName+" token "+c[0]+" #"+c[1]+" length "+originals[m].Length);var i=originals[m][Int32.Parse(c[1])];string source=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[3]));Need(boundSites.Add(i),"Duplicate physical display site "+c[2]);Need(i.OpCode==OpCodes.Ldstr&&(string)i.Operand==source,"Guarded ldstr "+c[2]);if(c.Length>5&&c[5]=="event")NativeEventCaptionAudit.Require(origin,origin.Body.Instructions[Int32.Parse(c[1])]);if(c.Length>5&&(c[5]=="gui"||c[5]=="label")){var consumer=GuiCaptionAudit.Consumer(m,i);if(c[5]=="gui"){guiMethods.Add(m);var call=(MethodReference)consumer.Operand;if(call.DeclaringType.FullName=="UnityEngine.GUILayout"&&call.Name=="Button")guiButtons.Add(consumer);if(call.DeclaringType.FullName=="GUIUtils")guiMethods.Add(method("GUIUtils",call.Name));}}var il=m.Body.GetILProcessor();edit(m,i,new Instruction[0],new[]{il.Create(OpCodes.Ldstr,source),il.Create(OpCodes.Call,api("Text"))},null);i.Operand=c[2];}
+ // Validate the entire binding table before editing any instruction. Otherwise an
+ // earlier binding in the same method could change a later binding's IL window.
+ var sites=new List<Site>();var ids=new HashSet<string>();
+ foreach(var line in File.ReadAllLines(a[2])){
+  var c=line.Split('\t');Need(c.Length==5||c.Length==6||c.Length==8,"Invalid managed binding row");Need(c[4]=="v9"||c[4]=="v10","Unknown managed binding stage");
+  var origin=(MethodDefinition)(c[4]=="v9"?pristine:asm).MainModule.LookupToken(Int32.Parse(c[0]));var m=originals.Keys.Single(x=>x.FullName==origin.FullName);int at=Int32.Parse(c[1]);
+  Need(at>=0&&at<originals[m].Length,"Site beyond method "+m.FullName+" token "+c[0]+" #"+c[1]+" length "+originals[m].Length);
+  var i=originals[m][at];string source=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[3]));
+  Need(ids.Add(c[2])&&!String.IsNullOrEmpty(c[2]),"Duplicate/empty binding ID");Need(boundSites.Add(i),"Duplicate physical display site "+c[2]);Need(i.OpCode==OpCodes.Ldstr&&(string)i.Operand==source,"Guarded ldstr "+c[2]);
+  if(c.Length==8){
+   Need(c[4]=="v9","Anchored coordinates must refer to pristine assembly");string signature=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[6]));
+   // The binding anchor is recorded against pristine IL. RenderingVerify has
+   // already proven that the render stage changes only its declared wrappers
+   // and GUID dispatches; one such dispatch can sit inside this IL window.
+   // The exact rendered instruction and method identity are checked above.
+   BindingAnchor.Require(origin,at,signature,source,c[7]);
+  }
+  if(c.Length>5&&c[5]=="event")NativeEventCaptionAudit.Require(origin,origin.Body.Instructions[at]);
+  if(c.Length>5&&(c[5]=="gui"||c[5]=="label")){var consumer=GuiCaptionAudit.Consumer(m,i);if(c[5]=="gui"){guiMethods.Add(m);var call=(MethodReference)consumer.Operand;if(call.DeclaringType.FullName=="UnityEngine.GUILayout"&&call.Name=="Button")guiButtons.Add(consumer);if(call.DeclaringType.FullName=="GUIUtils")guiMethods.Add(method("GUIUtils",call.Name));}}
+  sites.Add(new Site{Method=m,Instruction=i,Source=source,Id=c[2]});
+ }
+ foreach(var site in sites){var il=site.Method.Body.GetILProcessor();edit(site.Method,site.Instruction,new Instruction[0],new[]{il.Create(OpCodes.Ldstr,site.Source),il.Create(OpCodes.Call,api("Text"))},null);site.Instruction.Operand=site.Id;}
  var nativeEvents=originals.Keys.Single(m=>m.FullName=="System.Void GameEventManager::ShowEvent(GameEventManager/GAME_EVENT,System.String,UnityEngine.Vector2)");var eventInstructions=originals[nativeEvents];for(int n=0;n<eventInstructions.Length-1;n++){var i=eventInstructions[n];var next=eventInstructions[n+1];if(i.OpCode==OpCodes.Ldstr&&(next.OpCode==OpCodes.Stloc_3||next.OpCode==OpCodes.Stloc_S&&((VariableDefinition)next.Operand).Index==4))Need(boundSites.Contains(i),"Unbound native event caption: "+i.Operand);}
  foreach(string type in new[]{"SplashManager","MainMenu","GameSpace","MessageDialogManager","PreludeManager","EpilogueManager"}){var m=method(type,"Awake");var il=m.Body.GetILProcessor();edit(m,originals[m][0],new[]{il.Create(OpCodes.Call,api("Boot"))},new Instruction[0],null);}
  var process=method("UILabel","ProcessText");edit(process,originals[process][0],new[]{process.Body.GetILProcessor().Create(OpCodes.Ldarg_0),process.Body.GetILProcessor().Create(OpCodes.Call,api("PrepareLabel"))},new Instruction[0],null);var reads=originals[process].Where(i=>i.OpCode==OpCodes.Ldfld&&((FieldReference)i.Operand).Name=="mText").ToArray();Need(reads.Length==9,"UILabel reads");foreach(var i in reads.Skip(6)){var il=process.Body.GetILProcessor();edit(process,i,new Instruction[0],new[]{il.Create(OpCodes.Ldarg_0),il.Create(OpCodes.Call,api("ForLabel"))},null);}

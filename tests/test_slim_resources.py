@@ -48,3 +48,12 @@ class SlimResources(unittest.TestCase):
     def test_embedded_font_alone_still_requires_resource_output(self):
         layout=dict(original_hashes={'CW3_Data/sharedassets0.assets':'sha','CW3_Data/resources.assets':'sha'},fixed_edits=[])
         self.assertEqual(list(independent.resource_plan(layout)),[('CW3_Data/sharedassets0.assets',[],True)])
+
+    def test_native_audio_edits_match_the_audited_windows_ids(self):
+        windows=json.loads((independent.ROOT/'resources/layout.json').read_text())
+        native=json.loads((independent.ROOT/'resources/macos-target.json').read_text())
+        def background(profile):
+            return [row for row in profile['fixed_edits'] if row.get('fields')=={'m_LoadInBackground':{'before':False,'after':True}}]
+        self.assertEqual(len(background(native)),166)
+        self.assertEqual(background(native),background(windows))
+        self.assertTrue({81,104,229}.isdisjoint(row['object_id'] for row in background(native)))

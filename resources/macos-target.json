@@ -1,0 +1,2003 @@
+{
+  "game": "Creeper World 3 Arc Eternal",
+  "version": "2.12 Steam",
+  "steam_build": "22453699",
+  "unity_version": "5.2.3f1",
+  "exe_sha256": "67e5badb2cc8cc8a5a58974af9d8de1d8f4ebca051d63a0f4939e51c68176564",
+  "id": "macos-steam-22453699",
+  "target_id": "macos-steam-22453699",
+  "platform": 2,
+  "data_dir": "CW3.app/Contents/Resources/Data",
+  "executable": "CW3.app/Contents/MacOS/CW3",
+  "original_hashes": {
+    "CW3_Data/Managed/Assembly-CSharp.dll": "4b27007ccfcab83f17a0eee24fbef69500e48951c0d2fcf0e3c18723e09beade",
+    "CW3_Data/Managed/System.Core.dll": "b091dad33002f03cc6c1747d8c5f7a901cbf8a60ca0d286088162143a28b57a3",
+    "CW3_Data/Managed/System.Xml.dll": "b71d84b2b02c5aabe9a73756c04e5b453182737378d2cee74e0124907d4f4246",
+    "CW3_Data/Managed/System.dll": "8ee60fe09c87ec2cf664720b341eabcf0d94a62323cc1c6feaa3ed94c45aa2b0",
+    "CW3_Data/Managed/UnityEngine.dll": "0c6057b5c8a35d0770a5919478dd184dba555a73d43ea3fd8a5f0e7d7429a7c7",
+    "CW3_Data/Managed/mscorlib.dll": "87b4bf6434902f2397212661b348d7df0769e6d13e918b72dc4ab9b18443e39c",
+    "CW3_Data/Resources/unity_builtin_extra": "907da72a76b7fd40efca3ff950cf749c8f65ef5f357d329cc6143def0ef91155",
+    "CW3_Data/level1": "78ba87bee007b3faaeb71d3a761a07dbd84b01144ec693a7df78201f817d38c5",
+    "CW3_Data/level2": "dcdc2762e7f8c478411c2e08c8160f54f96fd903e0e7f74b4c21c2623bd21ae8",
+    "CW3_Data/level3": "c1adcae516f28d79fef1c709245dd0342c733f3ebea1995392fc466f88fbc3f5",
+    "CW3_Data/level4": "0a9ccd018ace49881b18f4622fa54631abdf99511d9c8a6ecfc39a62b617ea2d",
+    "CW3_Data/level5": "b18266bb27ff0668b385ffbf6adb229335d0a852bd1072c131da0df6d22eca2b",
+    "CW3_Data/level6": "14078386fe1bc0f439ed6cf4cef9a910fdeb50da34b2395589d9a73f3daf6537",
+    "CW3_Data/mainData": "9169557b0bab9edccf8280b51abbddac2318bd90bae3b4285ec7e5a37181dce7",
+    "CW3_Data/resources.assets": "b346efc9c2b3446027b2c8d7c6019e1715c6620d0e431fbac967b546d17d4aff",
+    "CW3_Data/sharedassets0.assets": "2a3ef1395e5f4226747d7cf2564266b85417a111f4e3bd0effaae9b158cf9f84",
+    "CW3_Data/sharedassets2.assets": "48710cec64198435b9d0649d13cc167f91831a17bc8759ca8ba0eb67eae25269",
+    "CW3_Data/sharedassets4.assets": "54abc126d9fea02c7685b6249437d18f6b800719e3ae8842e9e74c7d43cd5429",
+    "CW3_Data/sharedassets6.assets": "d875c9de045d206e3f0e4f5aa426a4a9de778ebf69570673f91d485988aa9725"
+  },
+  "fixed_edits": [
+    {
+      "file": "CW3_Data/level2",
+      "object_id": 269,
+      "kind": "fields",
+      "fields": {
+        "m_LocalPosition": {
+          "before": {
+            "x": -216.0,
+            "y": -5.0,
+            "z": 0.0
+          },
+          "after": {
+            "x": -216.0,
+            "y": -12.0,
+            "z": 0.0
+          }
+        }
+      },
+      "reason": "Verified text inset or render queue",
+      "object_path": "UI Root (2D)/Camera/TopAnchor/Panel/MessageDialog/MessageText",
+      "source_sha256": "13631cc54fd93f4cad4a9dba9edac5a38fcaec44424facb8ebb2c3d7f1be75ab"
+    },
+    {
+      "file": "CW3_Data/level3",
+      "object_id": 3674,
+      "kind": "fields",
+      "fields": {
+        "m_LocalPosition": {
+          "before": {
+            "x": -216.0,
+            "y": -5.0,
+            "z": 0.0
+          },
+          "after": {
+            "x": -216.0,
+            "y": -12.0,
+            "z": 0.0
+          }
+        }
+      },
+      "reason": "Verified text inset or render queue",
+      "object_path": "UI Root (2D)/Camera/TopPanelAnchor/MessageDialogPanel/MessageDialog/MessageText",
+      "source_sha256": "78eb6ab4e86b26c9497752d78d37392bfc080edca6c59453d8a0daf21b4d653a"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 288,
+      "kind": "raw_fixed",
+      "source_sha256": "965801a8f3541b13f0b2b6a9c1ee27475e06766c50aa23b6da68b822140ef0ea",
+      "edits": [
+        {
+          "offset": 36,
+          "before": "0b",
+          "after": "00"
+        },
+        {
+          "offset": 4396,
+          "before": "1c01",
+          "after": "0000"
+        },
+        {
+          "offset": 4424,
+          "before": "00",
+          "after": "02"
+        },
+        {
+          "offset": 4428,
+          "before": "0000",
+          "after": "f402"
+        },
+        {
+          "offset": 4436,
+          "before": "10",
+          "after": "14"
+        }
+      ],
+      "reason": "Audited NGUI dynamic font binding; no translated text"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 289,
+      "kind": "raw_fixed",
+      "source_sha256": "e99cc870b83789127a3f41fea125f8794263697dbf55d1e3e42ccaf83d4e93e7",
+      "edits": [
+        {
+          "offset": 36,
+          "before": "0b",
+          "after": "00"
+        },
+        {
+          "offset": 4148,
+          "before": "1c01",
+          "after": "0000"
+        },
+        {
+          "offset": 4176,
+          "before": "00",
+          "after": "02"
+        },
+        {
+          "offset": 4180,
+          "before": "0000",
+          "after": "f402"
+        },
+        {
+          "offset": 4188,
+          "before": "10",
+          "after": "1c"
+        }
+      ],
+      "reason": "Audited NGUI dynamic font binding; no translated text"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 290,
+      "kind": "raw_fixed",
+      "source_sha256": "270fd2120110bdb386bc5e01746ecc0f8f02b3811279c2dbb1dcec22ada6609b",
+      "edits": [
+        {
+          "offset": 36,
+          "before": "0b",
+          "after": "00"
+        },
+        {
+          "offset": 3904,
+          "before": "1c01",
+          "after": "0000"
+        },
+        {
+          "offset": 3932,
+          "before": "00",
+          "after": "02"
+        },
+        {
+          "offset": 3936,
+          "before": "0000",
+          "after": "f402"
+        }
+      ],
+      "reason": "Audited NGUI dynamic font binding; no translated text"
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 82,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      },
+      "reason": "Preload non-menu Vorbis effects in background to avoid blocking scene activation. Menu IDs 81/104/229 stay synchronous for immediate feedback. Source samples, load type and NGUI/font repairs remain unchanged."
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 83,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 84,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 85,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 86,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 87,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 88,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 89,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 91,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 92,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 93,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 94,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 95,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 96,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 97,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 98,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 99,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 100,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 102,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 103,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 105,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 106,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 107,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 108,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 109,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 110,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 111,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 113,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 114,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 115,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 116,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 117,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 118,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 120,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 121,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 122,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 123,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 124,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 126,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 127,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 128,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 129,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 130,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 131,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 133,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 134,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 135,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 136,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 137,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 138,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 139,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 140,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 141,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 142,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 143,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 144,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 145,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 146,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 147,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 148,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 149,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 150,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 151,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 152,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 154,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 155,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 156,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 157,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 158,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 159,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 160,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 161,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 162,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 164,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 165,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 166,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 167,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 169,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 170,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 171,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 172,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 173,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 174,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 175,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 176,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 177,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 179,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 180,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 181,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 182,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 183,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 184,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 185,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 186,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 187,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 188,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 189,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 190,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 191,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 192,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 193,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 194,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 195,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 196,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 197,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 198,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 199,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 200,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 201,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 202,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 203,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 204,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 205,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 207,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 208,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 209,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 210,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 211,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 212,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 213,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 214,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 215,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 216,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 217,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 218,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 219,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 220,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 221,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 222,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 223,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 224,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 225,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 226,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 227,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 228,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 230,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 231,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 233,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 234,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 237,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 238,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 239,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 240,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 242,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 243,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 244,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 245,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 246,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 247,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 248,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 249,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 250,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 251,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 252,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 253,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 254,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 255,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 256,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 257,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 258,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 259,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 261,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 262,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 263,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 264,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "file": "CW3_Data/sharedassets2.assets",
+      "object_id": 265,
+      "kind": "fields",
+      "fields": {
+        "m_LoadInBackground": {
+          "before": false,
+          "after": true
+        }
+      }
+    }
+  ]
+}

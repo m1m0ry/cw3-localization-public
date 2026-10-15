@@ -37,3 +37,14 @@ python3 tools/debug.py disable
 其他构建目录须使用对应的 `--config local-only/候选/install-config.json`。写存档前先备份并选择空槽位，遵守游戏正常确认流程。
 
 `style_probe` 报告当前字体角色、加载与回退状态；`layout_probe "控件路径"` 查询已存在控件的字号、布局和图集。
+
+## 原生 macOS
+
+启停前退出游戏；`STATE` 使用[字体配置目录](text-style.md)。
+
+```sh
+python3 tools/debug.py --config CONFIG --state STATE enable
+# 启动后改为 command runtime_probe；退出后改为 disable。
+```
+
+查询命令：`runtime_probe`、`style_probe`、`display_probe`、`screenshot`。

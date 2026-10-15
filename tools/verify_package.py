@@ -11,8 +11,8 @@ import sys
 import tempfile
 import zipfile
 
-from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, target_description, validate_release_payload
-from player_install import RUNTIME
+from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, instructions, supported_target, target_description, validate_release_payload
+from player_install import MACOS, RUNTIME, atomic_copy, installed_path, metadata, target_identity, target_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -55,6 +55,9 @@ def inspect_zip(archive, build, supported, exe):
             'Expected the current independent build manifest')
     require(build.get('steam_build') == supported['steam_build'] and build.get('version') == supported['version'],
             'Build target differs from the supported game')
+    require(target_layout(build) == target_layout(supported), 'Build/profile platform mismatch')
+    if target_layout(supported)['target_id'] == MACOS:
+        require(target_identity(build) == target_identity(supported), 'Build/profile target fingerprint mismatch')
     infos = archive.infolist()
     require(infos, 'Empty package ZIP')
     names = [safe_name(info.orig_filename, info.is_dir()) for info in infos]
@@ -76,8 +79,9 @@ def inspect_zip(archive, build, supported, exe):
     target = target_description(supported)
     require(player.get('target') == target and player.get('exe_sha256') == supported['exe_sha256'],
             'Player target or executable hash mismatch')
+    require(target_identity(player) == target_identity(supported), 'Player platform or install layout mismatch')
     if exe is not None:
-        require(sha(exe) == player['exe_sha256'], 'Installed CW3.exe does not match the package target')
+        require(sha(exe) == player['exe_sha256'], 'Installed '+target_layout(player)['executable']+' does not match the package target')
     for key in ('required_originals', 'controlled_fonts'):
         require(player.get(key, {}) == build.get(key, {}), 'Player/build metadata mismatch: ' + key)
     for key in ('source_repo', 'source_commit', 'source_dirty', 'build_inputs_sha256'):
@@ -102,7 +106,7 @@ def inspect_zip(archive, build, supported, exe):
         require(valid_hash(row.get('after')) and type(row.get('bytes')) is int and row['bytes'] >= 0,
                 'Invalid payload hash or size: ' + name)
         payload.add(name)
-    validate_release_payload(payload)
+    validate_release_payload(payload,target_layout(supported)['target_id'])
     require(set(files) == payload | set(PLAYER_CONTROLS),
             'ZIP file list differs from payload and player controls; missing=' + str(sorted((payload | set(PLAYER_CONTROLS)) - set(files)))
             + ', extra=' + str(sorted(set(files) - (payload | set(PLAYER_CONTROLS)))))
@@ -115,7 +119,7 @@ def inspect_zip(archive, build, supported, exe):
     originals = player.get('required_originals', {})
     require(isinstance(originals, dict), 'Invalid required-original manifest')
     for name, expected in originals.items():
-        safe_name(name)
+        require(safe_name(name).startswith('CW3_Data/'), 'Required original is outside game data: ' + name)
         require(name not in payload and valid_hash(expected), 'Invalid required original: ' + name)
     controlled = player.get('controlled_fonts', {})
     require(isinstance(controlled, dict), 'Invalid controlled-font metadata')
@@ -135,8 +139,8 @@ def inspect_zip(archive, build, supported, exe):
     # Control scripts and licenses must be the current packaging sources, not merely valid ZIP entries.
     for name, source in PLAYER_SOURCES.items():
         require(archive.read(files[name]) == (ROOT / source).read_bytes(), 'Player control differs from packaging source: ' + name)
-    instructions = (ROOT / 'player/使用说明-v12.txt').read_text(encoding='utf8').replace(' v12\n', ' ' + player['version'] + '\n', 1)
-    require(archive.read(files['使用说明.txt']).decode('utf8').replace('\r\n', '\n') == instructions,
+    expected_instructions = instructions(supported, player['version'], ROOT)
+    require(archive.read(files['使用说明.txt']).decode('utf8').replace('\r\n', '\n') == expected_instructions,
             'Player instructions differ from the versioned packaging source')
     return root, player
 
@@ -148,24 +152,42 @@ def exercise_fixture(archive, root, player, original, exe):
         package = tmp / 'package' / root
         game = tmp / 'game'
         game.mkdir()
-        shutil.copy2(exe, game / 'CW3.exe')
+        layout = target_layout(player)
+        native = layout['target_id'] == MACOS
+        executable = game / layout['executable']
+        executable.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(exe, executable)
+        (game / layout['data_dir']).mkdir(parents=True, exist_ok=True)
         originals = {row['file']: row['before'] for row in player['files'] if row['before']}
         originals.update(player.get('required_originals', {}))
         for name, expected in originals.items():
             source = original / name
             require(sha(source) == expected, 'Original fixture hash mismatch: ' + name)
-            target = game / name
+            target = installed_path(game, name, player)
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, target)
+            # The disposable copy receives its own macOS provenance. Capture
+            # that fixture metadata and require install/restore to keep it.
+            atomic_copy(source, target)
+        original_metadata = {name: metadata(installed_path(game, name, player)) for name in originals} if native else {}
         sentinel = game / 'fixture-save.dat'
         sentinel.write_bytes(b'UNCHANGED SAVE SENTINEL')
         def run(action):
-            subprocess.run([sys.executable, str(package / 'install.py'), '--game', str(game), '--action', action], check=True, timeout=180)
+            # This sandbox cannot enumerate host processes. The fixture is
+            # isolated; exercise the shipped entry point with only its idle
+            # boundary replaced. The process matcher has a separate test.
+            entry = ('import sys,unittest.mock as mock\n'
+                     'sys.path.insert(0,sys.argv[1])\n'
+                     'import install\n'
+                     'sys.argv=["install.py","--game",sys.argv[2],"--action",sys.argv[3]]\n'
+                     'with mock.patch.object(install,"idle"):install.main()\n')
+            subprocess.run([sys.executable, '-c', entry, str(package), str(game), action], check=True, timeout=180)
         run('install')
-        require(all(sha(game / row['file']) == row['after'] for row in player['files']), 'Fixture installation hash mismatch')
+        require(all(sha(installed_path(game, row['file'], player)) == row['after'] for row in player['files']), 'Fixture installation hash mismatch')
         run('restore')
-        require(all(sha(game / row['file']) == row['before'] for row in player['files']), 'Fixture restoration hash mismatch')
-        require(all(sha(game / name) == expected for name, expected in originals.items()), 'Required original changed in fixture')
+        require(all(sha(installed_path(game, row['file'], player)) == row['before'] for row in player['files']), 'Fixture restoration hash mismatch')
+        require(all(sha(installed_path(game, name, player)) == expected for name, expected in originals.items()), 'Required original changed in fixture')
+        require(all(metadata(installed_path(game, name, player)) == expected for name, expected in original_metadata.items()), 'Original metadata changed in fixture')
+        require(sha(executable) == player['exe_sha256'], 'Fixture executable changed')
         require(sentinel.read_bytes() == b'UNCHANGED SAVE SENTINEL', 'Fixture save sentinel changed')
 
 
@@ -180,18 +202,18 @@ def main():
         path = Path(config[key])
         return path if path.is_absolute() else ROOT / path
     build = json.loads((loc('package') / 'manifest.json').read_text())
-    supported = json.loads((ROOT / 'resources/supported-build.json').read_text())
+    supported = supported_target(build)
     package = Path(args.package)
-    exe = loc('game') / 'CW3.exe'
+    exe = loc('game') / target_layout(supported)['executable']
     # Locked build inputs need no executable; installed-game and fixture checks still require it.
     checked_exe = None if args.inspect_only and not exe.is_file() else exe
     with zipfile.ZipFile(package) as archive:
         root, player = inspect_zip(archive, build, supported, checked_exe)
         if not args.inspect_only:
-            exercise_fixture(archive, root, player, loc('original'), loc('game') / 'CW3.exe')
+            exercise_fixture(archive, root, player, loc('original'), exe)
     print('ZIP SHA256:', sha(package))
     print('PASS ZIP integrity:', len(player['files']), 'payload files +', len(PLAYER_CONTROLS), 'player controls;', player['version'])
-    print('Supported target CW3.exe SHA256:', player['exe_sha256'])
+    print('Supported target executable SHA256:', player['exe_sha256'])
     print('Actual executable hash verified.' if checked_exe is not None else 'Actual executable unavailable; only the package target metadata was checked.')
     if 'source_commit' in player:
         print('Source commit:', player['source_commit'], '; source_dirty:', player.get('source_dirty'))
