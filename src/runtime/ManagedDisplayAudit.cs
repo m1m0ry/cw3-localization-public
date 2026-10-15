@@ -5,7 +5,7 @@ internal class ManagedDisplayAudit {
   internal string Classification,Consumer,Reason;
   internal Finding(string classification,string consumer,string reason){Classification=classification;Consumer=consumer;Reason=reason;}
  }
- internal sealed class Binding {internal string Id,Stage;}
+ internal sealed class Binding {internal string Id;}
  internal static IEnumerable<TypeDefinition> Types(IEnumerable<TypeDefinition> types){foreach(var t in types){yield return t;foreach(var n in Types(t.NestedTypes))yield return n;}}
  internal static string Key(MethodDefinition m,int at){return m.MetadataToken.ToInt32()+":"+at;}
  internal static Finding Classify(MethodDefinition m,Instruction source){
@@ -24,33 +24,24 @@ internal class ManagedDisplayAudit {
   }
   return new Finding("unknown","",rejected);
  }
- internal static Dictionary<string,Binding> Bindings(AssemblyDefinition original,AssemblyDefinition render,Hashtable doc){
-  var bound=new Dictionary<string,Binding>();var stages=new Dictionary<int,Dictionary<int,int>>();var nativeMethods=Types(original.MainModule.Types).SelectMany(x=>x.Methods).ToDictionary(x=>x.FullName);
+ internal static Dictionary<string,Binding> Bindings(AssemblyDefinition original,Hashtable doc){
+  var bound=new Dictionary<string,Binding>();
   foreach(Hashtable e in(ArrayList)doc["entries"]){var t=(Hashtable)e["target"];if((string)t["kind"]!="managed")continue;
-   string stage=(string)t["stage"];if(stage!="v9"&&stage!="v10")throw new Exception("Unknown binding stage "+stage);
-   int token=(int)t["method_token"],at=(int)t["instruction_index"];var m=(MethodDefinition)(stage=="v9"?original:render).MainModule.LookupToken(token);
-   if(!m.HasBody||at<0||at>=m.Body.Instructions.Count||m.Body.Instructions[at].OpCode!=OpCodes.Ldstr||(string)m.Body.Instructions[at].Operand!=(string)e["source"])throw new Exception("Binding source drift: "+e["id"]);
-   MethodDefinition native;if(!nativeMethods.TryGetValue(m.FullName,out native))throw new Exception("Original binding method missing: "+m.FullName);int nativeAt=at;
-   if(stage=="v10"){
-    Dictionary<int,int> map;if(!stages.TryGetValue(token,out map)){
-     if(native.FullName!=m.FullName)throw new Exception("Binding method identity drift");var before=native.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr).ToArray();var after=m.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr).ToArray();
-     if(!before.Select(i=>(string)i.Operand).SequenceEqual(after.Select(i=>(string)i.Operand)))throw new Exception("Stage literal sequence drift: "+m.FullName);
-     map=new Dictionary<int,int>();for(int n=0;n<before.Length;n++)map.Add(m.Body.Instructions.IndexOf(after[n]),native.Body.Instructions.IndexOf(before[n]));stages.Add(token,map);
-    }
-    nativeAt=map[at];
-   }
-   string k=Key(native,nativeAt);if(bound.ContainsKey(k))throw new Exception("Duplicate physical binding: "+k);bound.Add(k,new Binding{Id=(string)e["id"],Stage=stage});
+   if(t.Count!=5)throw new Exception("Expected pristine anchored binding");
+   int token=(int)t["method_token"],at=(int)t["instruction_index"];var m=(MethodDefinition)original.MainModule.LookupToken(token);
+   BindingAnchor.Require(m,at,(string)t["method"],(string)e["source"],(string)t["anchor_sha256"]);
+   string k=Key(m,at);if(bound.ContainsKey(k))throw new Exception("Duplicate physical binding: "+k);bound.Add(k,new Binding{Id=(string)e["id"]});
   }
   return bound;
  }
  static string B(string s){return Convert.ToBase64String(Encoding.UTF8.GetBytes(s));}
  static void Main(string[]a){
-  if(a.Length!=3)throw new ArgumentException("original.dll render.dll dictionary.json required");
-  using(var native=AssemblyDefinition.ReadAssembly(a[0]))using(var render=AssemblyDefinition.ReadAssembly(a[1])){
-   var bound=Bindings(native,render,(Hashtable)Json.Read(File.ReadAllText(a[2])));int total=0;
+  if(a.Length!=2)throw new ArgumentException("original.dll dictionary.json required");
+  using(var native=AssemblyDefinition.ReadAssembly(a[0])){
+   var bound=Bindings(native,(Hashtable)Json.Read(File.ReadAllText(a[1])));int total=0;
    foreach(var type in Types(native.MainModule.Types))foreach(var m in type.Methods.Where(x=>x.HasBody))for(int at=0;at<m.Body.Instructions.Count;at++){
     var i=m.Body.Instructions[at];if(i.OpCode!=OpCodes.Ldstr)continue;var f=Classify(m,i);Binding b;bool adopted=bound.TryGetValue(Key(m,at),out b);
-    Console.WriteLine(String.Join("\t",new[]{adopted?"bound":f.Classification,f.Classification,m.MetadataToken.ToInt32().ToString(),at.ToString(),i.Offset.ToString(),B(m.FullName),B((string)i.Operand),B(f.Consumer),B(f.Reason),B(adopted?b.Id:""),adopted?b.Stage:""}));total++;
+    Console.WriteLine(String.Join("\t",new[]{adopted?"bound":f.Classification,f.Classification,m.MetadataToken.ToInt32().ToString(),at.ToString(),i.Offset.ToString(),B(m.FullName),B((string)i.Operand),B(f.Consumer),B(f.Reason),B(adopted?b.Id:"")}));total++;
    }
    Console.Error.WriteLine(total+" ldstr instructions; "+bound.Count+" validated managed bindings");
   }

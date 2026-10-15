@@ -52,7 +52,7 @@ python3 tools/audit_managed_display.py \
   --output local-only/managed-review-new.json
 ```
 
-`--suite` 可重复、去重，只运行所选 C# 套件；不指定时运行全套。IL 审计区分已有绑定、显示候选、内部键及未知，不自动改译文。配置须指向对应 `managed/render.dll`，输出使用新的 `local-only` 路径。
+`--suite` 可重复、去重，只运行所选 C# 套件；不指定时运行全套。IL 审计区分已有绑定、显示候选、内部键及未知，不自动改译文。配置须提供已校验的原版输入，输出使用新的 `local-only` 路径。
 
 漏译候选采集默认关闭。创建游戏目录下的 `CW3Localization/discover.enabled` 并重启可启用，删除后重启关闭；结果写入同目录 `candidates.json`，需人工审核，不自动翻译或上传。
 

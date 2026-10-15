@@ -24,7 +24,7 @@ def definitions(entries,original,expected_platform=5):
         return (object_path(f,f.objects[parent].parse_as_dict()['m_GameObject']['m_PathID'])+'/' if parent else '')+go['m_Name']
     for e in entries:
         t=e['target'];d={k:e[k] for k in ('id','source')};d['kind']=t['kind']
-        if t['kind']=='managed':d.update(site=str(t['method_token'])+':'+str(t['instruction_index']),stage=t['stage'])
+        if t['kind']=='managed':d.update(site=str(t['method_token'])+':'+str(t['instruction_index']))
         if t['kind'] in ('label','textmesh'):
             f=resource(t['file']);o=f.objects[t['object_id']]
             gid=struct.unpack_from('<q',o.get_raw_data(),4)[0] if t['kind']=='label' else o.parse_as_dict()['m_GameObject']['m_PathID']
@@ -132,8 +132,7 @@ def _build(config,out,final_out):
     for e in entries:
         t=e['target']
         if t['kind']=='managed':
-            row=[str(t['method_token']),str(t['instruction_index']),e['id'],base64.b64encode(e['source'].encode()).decode(),t['stage'], 'event' if e['context'].startswith('Native event caption / ') else 'gui' if e['context'].startswith('GUI caption / ') else 'label' if e['context'].startswith('UILabel caption / ') else '']
-            if layout['platform']==2:row += [base64.b64encode(t['method'].encode()).decode(),t['anchor_sha256']]
+            row=[str(t['method_token']),str(t['instruction_index']),e['id'],base64.b64encode(e['source'].encode()).decode(), 'event' if e['context'].startswith('Native event caption / ') else 'gui' if e['context'].startswith('GUI caption / ') else 'label' if e['context'].startswith('UILabel caption / ') else '',base64.b64encode(t['method'].encode()).decode(),t['anchor_sha256']]
             rows.append('\t'.join(row))
     (generated/'managed.tsv').write_text('\n'.join(rows)+'\n')
     planned=list(resource_plan(layout));changed_names={name for name,fixes,embedded in planned}

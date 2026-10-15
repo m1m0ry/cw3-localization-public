@@ -11,7 +11,7 @@ class SlimResources(unittest.TestCase):
                 out=Path(folder)/'candidate';target=out/leftover;target.parent.mkdir(parents=True)
                 if leftover=='empty-directory':target.mkdir()
                 else:target.write_bytes(b'KEEP')
-                with self.assertRaisesRegex(ValueError,'empty output directory'):independent.build({},out)
+                with self.assertRaisesRegex(ValueError,'empty output directory'):independent.build({'target_id':'windows-steam-22453699'},out)
                 if leftover!='empty-directory':self.assertEqual(target.read_bytes(),b'KEEP')
                 self.assertFalse((out/'generated').exists())
 
@@ -30,7 +30,7 @@ class SlimResources(unittest.TestCase):
             self.assertTrue(text_style.validate_font(root/'local-only/independent-font/font.ttf','sans'))
             out=root/'candidate'
             with patch.object(independent,'ROOT',root),self.assertRaisesRegex(ValueError,'Font hash differs'):
-                independent.build({},out)
+                independent.build({'target_id':'windows-steam-22453699'},out)
             self.assertFalse(out.exists())
 
     def test_only_four_repaired_resources_are_serialized(self):

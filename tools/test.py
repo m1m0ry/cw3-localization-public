@@ -71,7 +71,7 @@ class Contracts:
             if name=='AssemblyStructureContracts':self.execute(name,[ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],flags=flags+['-r:System.Core'])
             elif name=='GuiCaptionContracts':self.execute(name,[runtime/'GuiCaptionAudit.cs',test/(name+'.cs')],flags=flags)
             elif name=='NativeNoticeContracts':self.execute(name,[runtime/s for s in ('NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs','MessageBindings.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(targets)],flags+['-r:System.Core'])
-            elif name=='ManagedDisplayContracts':self.execute(name,[runtime/s for s in ('ManagedDisplayAudit.cs','NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(m.location('build').parent/'managed/render.dll'),w(targets)],flags+['-r:System.Core','-main:ManagedDisplayContracts'])
+            elif name=='ManagedDisplayContracts':self.execute(name,[runtime/s for s in ('ManagedDisplayAudit.cs','NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs')]+[ROOT/'src/verification/BindingAnchor.cs',test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(targets)],flags+['-r:System.Core','-main:ManagedDisplayContracts'])
             elif name=='MainMenuClickContracts':
                 menu=m.compile(o,'MainMenuClickFixture.exe',[test/'MainMenuClickFixture.cs']);patched=o/'MainMenuClickFixture.patched.exe';reversed_=o/'MainMenuClickFixture.reversed.exe'
                 m.run(menu,['original']);self.execute(name,[runtime/'MainMenuClickPatch.cs',test/(name+'.cs')],[w(menu),w(patched),w(reversed_)],flags)

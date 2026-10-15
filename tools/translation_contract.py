@@ -38,6 +38,11 @@ def check(doc, locks, codepoints):
         assert all(isinstance(e[k], str) and e[k] for k in ('id','source','context','translation')), e['id']
         payload = json.dumps({k:e[k] for k in ('id','source','target')}, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()
         assert hashlib.sha256(payload).hexdigest() == locks[e['id']], 'Immutable target/source changed: ' + e['id']
+        t=e['target']
+        if t['kind']=='managed':
+            assert set(t)=={'kind','method_token','instruction_index','method','anchor_sha256'}, 'Managed binding must use pristine anchored coordinates'
+            assert type(t['method_token']) is int and t['method_token']>0 and type(t['instruction_index']) is int and t['instruction_index']>=0, 'Invalid managed coordinates'
+            assert isinstance(t['method'],str) and t['method'] and isinstance(t['anchor_sha256'],str) and re.fullmatch(r'[a-f0-9]{64}',t['anchor_sha256']), 'Missing managed method/IL anchor'
         for rx in tokens:
             assert re.findall(rx, e['source']) == re.findall(rx, e['translation']), 'Placeholder/tag mismatch or order changed: ' + e['id']
         if e['target']['kind'] == 'crpl':

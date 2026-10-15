@@ -169,8 +169,8 @@ def resolve(entries, original, profile):
             target = row['target']
             require(target.get('kind') == kind, 'Mac binding kind mismatch: ' + ident)
             if kind == 'managed':
-                require(set(target) == {'kind', 'stage', 'method_token', 'instruction_index', 'method', 'anchor_sha256'}, 'Invalid managed binding fields')
-                require(target['stage'] == 'v9' and type(target['method_token']) is int and target['method_token'] > 0 and type(target['instruction_index']) is int and target['instruction_index'] >= 0, 'Mac managed coordinates must be pristine')
+                require(set(target) == {'kind', 'method_token', 'instruction_index', 'method', 'anchor_sha256'}, 'Invalid managed binding fields')
+                require(type(target['method_token']) is int and target['method_token'] > 0 and type(target['instruction_index']) is int and target['instruction_index'] >= 0, 'Mac managed coordinates must be pristine')
                 require(isinstance(target['method'], str) and target['method'] and isinstance(target['anchor_sha256'], str) and len(target['anchor_sha256']) == 64 and all(c in '0123456789abcdef' for c in target['anchor_sha256']), 'Missing managed method/IL anchor')
                 key = (kind, target['method_token'], target['instruction_index'])
             else:
@@ -200,7 +200,7 @@ def extract(entries, windows, original, profile, managed_rows):
     for line in managed_rows.splitlines():
         ident, token, index, method, fingerprint, source = line.split('\t')
         require(ident not in managed, 'Duplicate managed extraction ID')
-        managed[ident] = (dict(kind='managed', stage='v9', method_token=int(token), instruction_index=int(index),
+        managed[ident] = (dict(kind='managed', method_token=int(token), instruction_index=int(index),
                               method=base64.b64decode(method, validate=True).decode(), anchor_sha256=fingerprint),
                           base64.b64decode(source, validate=True).decode())
     expected = {e['id'] for e in entries if e['target']['kind'] == 'managed'}
