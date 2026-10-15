@@ -1,10 +1,6 @@
 """Validate explicitly reviewed CRPL output positions; never rewrite script variables."""
 import hashlib,re
-from resource_text import crpl_literals
-
-def show_calls(code):
-    masked=re.sub(r'"(?:\\.|[^"\\])*"|#[^\r\n]*',lambda m:' '*len(m[0]),code)
-    return list(re.finditer(r'\bShowMessage(?:Dismissible)?\b',masked))
+from resource_text import crpl_literals,show_calls
 
 def output_definition(code,target,source):
     assert hashlib.sha256(code.encode('utf8')).hexdigest()==target['script_sha256'],'Output script drift'

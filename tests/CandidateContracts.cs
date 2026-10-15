@@ -3,7 +3,7 @@ class CandidateContracts {
  static void Need(bool value,string message){if(!value)throw new Exception(message);}
  static void Main(string[] args){
   string dir=args[0],file=Path.Combine(dir,"candidates-contract.json");if(File.Exists(file))File.Delete(file);
-  var off=new Candidates(false,Path.Combine(dir,"absent","candidates.json"));off.Record(0,"OK","label","MainMenu","Button/Label","unbound_source","");off.Tick(99);off.Finish();Need(!Directory.Exists(Path.Combine(dir,"absent")),"Disabled collector touched filesystem");
+  var off=new Candidates(false,Path.Combine(dir,"absent","candidates.json"));for(int i=0;i<129;i++)off.Record(0,"OK","label","MainMenu","Button/Label","unbound_source","");off.Tick(99);off.Finish();Need(!Directory.Exists(Path.Combine(dir,"absent")),"Disabled collector touched filesystem");
   Need(Candidates.Useful("OK")&&Candidates.Useful("No")&&Candidates.Useful("X")&&Candidates.Useful("CREEPER WORLD 4 NOW AVAILABLE! ->")&&Candidates.Useful("Open the map file map.cw3"),"Short buttons lost");
   foreach(string text in new[]{"123:45", "1024x768", "30.1 30.1 1X", "C:\\Game\\CW3.exe", "https://example.invalid", "Alpha3", "DEACTIVATE", "1 ->x", ":loop 1 ->x", "翻译完成", "person@example.invalid"})Need(!Candidates.Useful(text),"Noise accepted: "+text);
   Need(!Candidates.Useful("Score: {0}; Sent: {1}")&&Candidates.Useful("Score: {0}; Sent: {1}",true),"Only reviewed templates bypass the code heuristic");
@@ -11,6 +11,11 @@ class CandidateContracts {
   c.Tick(0);c.Finish();var doc=(Hashtable)Json.Read(File.ReadAllText(file));var rows=(ArrayList)doc["candidates"];Need(rows.Count==3,"Context deduplication or bound button missing");Need((int)((Hashtable)rows[0])["count"]==2,"Observation count");
   c.Tick(60);Need((int)((Hashtable)Json.Read(c.Status()))["writes"]==1,"Idle flush wrote again");
   for(int i=0;i<600;i++)c.Record(100+i,"Candidate "+i,"label","Game","Label","unbound_source","");c.Finish();doc=(Hashtable)Json.Read(File.ReadAllText(file));Need(((ArrayList)doc["candidates"]).Count==Candidates.Limit,"Unbounded snapshot");Need(new FileInfo(file).Length<2000000,"Snapshot exceeds bound");Need((int)((Hashtable)doc["stats"])["capacity_limited"]==347,"Capacity limit counter drift");
+  string previousSession=(string)doc["session"];var filtered=new Candidates(true,file);
+  for(int i=0;i<129;i++)filtered.Record(200,"123:45","label","Game","Label","unbound_source","");
+  filtered.Tick(0);Need(filtered.Finish(),"Filtered and limited empty session flush");doc=(Hashtable)Json.Read(File.ReadAllText(file));
+  Need((string)doc["session"]!=previousSession&&((ArrayList)doc["candidates"]).Count==0,"First-frame filtering/limit retained the previous session");
+  var filteredStats=(Hashtable)doc["stats"];Need((int)filteredStats["filtered"]==128&&(int)filteredStats["frame_limited"]==1,"Filtered empty session limit counters");
   var empty=new Candidates(true,file);empty.Tick(0);Need(empty.Finish(),"Empty session flush");doc=(Hashtable)Json.Read(File.ReadAllText(file));Need(((ArrayList)doc["candidates"]).Count==0,"Old session survived zero-candidate run");
   using(var release=new ManualResetEvent(false)){var slow=new Candidates(true,Path.Combine(dir,"slow.json"),()=>release.WaitOne());slow.Tick(0);var timer=Stopwatch.StartNew();Need(!slow.Finish(),"Blocked IO reported complete");Need(timer.ElapsedMilliseconds<1800,"Exit wait unbounded");var status=(Hashtable)Json.Read(slow.Status());Need((bool)status["finish_timed_out"]&&(bool)status["write_pending"],"Pending final write not reported");release.Set();Need(slow.Finish(),"Released worker did not finish");}
   File.Delete(file);var failed=new Candidates(true,Path.Combine(dir,"absent","out.json"));failed.Record(0,"OK","label","Game","Label","unbound_source","");failed.Finish();Need(!failed.Enabled,"IO failure did not disable safely");Need(!File.Exists(Path.Combine(dir,"absent","out.json.tmp")),"IO failure left temporary snapshot");Console.WriteLine("PASS disabled no IO, filtering/short buttons, context deduplication, bounded snapshots/throttled writes, empty sessions and bounded final IO status.");

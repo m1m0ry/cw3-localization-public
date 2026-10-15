@@ -11,10 +11,9 @@ public static partial class CW3Runtime {
  static string[] guiArguments;static string lastScript,lastHash;static WeakReference ordinalCommands;static int[] outputOrdinals;
  static readonly List<Hashtable> displayLabels=new List<Hashtable>();
  sealed class MeshMaterial {internal Material Current;internal readonly List<Material> Created=new List<Material>();}
+ sealed class MeshState {internal TextMesh Mesh;internal string Original;internal MeshMaterial Material;}
  static bool rebuildingFont;
- static readonly Dictionary<int,TextMesh> meshOwners=new Dictionary<int,TextMesh>();
- static readonly Dictionary<int,string> meshOriginal=new Dictionary<int,string>();
- static readonly Dictionary<int,MeshMaterial> meshMaterials=new Dictionary<int,MeshMaterial>();
+ static readonly Dictionary<int,MeshState> meshes=new Dictionary<int,MeshState>();
  static Font external,guiExternal;static bool loaded;static string guiId,guiOriginal;static CW3RuntimePump pump;
  static string S(Hashtable d,string k){return d[k] as string;}
  static object Get(object value,string name){if(value==null)return null;Type t=value as Type??value.GetType();var f=t.GetField(name,Flags);if(f!=null)return f.GetValue(value is Type?null:value);var p=t.GetProperty(name,Flags);return p==null?null:p.GetValue(value,null);}
@@ -50,7 +49,10 @@ public static partial class CW3Runtime {
  // Borrow game-owned instances (SetColor keeps one). Track only instances this bridge creates.
  static void MeshFont(TextMesh mesh){
   if(mesh==null||mesh.font==null)return;var renderer=mesh.GetComponent<Renderer>();if(renderer==null)return;
-  MeshMaterial state;if(!meshMaterials.TryGetValue(mesh.GetInstanceID(),out state))meshMaterials.Add(mesh.GetInstanceID(),state=new MeshMaterial());
+  // A record can exist before a renderer/font is ready. Keep material ownership
+  // optional, and never recreate an owner after its lifetime has released it.
+  MeshState owner;if(!meshes.TryGetValue(mesh.GetInstanceID(),out owner))return;
+  MeshMaterial state=owner.Material;if(state==null)owner.Material=state=new MeshMaterial();
   if(state.Current==null||state.Current!=renderer.sharedMaterial){
    Material previous=renderer.sharedMaterial,current=renderer.material;
    if(current==null){current=new Material(mesh.font.material);renderer.sharedMaterial=current;}
@@ -62,16 +64,16 @@ public static partial class CW3Runtime {
   var report=new Hashtable();if(mesh==null){report["status"]="missing_mesh";return report;}
   var renderer=mesh.GetComponent<Renderer>();Material material=renderer==null?null:renderer.sharedMaterial;
   var fade=mesh.GetComponent("SetColor");Material held=Get(fade,"material") as Material;
-  MeshMaterial state;bool tracked=meshMaterials.TryGetValue(mesh.GetInstanceID(),out state);
+  MeshState owner;MeshMaterial state=meshes.TryGetValue(mesh.GetInstanceID(),out owner)?owner.Material:null;bool tracked=state!=null;
   report["status"]=material==null?"missing_renderer_material":held!=null&&held!=material?"fade_material_mismatch":tracked&&state.Current!=material?"renderer_material_changed":"ready";
   report["material_owned"]=tracked&&material!=null&&state.Created.Contains(material);
   return report;
  }
- static void RememberMesh(TextMesh mesh,string original){int id=mesh.GetInstanceID();meshOwners[id]=mesh;meshOriginal[id]=original;var lifetime=mesh.GetComponent<CW3MeshLifetime>();if(lifetime==null)lifetime=mesh.gameObject.AddComponent<CW3MeshLifetime>();lifetime.MeshId=id;}
- internal static void ReleaseMesh(int id){MeshMaterial state;if(meshMaterials.TryGetValue(id,out state)){foreach(var material in state.Created)if(material!=null)UnityEngine.Object.Destroy(material);meshMaterials.Remove(id);}meshOwners.Remove(id);meshOriginal.Remove(id);TextStyles.ReleaseMesh(id);}
+ static void RememberMesh(TextMesh mesh,string original){int id=mesh.GetInstanceID();MeshState state;if(!meshes.TryGetValue(id,out state))meshes.Add(id,state=new MeshState());state.Mesh=mesh;state.Original=original;var lifetime=mesh.GetComponent<CW3MeshLifetime>();if(lifetime==null)lifetime=mesh.gameObject.AddComponent<CW3MeshLifetime>();lifetime.MeshId=id;}
+ internal static void ReleaseMesh(int id){MeshState state;if(meshes.TryGetValue(id,out state)){if(state.Material!=null)foreach(var material in state.Material.Created)if(material!=null)UnityEngine.Object.Destroy(material);meshes.Remove(id);}TextStyles.ReleaseMesh(id);}
  public static void SetMesh(TextMesh mesh,string original){Load();RememberMesh(mesh,original);string display=ForComponent(original,mesh,"textmesh");TextStyles.Mesh(mesh,display,TextStylePolicy.Role(mesh.name,PathOf(mesh)));MeshFont(mesh);mesh.text=display;RefreshSizedMesh(mesh);}
  public static void SetNamedMesh(TextMesh mesh,string original,object owner){Load();RememberMesh(mesh,original);string display=ForName(original,owner);TextStyles.Mesh(mesh,display,TextStylePolicy.Title);MeshFont(mesh);mesh.text=display;RefreshSizedMesh(mesh);}
- public static string OriginalMesh(TextMesh mesh){string text;return meshOriginal.TryGetValue(mesh.GetInstanceID(),out text)?text:mesh.text;}
+ public static string OriginalMesh(TextMesh mesh){MeshState state;return meshes.TryGetValue(mesh.GetInstanceID(),out state)?state.Original:mesh.text;}
  public static string ForName(string original,object owner){Load();List<Hashtable> list;if(original==null||owner==null)return original;string guid=Get(owner,"GUID") as string;if(sources.TryGetValue(original,out list))foreach(var d in list)if(S(d,"owner")==owner.GetType().Name&&S(d,"guid")==guid)return Text(S(d,"id"),original);Observe(original,"xml_name",owner.GetType().Name+":"+guid,"unbound_context","");return original;}
  // Resource identity comes from native loaders, before their XML loses that identity.
  static string HashBytes(byte[] data){if(data==null)return null;using(var h=SHA256.Create())return BitConverter.ToString(h.ComputeHash(data)).Replace("-","").ToLowerInvariant();}
@@ -128,8 +130,8 @@ public static partial class CW3Runtime {
  }
  internal static Hashtable ApplySizes(TextStylePolicy saved){Load();return TextStyles.ApplySizes(saved,label=>PrepareStyledLabel(label),mesh=>RefreshSizedMesh(mesh));}
  static void FontRebuilt(Font f){if(!TextStyles.Owns(f)||rebuildingFont)return;rebuildingFont=true;try{TextStyles.Rebuilt(f,PrepareStyledLabel,(mesh,refit)=>{if(refit)RefreshSizedMesh(mesh);else MeshFont(mesh);mesh.text=mesh.text;});}finally{rebuildingFont=false;}}
- internal static void Scan(){Load();Scene();FontSettingsView.Bind();foreach(TextMesh mesh in Resources.FindObjectsOfTypeAll(typeof(TextMesh))){if(mesh==null)continue;int id=mesh.GetInstanceID();if(!meshOriginal.ContainsKey(id))SetMesh(mesh,mesh.text);}}
- internal static void Scene(){messageBindings.Cleanup(owner=>owner is UnityEngine.Object&&(UnityEngine.Object)owner==null);var dead=new List<int>();foreach(var pair in meshOwners)if(pair.Value==null)dead.Add(pair.Key);foreach(int id in dead)ReleaseMesh(id);TextStyles.Cleanup();}
+ internal static void Scan(){Load();Scene();FontSettingsView.Bind();foreach(TextMesh mesh in Resources.FindObjectsOfTypeAll(typeof(TextMesh))){if(mesh==null)continue;int id=mesh.GetInstanceID();if(!meshes.ContainsKey(id))SetMesh(mesh,mesh.text);}}
+ internal static void Scene(){messageBindings.Cleanup(owner=>owner is UnityEngine.Object&&(UnityEngine.Object)owner==null);var dead=new List<int>();foreach(var pair in meshes)if(pair.Value.Mesh==null)dead.Add(pair.Key);foreach(int id in dead)ReleaseMesh(id);TextStyles.Cleanup();}
 }
 public sealed class CW3RuntimePump:MonoBehaviour {
  int frames=4;void OnLevelWasLoaded(int level){FontSettingsView.Scene();CW3Runtime.Scene();frames=4;}void LateUpdate(){if(frames>0){frames--;CW3Runtime.Scan();}FontSettingsView.Tick();CW3Runtime.DiscoveryTick();}void OnGUI(){FontSettingsView.Draw();}void OnApplicationQuit(){CW3Runtime.DiscoveryFlush();TextStyles.Shutdown();}void OnDestroy(){FontSettingsView.Scene();CW3Runtime.Scene();}

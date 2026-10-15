@@ -16,7 +16,8 @@ internal sealed class Candidates {
  }
  internal void Record(int currentFrame,string source,string kind,string scene,string context,string reason,string id){
   if(!Enabled)return;long start=Stopwatch.GetTimestamp();try{
-   if(frame!=currentFrame){frame=currentFrame;inFrame=0;}if(inFrame++>=PerFrame){frameLimited++;dirty=rows.Count>0;return;}events++;
+   // Limiting observations must not cancel the initial empty-session snapshot.
+   if(frame!=currentFrame){frame=currentFrame;inFrame=0;}if(inFrame++>=PerFrame){frameLimited++;dirty|=rows.Count>0;return;}events++;
    if(!Useful(source,!String.IsNullOrEmpty(id))){filtered++;return;}scene=Bound(scene,64);context=Bound(context,256);kind=Bound(kind,32);reason=Bound(reason,48);id=Bound(id,64);
    string key=String.Join("\0",new[]{source,kind,scene,context,reason,id});Row row;
    if(rows.TryGetValue(key,out row)){if(row.count<Int32.MaxValue)row.count++;dirty=true;return;}

@@ -3,8 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-class Verify {
- static List<Instruction> Clean(MethodDefinition m){return m.HasBody?m.Body.Instructions.ToList():new List<Instruction>();}
+
+// Compare only after each stage has reversed its own explicitly allowed edits.
+// No exclusions belong here: rendering, runtime and debug own their reversal rules.
+internal static class AssemblyStructure {
+ internal static IEnumerable<TypeDefinition> Types(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var u in Types(n))yield return u;}
+ static List<Instruction> Instructions(MethodDefinition m){return m.HasBody?m.Body.Instructions.ToList():new List<Instruction>();}
  static string Op(Instruction i,List<Instruction> list){
   string name=i.OpCode.Name;if(name.EndsWith(".s")&&i.Operand is Instruction)name=name.Substring(0,name.Length-2);
   object operand=i.Operand;
@@ -14,17 +18,9 @@ class Verify {
   return name+" "+(operand==null?"":operand.ToString());
  }
  static void Require(bool b,string msg){if(!b)throw new Exception(msg);}
- static System.Collections.Generic.IEnumerable<TypeDefinition> All(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var u in All(n))yield return u;}
- static void Main(string[] a){
-  var old=AssemblyDefinition.ReadAssembly(a[0]);var patch=AssemblyDefinition.ReadAssembly(a[1]);int methods=0,instructions=0;
-  var process=patch.MainModule.GetType("UILabel").Methods.Single(m=>m.Name=="ProcessText");var ii=process.Body.Instructions;int removed=0;for(int k=0;k<ii.Count-2;k++){var field=ii[k].Operand as FieldReference;var call=ii[k+2].Operand as MethodReference;if(ii[k].OpCode==OpCodes.Ldfld&&field!=null&&field.Name=="mText"&&ii[k+1].OpCode==OpCodes.Ldarg_0&&ii[k+2].OpCode==OpCodes.Call&&call!=null&&call.DeclaringType.Name=="CW3Display"&&call.Name=="ForLabel"){ii.RemoveAt(k+2);ii.RemoveAt(k+1);removed++;}}Require(removed==3,"Exactly three display reads required");
-
-  foreach(var line in System.IO.File.ReadAllLines(a[2])){
-   var c=line.Split('\t');var originalMethod=(MethodDefinition)old.MainModule.LookupToken(Int32.Parse(c[0]));var m=patch.MainModule.Types.SelectMany(t=>All(t)).SelectMany(t=>t.Methods).Single(t=>t.FullName==originalMethod.FullName);var i=m.Body.Instructions[Int32.Parse(c[1])];
-   string src=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[2]));string dst=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[3]));
-   Require(i.OpCode==OpCodes.Ldstr&&(string)i.Operand==dst,"translated display site mismatch");i.Operand=src;
-  }
-  var ot=old.MainModule.Types.SelectMany(t=>All(t)).ToList();var nt=patch.MainModule.Types.SelectMany(t=>All(t)).ToList();
+ internal static void RequireSame(AssemblyDefinition old,AssemblyDefinition patch,out int methods,out int instructions){
+  methods=0;instructions=0;
+  var ot=old.MainModule.Types.SelectMany(Types).ToList();var nt=patch.MainModule.Types.SelectMany(Types).ToList();
   Require(ot.Count==nt.Count,"type count");
   for(int ti=0;ti<ot.Count;ti++){
    var t=ot[ti];var u=nt[ti];
@@ -33,7 +29,7 @@ class Verify {
    Require(t.Methods.Count==u.Methods.Count,"method count");
    for(int mi=0;mi<t.Methods.Count;mi++){
     var m=t.Methods[mi];var n=u.Methods[mi];Require(m.FullName==n.FullName&&m.Attributes==n.Attributes,"method identity");
-    var x=Clean(m);var y=Clean(n);
+    var x=Instructions(m);var y=Instructions(n);
     Require(x.Select(i=>Op(i,x)).SequenceEqual(y.Select(i=>Op(i,y))),"logic changed: "+m.FullName);
     if(m.HasBody){Require(m.Body.ExceptionHandlers.Count==n.Body.ExceptionHandlers.Count,"EH count");
      for(int ei=0;ei<m.Body.ExceptionHandlers.Count;ei++){
@@ -45,6 +41,5 @@ class Verify {
     methods++;instructions+=x.Count;
    }
   }
-  Console.WriteLine("PASS: original types, field order, method signatures, "+methods+" methods and "+instructions+" IL instructions unchanged after reverting only manifest-listed display string operands.");
  }
 }

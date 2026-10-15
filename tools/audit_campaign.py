@@ -1,25 +1,8 @@
 """Read-only audit of CW3 2.12 bundled message bodies and script display calls, including variable and concatenated outputs."""
 from pathlib import Path
 import argparse,base64,collections,json,re,xml.etree.ElementTree as ET
-from resource_text import unpack_script,paths,scripts,crpl_literals
+from resource_text import unpack_script,paths,scripts,display_calls,show_calls
 ROOT=Path(__file__).resolve().parents[1]
-
-def display_calls(code):
-    # CW3's lexer treats # outside quotes as a comment. Preserve offsets and line numbers.
-    clean=list(code);quoted=False;comment=False
-    for i,ch in enumerate(code):
-        if ch=='\n':comment=False
-        if ch=='"' and not comment:quoted=not quoted
-        if ch=='#' and not quoted:comment=True
-        if comment and ch!='\n':clean[i]=' '
-    clean=''.join(clean)
-    for index,hit in enumerate(crpl_literals(code)):
-        if clean[hit.start()]!='"':continue
-        prefix=clean[:hit.start()];suffix=clean[hit.end():]
-        function=re.search(r'(AddConversationMessage|ShowMessage(?:Dismissible)?)\(\s*[^"()\n]*$',prefix)
-        postfix=re.match(r'\s*(?:-?\d+\s+|(?:Screen\w+\s+|\d+\s+sub\s+))*(AddConversationMessage|ShowMessage(?:Dismissible)?)\b',suffix)
-        call=function.group(1) if function else postfix.group(1) if postfix else None
-        if call:yield index,'conversation' if call=='AddConversationMessage' else 'show',hit.group()[1:-1]
 
 def audit(original,entries):
     from unity15_metadata import read_unity15_metadata
@@ -56,14 +39,12 @@ def audit(original,entries):
             if node.tag!='scripts' or not (node.text or '').strip():continue
             for script,encoded in scripts(node.text).items():
                 code=base64.b64decode(encoded,validate=True).decode('utf-16le')
-                from script_outputs import show_calls,output_definition
-                calls=show_calls(code);registered=set();literals=crpl_literals(code)
-                for index,family,source in display_calls(code):
-                    if re.search('[A-Za-z\u3400-\u9fff]',source):check((file,ref['m_PathID'],xp,script,index),source,name+'/'+script+' literal '+str(index),family)
-                    if family=='show':
-                        hit=literals[index];function=re.search(r'(ShowMessage(?:Dismissible)?)\(\s*[^"()\n]*$',code[:hit.start()]);postfix=re.match(r'\s*(?:-?\d+\s+|(?:Screen\w+\s+|\d+\s+sub\s+))*(ShowMessage(?:Dismissible)?)\b',code[hit.end():])
-                        offset=function.start() if function else hit.end()+postfix.start(1)
-                        registered.update(i for i,c in enumerate(calls)if c.start()==offset)
+                from script_outputs import output_definition
+                calls=show_calls(code);registered=set()
+                for site in display_calls(code):
+                    if re.search('[A-Za-z\u3400-\u9fff]',site.source):check((file,ref['m_PathID'],xp,script,site.literal_index),site.source,name+'/'+script+' literal '+str(site.literal_index),site.family)
+                    if site.family=='show':
+                        registered.update(i for i,c in enumerate(calls)if c.start()==site.call_offset)
                 for ordinal,call in enumerate(calls):
                     counts['show_call_positions']+=1;key=(file,ref['m_PathID'],xp,script,ordinal)
                     rows=outputs.get(key,[])
