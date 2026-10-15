@@ -1,6 +1,11 @@
 {
   "original_hashes": {
     "CW3_Data/Managed/Assembly-CSharp.dll": "36cfba7d5e8408a78d5a16c2bbf5b6f59403c16375cbbf03f39cbfe53a0b9e2e",
+    "CW3_Data/Managed/mscorlib.dll": "87b4bf6434902f2397212661b348d7df0769e6d13e918b72dc4ab9b18443e39c",
+    "CW3_Data/Managed/UnityEngine.dll": "b8571fa89cf7f70fb5e50e87d4a8fd74dedd99e8dc71caeae5826d03846240c7",
+    "CW3_Data/Managed/System.dll": "8ee60fe09c87ec2cf664720b341eabcf0d94a62323cc1c6feaa3ed94c45aa2b0",
+    "CW3_Data/Managed/System.Xml.dll": "b71d84b2b02c5aabe9a73756c04e5b453182737378d2cee74e0124907d4f4246",
+    "CW3_Data/Managed/System.Core.dll": "b091dad33002f03cc6c1747d8c5f7a901cbf8a60ca0d286088162143a28b57a3",
     "CW3_Data/level1": "fcc12230a9d6b56ac4c272f2de089c871f4e0b7e99d366c03382c0a6e4432746",
     "CW3_Data/level2": "646bbcc6acdc67c5dd14925122f250aee987e3f809c1ce6c1323928477370ce0",
     "CW3_Data/level3": "7761186361d03db6614e961990cb2603451516fa910766938930819d3b76917e",

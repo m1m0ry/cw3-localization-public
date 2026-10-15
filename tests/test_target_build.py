@@ -1,6 +1,7 @@
 """Target selection and publication boundaries do not require private game files."""
 from pathlib import Path
 import hashlib
+import json
 import subprocess
 import sys
 import tempfile
@@ -11,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import game_target
 import independent
+import workflow
 
 
 class TargetBuild(unittest.TestCase):
@@ -32,6 +34,23 @@ class TargetBuild(unittest.TestCase):
             game_target.verify_inputs(root, target)
             file.write_bytes(b'changed')
             with self.assertRaisesRegex(ValueError, 'fingerprint mismatch'):game_target.verify_inputs(root, target)
+
+    def test_windows_prepare_includes_all_fixed_compiler_references(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);game=root/'game';original=root/'original'
+            target=game_target.load({})
+            references={'CW3_Data/Managed/'+name for name in ('mscorlib.dll','UnityEngine.dll','System.dll','System.Xml.dll','System.Core.dll')}
+            contents={name:name.encode() for name in set(target['original_hashes'])|references}
+            for name,data in dict(contents,**{target['executable']:b'EXE'}).items():
+                path=game/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
+            target=dict(target,exe_sha256=hashlib.sha256(b'EXE').hexdigest(),original_hashes={name:hashlib.sha256(contents[name]).hexdigest() for name in target['original_hashes']})
+            config=root/'config.json';config.write_text(json.dumps(dict(game=str(game),original=str(original))))
+            with patch.object(workflow,'check'),patch.object(game_target,'load',return_value=target),patch.object(sys,'argv',['workflow','prepare','--config',str(config)]):
+                workflow.main()
+            for name in references:self.assertEqual((original/name).read_bytes(),contents[name])
+            game_target.verify_inputs(original,target)
+            changed=original/'CW3_Data/Managed/UnityEngine.dll';changed.write_bytes(b'DRIFT')
+            with self.assertRaisesRegex(ValueError,'fingerprint mismatch'):game_target.verify_inputs(original,target)
 
     def test_failed_candidate_is_not_published_or_retained(self):
         with tempfile.TemporaryDirectory() as folder:
