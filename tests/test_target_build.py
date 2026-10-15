@@ -33,7 +33,7 @@ class TargetBuild(unittest.TestCase):
             file.write_bytes(b'changed')
             with self.assertRaisesRegex(ValueError, 'fingerprint mismatch'):game_target.verify_inputs(root, target)
 
-    def test_failed_candidate_is_not_published(self):
+    def test_failed_candidate_is_not_published_or_retained(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder);output = root / 'candidate'
             def fail(config, stage, final):
@@ -42,7 +42,17 @@ class TargetBuild(unittest.TestCase):
             with patch.object(independent, '_build', side_effect=fail):
                 with self.assertRaisesRegex(ValueError, 'anchor mismatch'):independent.build({}, output)
             self.assertFalse(output.exists())
-            self.assertEqual(len(list(root.glob('*.building-*/partial'))), 1)
+            self.assertEqual(list(root.iterdir()), [])
+
+    def test_verified_candidate_survives_staging_cleanup(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder);output = root / 'candidate'
+            def complete(config, stage, final):
+                stage.mkdir();(stage / 'manifest.json').write_text('verified')
+            with patch.object(independent, '_build', side_effect=complete):
+                independent.build({}, output)
+            self.assertEqual((output / 'manifest.json').read_text(), 'verified')
+            self.assertEqual(list(root.iterdir()), [output])
 
     def test_optimized_python_cannot_disable_target_verification(self):
         result = subprocess.run([sys.executable, '-O', '-c',

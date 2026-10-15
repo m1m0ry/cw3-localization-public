@@ -100,10 +100,12 @@ def build(config,out):
     if out.exists() and (not out.is_dir() or any(out.iterdir())):
         raise ValueError('Choose an empty output directory; keep existing candidates and recovery points')
     stage=out.with_name(out.name+'.building-'+uuid.uuid4().hex[:12])
-    _build(config,stage,out)
-    # A failed build retains its staging directory for inspection, never a ready manifest at out.
-    if out.exists():out.rmdir()
-    stage.rename(out)
+    try:
+        _build(config,stage,out)
+        if out.exists():out.rmdir()
+        stage.rename(out)
+    finally:
+        if stage.exists():shutil.rmtree(stage)
     print('Verified offline candidate:',out)
 
 def _build(config,out,final_out):
