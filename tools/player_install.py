@@ -28,27 +28,20 @@ TARGETS={
     WINDOWS:dict(platform=5,data_dir='CW3_Data',executable='CW3.exe'),
     MACOS:dict(platform=2,data_dir='CW3.app/Contents/Resources/Data',executable='CW3.app/Contents/MacOS/CW3'),
 }
-IDENTITY=('target_id','platform','data_dir','executable','exe_sha256')
 # macOS may update provenance during an in-place write. Its presence and all
 # other xattrs/modes remain protected; no security attribute is removed.
 SYSTEM_XATTR='com.apple.provenance'
 
-def _darwin_xattr(operation,path,name=None,value=None):
+def _darwin_xattr(operation,path,name=None):
     # Homebrew Python may omit os.*xattr; read the same metadata via libSystem.
     libc=ctypes.CDLL(None,use_errno=True)
     location=os.fsencode(path);attribute=os.fsencode(name) if name is not None else None
     if operation=='list':
         call=libc.listxattr;call.argtypes=[ctypes.c_char_p,ctypes.c_void_p,ctypes.c_size_t,ctypes.c_int]
         arguments=(location,)
-    elif operation=='get':
+    else:
         call=libc.getxattr;call.argtypes=[ctypes.c_char_p,ctypes.c_char_p,ctypes.c_void_p,ctypes.c_size_t,ctypes.c_uint32,ctypes.c_int]
         arguments=(location,attribute)
-    else:
-        call=libc.setxattr;call.argtypes=[ctypes.c_char_p,ctypes.c_char_p,ctypes.c_void_p,ctypes.c_size_t,ctypes.c_uint32,ctypes.c_int]
-        payload=ctypes.create_string_buffer(value,max(len(value),1))
-        call.restype=ctypes.c_int
-        if call(location,attribute,payload,len(value),0,0)<0:raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()),str(path))
-        return
     call.restype=ctypes.c_ssize_t
     size=call(*arguments,None,0,*((0,0) if operation=='get' else (0,)))
     if size<0:raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()),str(path))
@@ -68,27 +61,18 @@ def get_xattr(path,name):
     if sys.platform=='darwin':return _darwin_xattr('get',path,name)
     raise RuntimeError('此环境无法读取文件扩展属性')
 
-def set_xattr(path,name,value):
-    if hasattr(os,'setxattr'):return os.setxattr(path,name,value)
-    if sys.platform=='darwin':return _darwin_xattr('set',path,name,value)
-    raise RuntimeError('此环境无法写入文件扩展属性')
-
-def target_layout(manifest=None):
-    manifest=manifest or {};target_id=manifest.get('target_id',WINDOWS)
-    if target_id not in TARGETS:raise ValueError('不支持的补丁目标')
+def target_layout(manifest):
+    target_id=manifest.get('target_id')
+    if target_id not in TARGETS:raise ValueError('补丁必须声明受支持的目标')
     expected=TARGETS[target_id]
-    # Only the old Windows manifest may omit target fields. Partial or mixed
-    # target records cannot select a different filesystem layout.
-    explicit='target_id' in manifest or any(k in manifest for k in expected)
-    if explicit and (manifest.get('target_id')!=target_id or any(manifest.get(k)!=v for k,v in expected.items())):
-        raise ValueError('补丁目标与平台/目录不一致')
+    if any(manifest.get(k)!=v for k,v in expected.items()):raise ValueError('补丁目标与平台/目录不一致')
     return dict(target_id=target_id,**expected)
 
 def target_identity(manifest):
     result=target_layout(manifest)
     result['exe_sha256']=manifest.get('exe_sha256')
-    if result['target_id']==MACOS and not re.fullmatch(r'[0-9a-f]{64}',result['exe_sha256'] or ''):
-        raise ValueError('原生目标缺少可执行文件指纹')
+    if not re.fullmatch(r'[0-9a-f]{64}',result['exe_sha256'] or ''):
+        raise ValueError('目标缺少可执行文件指纹')
     return result
 
 def confined(root,name):
@@ -101,7 +85,7 @@ def confined(root,name):
         cursor=cursor.parent
     return target
 
-def installed_path(game,name,manifest=None):
+def installed_path(game,name,manifest):
     safe(game,name);layout=target_layout(manifest)
     relative=Path(layout['data_dir']).joinpath(*Path(name).parts[1:]) if name.startswith('CW3_Data/') else Path(name)
     return confined(game,relative)
@@ -190,7 +174,7 @@ def bottle_path(path,bottle):
     drive=p.drive[0].lower();base=bottle/'drive_c' if drive=='c' else bottle/'dosdevices'/(drive+':')
     return base.joinpath(*p.parts[1:])
 
-def discover(manifest=None):
+def discover(manifest):
     layout=target_layout(manifest)
     roots=[];bottles={};candidates=[Path.cwd(),PACKAGE.parent]
     if sys.platform=='win32':
@@ -219,7 +203,7 @@ def discover(manifest=None):
         if (p/layout['executable']).is_file() and (p/layout['data_dir']).is_dir():unique[os.path.normcase(str(p.resolve()))]=p.resolve()
     return list(unique.values())
 
-def choose_game(manifest=None):
+def choose_game(manifest):
     layout=target_layout(manifest);candidates=discover(manifest)
     for i,p in enumerate(candidates,1):print(f'{i}. {p}')
     print('选择编号，或粘贴包含 '+layout['executable']+' 的游戏目录。')
@@ -238,12 +222,11 @@ def idle():
     else:raise RuntimeError('此安装入口仅支持 Windows 或 macOS')
     if running:raise RuntimeError('请先完全退出 CW3（包括其他 bottle 中的 CW3），再安装或清理')
 
-def ensure_writable(game,rows,required,manifest=None):
+def ensure_writable(game,rows,required,manifest):
     if shutil.disk_usage(game).free<required:raise RuntimeError(f'空间不足：本操作需要约 {required//1048576+1} MiB 可用空间')
     folders={game}
     for f in rows:
         target=installed_path(game,f['file'],manifest)
-        if f['file'] in USER_FILES and target.exists():continue
         if target.is_file() and target.stat().st_nlink!=1:raise RuntimeError('受控程序文件存在硬链接：'+str(target))
         if target.exists() and not os.access(target,os.W_OK):raise RuntimeError('游戏文件不可写，请检查该安装目录的权限：'+str(target))
         folder=target.parent
@@ -261,7 +244,7 @@ def ensure_writable(game,rows,required,manifest=None):
             fd,name=tempfile.mkstemp(prefix='.cw3-write-check-',dir=folder);os.close(fd);Path(name).unlink()
         except OSError as e:raise RuntimeError('目录不可写。请选择有写入权限的游戏目录；安装器不会自动提权：'+str(folder)) from e
 
-def atomic_copy(source,target,create_only=False):
+def atomic_copy(source,target):
     # Own an exclusive file in the destination directory; fixed temp names can
     # be pre-existing files or dangling links, and are never ours to overwrite.
     fd,name=tempfile.mkstemp(prefix='.'+target.name+'-',suffix='.cw3-install-tmp',dir=target.parent);temp=Path(name)
@@ -269,10 +252,7 @@ def atomic_copy(source,target,create_only=False):
         with os.fdopen(fd,'wb') as output,source.open('rb') as input_:
             shutil.copyfileobj(input_,output);output.flush();os.fsync(output.fileno())
         if digest(source)!=digest(temp):raise RuntimeError('写入校验失败')
-        if create_only:
-            try:os.link(temp,target)
-            except FileExistsError:return
-        else:os.replace(temp,target)
+        os.replace(temp,target)
         sync_directory(target.parent)
     finally:temp.unlink(missing_ok=True)
 
@@ -286,22 +266,24 @@ def write_existing(source,target,expected_metadata):
     if digest(target)!=digest(source) or not metadata_matches(metadata(target),expected_metadata):
         raise RuntimeError('原生文件原位写入校验失败：'+str(target))
 
+def validate_release_payload(names,target_id):
+    if target_id not in TARGETS:raise ValueError('不支持的补丁目标')
+    names=list(names);expected=PAYLOAD if target_id==MACOS else PAYLOAD-{ADDED}
+    unexpected=set(names)-expected
+    if unexpected:raise ValueError('Unexpected release payload: '+', '.join(sorted(unexpected)))
+    if set(names)!=expected or len(names)!=len(set(names)):raise ValueError('Incomplete or duplicate release payload; missing: '+', '.join(sorted(expected-set(names))))
+
 def validate_manifest(manifest):
     layout=target_identity(manifest);rows=manifest.get('files',[])
     if manifest.get('format')!=2 or not isinstance(rows,list) or not rows:raise ValueError('需要完整文件包')
-    names=[r['file'] for r in rows];dictionaries=set(names)&{DEFAULT_DICTIONARY,LEGACY_DICTIONARY}
-    expected=PAYLOAD-{DEFAULT_DICTIONARY,ADDED}
-    if layout['target_id']==MACOS and ADDED in names:expected=expected|{ADDED}
-    if len(dictionaries)!=1 or set(names)-USER_FILES-dictionaries!=expected:raise ValueError('安装包文件列表不完整或含额外程序')
-    if len(names)!=len(set(names)):raise ValueError('安装包存在重复路径')
+    validate_release_payload((r['file'] for r in rows),layout['target_id'])
     for row in rows:
         if not re.fullmatch('[0-9a-f]{64}',row.get('after','')) or type(row.get('bytes')) is not int or not 0<=row['bytes']<=250000000:raise ValueError('安装包哈希或大小无效')
     return rows
 
 def check_legacy_dictionary(game,manifest):
     legacy=installed_path(game,LEGACY_DICTIONARY,manifest)
-    known=OFFICIAL_LEGACY_DICTIONARIES|{r['after'] for r in manifest['files'] if r['file']==LEGACY_DICTIONARY}
-    if legacy.exists() and digest(legacy) not in known:
+    if legacy.exists() and digest(legacy) not in OFFICIAL_LEGACY_DICTIONARIES:
         raise RuntimeError('旧 zh-CN.json 含未知内容；本次安装未改动游戏。请将自定义 entries 移至 zh-CN.user.json，另存并移走旧 zh-CN.json 后重试；不要覆盖已有用户词典')
 
 def check_required_originals(game,manifest):
@@ -333,13 +315,8 @@ def install(game,manifest,package=PACKAGE):
         bundle_changed=False
         for row in rows:
             name=row['file'];target=installed_path(game,name,manifest)
-            if name in USER_FILES and target.exists():continue
             if digest(target)==row['after']:continue
-            if name==LEGACY_DICTIONARY:check_legacy_dictionary(game,manifest)
             target.parent.mkdir(parents=True,exist_ok=True)
-            if name in USER_FILES:
-                atomic_copy(safe(stage,name),target,create_only=True)
-                continue
             if native and target.exists():write_existing(safe(stage,name),target,metadata(target))
             else:atomic_copy(safe(stage,name),target)
             if digest(target)!=row['after']:raise RuntimeError('安装后校验失败：'+name)

@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
+from player_install import target_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = 'windows-steam-22453699'
@@ -11,18 +12,13 @@ MACOS = 'macos-steam-22453699'
 def load(config):
     if not __debug__:
         raise RuntimeError('Build verification requires Python assertions; do not use -O')
-    ident = config.get('target_id', WINDOWS)
-    if ident == MACOS:
-        target = json.loads((ROOT / 'resources/macos-target.json').read_text())
-        if target['id'] != MACOS or target['platform'] != 2:
-            raise ValueError('Mac target profile identity changed')
-        return target
-    if ident != WINDOWS:
-        raise ValueError('Unknown CW3 target: ' + str(ident))
-    supported = json.loads((ROOT / 'resources/supported-build.json').read_text())
-    layout = json.loads((ROOT / 'resources/layout.json').read_text())
-    return dict(supported, **layout, id=WINDOWS, target_id=WINDOWS, platform=5,
-                data_dir='CW3_Data', executable='CW3.exe')
+    ident = config.get('target_id')
+    if ident not in (WINDOWS,MACOS):raise ValueError('Explicit CW3 target_id required: '+str(ident))
+    name='macos-target.json' if ident==MACOS else 'supported-build.json'
+    target=json.loads((ROOT/'resources'/name).read_text())
+    if ident==WINDOWS:target.update(json.loads((ROOT/'resources/layout.json').read_text()))
+    if target_layout(target)['target_id']!=ident:raise ValueError('Target profile identity changed')
+    return dict(target,id=ident)
 
 
 def installed(game, logical, target):

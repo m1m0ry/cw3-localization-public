@@ -12,7 +12,7 @@ import tempfile
 import zipfile
 
 from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, instructions, supported_target, target_description, validate_release_payload
-from player_install import MACOS, RUNTIME, atomic_copy, installed_path, target_identity, target_layout
+from player_install import RUNTIME, atomic_copy, installed_path, target_identity, target_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -55,9 +55,7 @@ def inspect_zip(archive, build, supported, exe):
             'Expected the current independent build manifest')
     require(build.get('steam_build') == supported['steam_build'] and build.get('version') == supported['version'],
             'Build target differs from the supported game')
-    require(target_layout(build) == target_layout(supported), 'Build/profile platform mismatch')
-    if target_layout(supported)['target_id'] == MACOS:
-        require(target_identity(build) == target_identity(supported), 'Build/profile target fingerprint mismatch')
+    require(target_identity(build) == target_identity(supported), 'Build/profile target fingerprint mismatch')
     infos = archive.infolist()
     require(infos, 'Empty package ZIP')
     names = [safe_name(info.orig_filename, info.is_dir()) for info in infos]

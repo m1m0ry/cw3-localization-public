@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
 import player_install as player
 import package_player,verify_package
-from player_fixture import fixture,macho,sha,snapshot
+from player_fixture import fixture,macho,sha,snapshot,set_xattr
 PROCESS_IDLE=player.idle
 
 class NativeInstall(unittest.TestCase):
@@ -44,7 +44,7 @@ class NativeInstall(unittest.TestCase):
     def test_partial_existing_write_and_failed_signing_are_fixed_by_replay(self):
         with tempfile.TemporaryDirectory() as folder:
             game,package,manifest=fixture(Path(folder),native=True);core=game/manifest['data_dir']/'Managed/Assembly-CSharp.dll';write=player.write_existing
-            attr='com.cw3.fixture' if sys.platform=='darwin' else 'user.cw3.fixture';player.set_xattr(core,attr,b'KEEP');core.chmod(0o755);before=player.metadata(core)
+            attr='com.cw3.fixture' if sys.platform=='darwin' else 'user.cw3.fixture';set_xattr(core,attr,b'KEEP');core.chmod(0o755);before=player.metadata(core)
             def partial(source,target,meta):
                 target.write_bytes(b'PARTIAL');raise OSError('interrupted')
             with patch.object(player,'write_existing',side_effect=partial),self.assertRaises(OSError):player.install(game,manifest,package)
@@ -63,20 +63,17 @@ class NativeInstall(unittest.TestCase):
             for row in manifest['files']:self.assertEqual(player.digest(player.installed_path(game,row['file'],manifest)),row['after'])
             self.assertFalse((game/'.cw3-zh-backup').exists())
 
-    def test_downgrade_to_internal_runtime_removes_external_helper(self):
-        with tempfile.TemporaryDirectory() as folder:
-            game,package,manifest=fixture(Path(folder),native=True)
-            with patch.object(player.subprocess,'run',return_value=subprocess.CompletedProcess([],0,'','')):
-                player.install(game,manifest,package)
-                old=copy.deepcopy(manifest);old['files']=[r for r in old['files'] if r['file']!=player.ADDED]
-                row=next(r for r in old['files'] if r['file']==player.DEFAULT_DICTIONARY)
-                row['file']=player.LEGACY_DICTIONARY
-                (package/player.DEFAULT_DICTIONARY).rename(package/player.LEGACY_DICTIONARY)
-                player.install(game,old,package)
-            self.assertFalse((game/player.ADDED).exists())
-            self.assertFalse((game/player.DEFAULT_DICTIONARY).exists())
-            self.assertTrue((game/player.LEGACY_DICTIONARY).exists())
-            self.assertEqual((game/'save.sentinel').read_bytes(),b'USER SAVE')
+    def test_historical_package_layouts_cannot_write_any_install_or_user_file(self):
+        for kind in ('legacy_dictionary','missing_external','user_dictionary','user_settings'):
+            with self.subTest(kind=kind),tempfile.TemporaryDirectory() as folder:
+                game,package,manifest=fixture(Path(folder),native=True)
+                user=game/player.USER_DICTIONARY;user.parent.mkdir(parents=True,exist_ok=True);user.write_bytes(b'USER OVERRIDES')
+                if kind=='legacy_dictionary':next(r for r in manifest['files'] if r['file']==player.DEFAULT_DICTIONARY)['file']=player.LEGACY_DICTIONARY
+                elif kind=='missing_external':manifest['files']=[r for r in manifest['files'] if r['file']!=player.ADDED]
+                else:manifest['files'].append(dict(file=player.USER_DICTIONARY if kind=='user_dictionary' else 'CW3Localization/text-style.json',after='0'*64,bytes=0))
+                before=snapshot(game)
+                with self.assertRaises(ValueError):player.install(game,manifest,package)
+                self.assertEqual(snapshot(game),before)
 
     def test_shared_controlled_font_is_refused_before_any_install_write(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -138,5 +135,5 @@ class NativeInstall(unittest.TestCase):
                 self.assertIn('清理汉化程序',archive.read('package/使用说明.txt').decode())
                 wrong=dict(supported,target_id=player.WINDOWS,**player.TARGETS[player.WINDOWS])
                 with self.assertRaises(ValueError):verify_package.inspect_zip(archive,build,wrong,None)
-            with self.assertRaisesRegex(ValueError,'external runtime'):package_player.validate_release_payload(player.PAYLOAD-{player.ADDED},player.MACOS)
+            with self.assertRaisesRegex(ValueError,'CW3ExternalRuntime.dll'):package_player.validate_release_payload(player.PAYLOAD-{player.ADDED},player.MACOS)
 if __name__=='__main__':unittest.main()

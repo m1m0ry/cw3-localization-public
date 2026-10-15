@@ -65,6 +65,7 @@ class PinnedBuild(unittest.TestCase):
             manifest=dict(provenance,format=1,revision='independent-v12-candidate',patch_version='v12.6',
                           steam_build=supported['steam_build'],version=supported['version'],
                           files=rows)
+            manifest.update(installer.target_identity(supported))
             (build/'manifest.json').write_text(json.dumps(manifest))
             config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original),game=str(original))))
             output=root/'local-only/package'

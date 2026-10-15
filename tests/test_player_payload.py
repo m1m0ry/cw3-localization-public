@@ -46,16 +46,6 @@ class CompleteInstall(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'未知内容'):player.install(game,manifest,package)
             self.assertEqual(snapshot(game),before)
 
-    def test_cli_selects_old_complete_package_without_overwriting_legacy_settings(self):
-        with tempfile.TemporaryDirectory() as folder:
-            game,package,manifest=fixture(Path(folder))
-            name='CW3Localization/text-style.json';(package/name).write_bytes(b'LEGACY DEFAULT')
-            manifest['files'].append(dict(file=name,before=None,after=sha(b'LEGACY DEFAULT'),bytes=14))
-            (package/'manifest.json').write_text(json.dumps(manifest))
-            target=game/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(b'USER SETTINGS')
-            with patch.object(sys,'argv',['install','--package',str(package),'--game',str(game),'--action','install']):player.main()
-            self.assertEqual(target.read_bytes(),b'USER SETTINGS')
-
     def test_interruption_is_repaired_by_reapplying_without_rollback(self):
         with tempfile.TemporaryDirectory() as folder:
             game,package,manifest=fixture(Path(folder));copy=player.atomic_copy
@@ -70,13 +60,15 @@ class CompleteInstall(unittest.TestCase):
             for row in manifest['files']:self.assertEqual(player.digest(player.installed_path(game,row['file'],manifest)),row['after'])
 
     def test_bad_incomplete_or_extra_payload_is_refused_before_any_write(self):
-        for kind in ('hash','missing','extra','target','anchor'):
+        for kind in ('hash','missing','extra','target','implicit','anchor'):
             with self.subTest(kind=kind),tempfile.TemporaryDirectory() as folder:
                 game,package,manifest=fixture(Path(folder))
                 if kind=='hash':(package/manifest['files'][-1]['file']).write_bytes(b'BROKEN')
                 elif kind=='missing':manifest['files'].pop()
                 elif kind=='extra':manifest['files'].append(dict(file='CW3_Data/arbitrary',after='0'*64,bytes=1))
                 elif kind=='target':manifest['platform']=2
+                elif kind=='implicit':
+                    for key in ('target_id','platform','data_dir','executable'):manifest.pop(key)
                 else:(game/'CW3_Data/anchor').write_bytes(b'OTHER BUILD')
                 before=snapshot(game)
                 with self.assertRaises((ValueError,RuntimeError)):player.install(game,manifest,package)
@@ -102,14 +94,6 @@ class CompleteInstall(unittest.TestCase):
             game,package,manifest=fixture(Path(folder));stale=game/'CW3_Data/Managed/CW3Display.dll';stale.write_bytes(b'OBSOLETE')
             other=stale.with_name('User.dll');other.write_bytes(b'KEEP')
             player.install(game,manifest,package);self.assertFalse(stale.exists());self.assertEqual(other.read_bytes(),b'KEEP')
-
-    def test_dictionary_appearing_during_seed_commit_is_never_overwritten(self):
-        with tempfile.TemporaryDirectory() as folder:
-            root=Path(folder);source=root/'seed';source.write_bytes(b'OFFICIAL');target=root/'zh-CN.json';link=player.os.link
-            def race(temp,destination):
-                destination.write_bytes(b'USER CREATED');return link(temp,destination)
-            with patch.object(player.os,'link',side_effect=race):player.atomic_copy(source,target,create_only=True)
-            self.assertEqual(target.read_bytes(),b'USER CREATED');self.assertEqual(set(p.name for p in root.iterdir()),{'seed','zh-CN.json'})
 
     def test_failed_atomic_write_keeps_target_and_cleans_its_temporary(self):
         with tempfile.TemporaryDirectory() as folder:

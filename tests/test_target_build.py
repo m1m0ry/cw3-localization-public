@@ -17,13 +17,14 @@ import workflow
 
 class TargetBuild(unittest.TestCase):
     def test_target_is_explicit_and_does_not_follow_host(self):
-        windows = game_target.load({})
+        windows = game_target.load({'target_id':game_target.WINDOWS})
         mac = game_target.load({'target_id': game_target.MACOS})
         self.assertEqual((windows['id'], windows['platform']), (game_target.WINDOWS, 5))
         self.assertEqual((mac['id'], mac['platform']), (game_target.MACOS, 2))
         self.assertEqual(game_target.installed(Path('/game'), 'CW3_Data/Managed/Assembly-CSharp.dll', mac),
                          Path('/game/CW3.app/Contents/Resources/Data/Managed/Assembly-CSharp.dll'))
-        with self.assertRaises(ValueError):game_target.load({'target_id': 'guess'})
+        for config in ({},{'target_id':'guess'}):
+            with self.assertRaises(ValueError):game_target.load(config)
         for name in ('/CW3_Data/x', 'CW3_Data/../x', 'CW3Localization/x'):
             with self.assertRaises(ValueError):game_target.installed(Path('/game'), name, mac)
 
@@ -43,7 +44,7 @@ class TargetBuild(unittest.TestCase):
     def test_windows_prepare_includes_all_fixed_compiler_references(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);game=root/'game';original=root/'original'
-            target=game_target.load({})
+            target=game_target.load({'target_id':game_target.WINDOWS})
             references={'CW3_Data/Managed/'+name for name in ('mscorlib.dll','UnityEngine.dll','System.dll','System.Xml.dll','System.Core.dll')}
             contents={name:name.encode() for name in set(target['original_hashes'])|references}
             for name,data in dict(contents,**{target['executable']:b'EXE'}).items():
@@ -64,7 +65,7 @@ class TargetBuild(unittest.TestCase):
                 stage.mkdir();(stage / 'partial').write_text('diagnostic')
                 raise ValueError('anchor mismatch')
             with patch.object(independent, '_build', side_effect=fail):
-                with self.assertRaisesRegex(ValueError, 'anchor mismatch'):independent.build({}, output)
+                with self.assertRaisesRegex(ValueError, 'anchor mismatch'):independent.build({'target_id':game_target.WINDOWS}, output)
             self.assertFalse(output.exists())
             self.assertEqual(list(root.iterdir()), [])
 
@@ -74,13 +75,13 @@ class TargetBuild(unittest.TestCase):
             def complete(config, stage, final):
                 stage.mkdir();(stage / 'manifest.json').write_text('verified')
             with patch.object(independent, '_build', side_effect=complete):
-                independent.build({}, output)
+                independent.build({'target_id':game_target.WINDOWS}, output)
             self.assertEqual((output / 'manifest.json').read_text(), 'verified')
             self.assertEqual(list(root.iterdir()), [output])
 
     def test_optimized_python_cannot_disable_target_verification(self):
         result = subprocess.run([sys.executable, '-O', '-c',
-            'import sys;sys.path.insert(0,"tools");import game_target;game_target.load({})'], cwd=ROOT, capture_output=True, text=True)
+            'import sys;sys.path.insert(0,"tools");import game_target;game_target.load(dict(target_id=game_target.WINDOWS))'], cwd=ROOT, capture_output=True, text=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('do not use -O', result.stderr)
 
