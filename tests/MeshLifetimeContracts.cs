@@ -42,7 +42,7 @@ namespace UnityEngine {
  public class TextMesh:Component {public Font font;public int fontSize=20;public string text;}
  public class AssetBundle:Object {public static AssetBundle CreateFromFile(string file){return null;}public Object LoadAsset(string name,Type type){return null;}public void Unload(bool destroy){}}
  public class Camera:Behaviour {public Vector3 WorldToScreenPoint(Vector3 p){return p;}}
- public static class Application {public static string dataPath="/unused-fixture",loadedLevelName="Game";public static int loadedLevel=3;public static void OpenURL(string url){}}
+ public static class Application {public static string dataPath="/unused-fixture",persistentDataPath="/unused-fixture",loadedLevelName="Game";public static int loadedLevel=3;public static void OpenURL(string url){}}
  public static class Time {public static int frameCount=1;public static float realtimeSinceStartup;}
  public static class Debug {public static void Log(string value){}public static void LogWarning(string value){}}
  public static class Resources {public static Object Load(string name,Type type){return null;}public static Object[] FindObjectsOfTypeAll(Type type){return new Object[0];}}

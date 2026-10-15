@@ -1,7 +1,9 @@
-"""Generate the fixed Unity 5.2.3/Windows native-font envelope, never user font data.
+"""Generate the selected Unity 5.2.3 native-font envelope, never user font data.
 
 Runtime C# fills only the Font names/data/metrics and object lengths/offsets. The
-Raw-v3 wrapper, Shader PPtr and class-142 identity match the successful native trial.
+Raw-v3 wrapper, Shader PPtr and class-142 identity match the selected player.
+Mac templates retain platform 2 and its built-in Shader dependency. Independent
+parsing checks the envelope; actual Mac font loading still needs live acceptance.
 """
 import base64,copy,hashlib,struct
 from pathlib import Path
@@ -11,12 +13,14 @@ from UnityPy.files.ObjectReader import ObjectReader
 from UnityPy.helpers.TypeTreeNode import TypeTreeNode
 from UnityPy.helpers.Tpk import get_typetree_node
 from UnityPy.helpers.UnityVersion import UnityVersion
+from unity15_metadata import read_unity15_metadata
 
-def build(original):
-    source=UnityPy.load((Path(original)/'CW3_Data/sharedassets0.assets').read_bytes()).file
-    assert source.header.version==15 and source.unity_version=='5.2.3f1' and source._m_target_platform==5
+def build(original, expected_platform=5):
+    source,_=read_unity15_metadata((Path(original)/'CW3_Data/sharedassets0.assets').read_bytes(),expected_platform)
     f=copy.copy(source);f.objects={};f.script_types=[];f.userInformation='';f._enable_type_tree=True;f.externals=[copy.copy(source.externals[1])]
     font=source.objects[756];fd=font.read_typetree();mat=source.objects[fd['m_DefaultMaterial']['m_PathID']];md=mat.read_typetree();tex=source.objects[fd['m_Texture']['m_PathID']];td=tex.read_typetree()
+    assert fd['m_DefaultMaterial']['m_FileID']==fd['m_Texture']['m_FileID']==0
+    assert [obj.type.name for obj in (font,mat,tex)]==['Font','Material','Texture2D']
     assert md['m_Shader']==dict(m_FileID=2,m_PathID=10101) and f.externals[0].path=='library/unity default resources'
     types={name:copy.copy(obj.serialized_type) for name,obj in [('Font',font),('Material',mat),('Texture2D',tex)]}
     types['AssetBundle']=copy.copy(types['Font']);types['AssetBundle'].class_id=142;types['AssetBundle'].old_type_hash=bytes.fromhex('f284abb6f2df17ebedae2b6b50436810')
@@ -39,6 +43,10 @@ def build(original):
     ObjectReader.from_reader=classmethod(capture)
     try:sf=UnityPy.load(raw).file
     finally:ObjectReader.from_reader=classmethod(orig)
+    checked,_=read_unity15_metadata(raw,expected_platform)
+    assert set(checked.objects)=={1,10,11,12} and str(checked.externals)==str(f.externals)
+    assert [t.old_type_hash for t in checked.types]==[t.old_type_hash for t in f.types]
+    assert checked.objects[11].read_typetree()['m_Shader']==dict(m_FileID=1,m_PathID=10101)
     def field(data,value):
         value=value.encode() if isinstance(value,str) else value;pattern=struct.pack('<I',len(value))+value;assert data.count(pattern)==1;start=data.index(pattern);return start,(start+4+len(value)+3)&~3
     font_raw=sf.objects[10].get_raw_data();na,nb=field(font_raw,name);fa,fb=field(font_raw,family);pa,pb=field(font_raw,payload);assert na==0 and nb<pa<pb<=fa

@@ -20,7 +20,14 @@ class ObjectMetadata:
     script_index_position: int
 
 
-def read_unity15_metadata(raw):
+def read_unity15_metadata(raw, expected_platform=5):
+    """Read one explicitly selected CW3 platform, never infer a write target."""
+    if type(expected_platform) is not int or expected_platform not in (2, 5):
+        raise ValueError('Supported CW3 asset platforms are 2 (Mac) and 5 (Windows)')
+    # The preservation checks below deliberately use assertions. Do not allow an
+    # optimized interpreter to turn a guarded resource writer into an unchecked one.
+    if not __debug__:
+        raise RuntimeError('CW3 resource checks require Python assertions (no -O)')
     entries = {}
     original_reader = ObjectReader.from_reader.__func__
 
@@ -43,18 +50,29 @@ def read_unity15_metadata(raw):
         file = UnityPy.load(raw).file
     finally:
         ObjectReader.from_reader = classmethod(original_reader)
-    assert file.header.version == 15
-    assert file.unity_version == '5.2.3f1' and file._m_target_platform == 5
+    if file.header.version != 15 or file.unity_version != '5.2.3f1' or file.header.endian != '<':
+        raise ValueError('Expected little-endian Unity 5.2.3f1 serialized v15 assets')
+    if file._m_target_platform != expected_platform:
+        raise ValueError('Unity asset platform %s does not match expected platform %s' %
+                         (file._m_target_platform, expected_platform))
     return file, entries
 
 
-def preserve_script_indices(original, saved):
-    source, source_entries = read_unity15_metadata(original)
-    target, target_entries = read_unity15_metadata(saved)
-    assert set(source_entries) == set(target_entries)
+def _verify_definitions(source, target):
     assert [t.class_id for t in source.types] == [t.class_id for t in target.types]
     assert str(source.script_types) == str(target.script_types)
     assert str(source.externals) == str(target.externals)
+    fields = ('class_id', 'is_stripped_type', 'script_id', 'old_type_hash',
+              'node', 'm_ClassName', 'm_NameSpace', 'm_AssemblyName', 'type_dependencies')
+    for old_type, new_type in zip(source.types, target.types):
+        assert all(getattr(old_type, name) == getattr(new_type, name) for name in fields), 'type definition changed'
+
+
+def preserve_script_indices(original, saved, expected_platform=5):
+    source, source_entries = read_unity15_metadata(original, expected_platform)
+    target, target_entries = read_unity15_metadata(saved, expected_platform)
+    assert set(source_entries) == set(target_entries)
+    _verify_definitions(source, target)
     repaired = bytearray(saved)
     corrected = []
     for path_id, before in source_entries.items():
@@ -66,7 +84,7 @@ def preserve_script_indices(original, saved):
             repaired[start:start + 2] = struct.pack(target.header.endian + 'h', before.script_index)
             corrected.append(path_id)
     result = bytes(repaired)
-    checked, checked_entries = read_unity15_metadata(result)
+    checked, checked_entries = read_unity15_metadata(result, expected_platform)
     for path_id, before in source_entries.items():
         after = checked_entries[path_id]
         assert (before.type_id, before.class_id, before.stripped, before.script_index) == (
@@ -76,18 +94,12 @@ def preserve_script_indices(original, saved):
     return result, corrected
 
 
-def verify_text_only_changes(original, patched, allowed_fields):
+def verify_text_only_changes(original, patched, allowed_fields, expected_platform=5):
     """Reject altered script links and every undeclared serialized object field."""
-    source, before = read_unity15_metadata(original)
-    target, after = read_unity15_metadata(patched)
+    source, before = read_unity15_metadata(original, expected_platform)
+    target, after = read_unity15_metadata(patched, expected_platform)
     assert set(before) == set(after)
-    assert str(source.script_types) == str(target.script_types)
-    assert str(source.externals) == str(target.externals)
-    assert [t.class_id for t in source.types] == [t.class_id for t in target.types]
-    definition_fields = ('class_id', 'is_stripped_type', 'script_id', 'old_type_hash',
-                         'node', 'm_ClassName', 'm_NameSpace', 'm_AssemblyName', 'type_dependencies')
-    for old_type, new_type in zip(source.types, target.types):
-        assert all(getattr(old_type, name) == getattr(new_type, name) for name in definition_fields), 'type definition changed'
+    _verify_definitions(source, target)
     changed = {}
     for path_id, meta in before.items():
         other = after[path_id]

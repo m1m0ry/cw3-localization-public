@@ -1,6 +1,6 @@
 using System;using System.IO;using System.Text;
 
-// Fixed Windows/Unity-5.2.3 envelope. Font objects are constructed from trusted metadata;
+// Target-generated Unity-5.2.3 envelope. Font objects are constructed from trusted metadata;
 // variable user bytes never become field names, paths, callbacks or game resource IDs.
 internal static class NativeFontBundle {
  static byte[] Part(string value){return Convert.FromBase64String(value);}

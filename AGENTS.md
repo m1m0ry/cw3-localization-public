@@ -2,7 +2,7 @@
 
 - 本仓库维护源码、译文和构建逻辑。通用构建步骤见 `docs/build.md`。
 
-- 目标为 Windows Steam 2.12 / build 22453699（Unity 5.2.3f1）。不修改原生 Mac 版或其他游戏。
+- 发行目标为 Windows Steam 2.12 / build 22453699（Unity 5.2.3f1）。原生 Mac 同 build 的离线候选仅验证默认字体、菜单和剧情；未经单独授权，不安装或启动原生游戏，不修改签名、quarantine 或存档。边界见 `docs/macos-offline.md`。
 - 使用 `config.local.json` 定位安装和构建输入，不在源码中硬编码个人路径。原版、备份、缓存、日志、密钥和存档不提交 Git。
 - 采用译文唯一来源是 `translations/zh-CN.json`。使用 `tools/workflow.py check` 校验、`tools/independent.py` 构建，不手改生成的 TSV、C# 映射或游戏二进制作为译文来源。
 - 内部 ID、状态值、回调和资源键不翻译，只处理显示边界。保留 Unity 脚本索引、对象引用和未声明字段；不要绕过版本及哈希保护。

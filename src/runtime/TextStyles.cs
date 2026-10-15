@@ -37,9 +37,10 @@ internal static class TextStyles {
  sealed class MeshState {internal TextMesh Mesh;internal Font Native;internal int BaseSize,Applied,PixelUnit;internal string Family,Reason,Role;internal int Percent;}
  static object Get(object value,string name){if(value==null)return null;var p=value.GetType().GetProperty(name,Flags);return p==null?null:p.GetValue(value,null);}
  static void Set(object value,string name,object data){var p=value.GetType().GetProperty(name,Flags);if(p==null||!p.CanWrite)throw new InvalidOperationException("Missing font property "+name);p.SetValue(value,data,null);}
- internal static void Load(string folder){
+ internal static void Load(RuntimePaths paths){
   if(loaded)return;loaded=true;
-  try{string path=Path.Combine(folder,"text-style.json");if(File.Exists(path)){if(new FileInfo(path).Length>32768)throw new FormatException("style size");policy=TextStylePolicy.Parse(File.ReadAllText(path));configStatus="loaded";}}
+  string folder=paths.Content,state=paths.State;
+  try{string path=Path.Combine(state,"text-style.json");if(File.Exists(path)){if(new FileInfo(path).Length>32768)throw new FormatException("style size");policy=TextStylePolicy.Parse(File.ReadAllText(path));configStatus="loaded";}}
   catch(Exception e){configStatus="invalid_defaults:"+e.GetType().Name;policy=new TextStylePolicy();}
   string registryPath=Path.Combine(folder,"fonts.json");
   try{
@@ -47,30 +48,30 @@ internal static class TextStyles {
    var registry=FontRegistry.Parse(File.ReadAllText(registryPath));registryHash=FileHash(registryPath);
    if(FileHash(typeof(TextStyles).Assembly.Location)!=registry.RuntimeHash)throw new FormatException("font runtime mismatch");
    if(registry.Faces["sans"].Hash!=CW3StyleFonts.SansHash||registry.Faces["serif"].Hash!=CW3StyleFonts.SerifHash)throw new FormatException("controlled defaults");
-   assetsValid=FileHash(Path.Combine(Application.dataPath,"sharedassets0.assets"))==registry.SharedHash&&FileHash(Path.Combine(Application.dataPath,"mainData"))==registry.MainHash;
+   assetsValid=FileHash(Path.Combine(paths.Data,"sharedassets0.assets"))==registry.SharedHash&&FileHash(Path.Combine(paths.Data,"mainData"))==registry.MainHash;
    foreach(var entry in registry.Faces){var face=entry.Value;pixelSizes[entry.Key]=face.PixelSize;fontStatus[entry.Key]=LoadFace(folder,entry.Key,face.File,face.Hash,face.Coverage,face.Family,face.ProbeChar,face.ProbeAdvance);}
    registryStatus=assetsValid?"loaded":"resource_hash_mismatch";
   }catch(Exception e){
    registryStatus="invalid_defaults:"+e.GetType().Name;registryHash="";
-   try{assetsValid=FileHash(Path.Combine(Application.dataPath,"sharedassets0.assets"))==CW3StyleFonts.AssetsHash;}catch{assetsValid=false;}
+   try{assetsValid=FileHash(Path.Combine(paths.Data,"sharedassets0.assets"))==CW3StyleFonts.AssetsHash;}catch{assetsValid=false;}
    fontStatus["sans"]=LoadFace(folder,"sans","font.ttf",CW3StyleFonts.SansHash,CW3StyleFonts.SansCoverage,"CW3 Sans SC External",0,0);
    fontStatus["serif"]=LoadFace(folder,"serif","serif.ttf",CW3StyleFonts.SerifHash,CW3StyleFonts.SerifCoverage,"CW3 Serif SC External",0,0);
   }
-  if(assetsValid)foreach(string role in TextStylePolicy.Roles){var choice=policy.For(role);if(fontStatus.ContainsKey(choice.Family))continue;string status=LocalFonts.Add(folder,choice.Family);fontStatus[choice.Family]=status;if(status=="ready"){Font font=LocalFonts.FontFor(choice.Family);fonts.Add(choice.Family,font);coverage[font.GetInstanceID()]=new BitArray(LocalFonts.Coverage(choice.Family));pixelSizes[choice.Family]=LocalFonts.PixelUnit(choice.Family);}}
+  if(assetsValid&&state!=null)foreach(string role in TextStylePolicy.Roles){var choice=policy.For(role);if(fontStatus.ContainsKey(choice.Family))continue;string status=LocalFonts.Add(state,choice.Family);fontStatus[choice.Family]=status;if(status=="ready"){Font font=LocalFonts.FontFor(choice.Family);fonts.Add(choice.Family,font);coverage[font.GetInstanceID()]=new BitArray(LocalFonts.Coverage(choice.Family));pixelSizes[choice.Family]=LocalFonts.PixelUnit(choice.Family);}}
 
   foreach(Font smooth in fonts.Values)SmoothFilter(smooth);
   // Preload only the configured pixel variants, once per family. No file IO in
   // Label/GUI/TextMesh drawing; all smooth consumers retain their original atlas.
-  foreach(string role in TextStylePolicy.Roles){var choice=policy.For(role);if(choice.PixelSize==0&&PixelUnit(choice.Family)==0||pointStatus.ContainsKey(choice.Family))continue;
+  if(state!=null)foreach(string role in TextStylePolicy.Roles){var choice=policy.For(role);if(choice.PixelSize==0&&PixelUnit(choice.Family)==0||pointStatus.ContainsKey(choice.Family))continue;
    Font smooth=FontFor(choice.Family);if(smooth==null)continue;
-   try{string[] source;Font point=fontSources.TryGetValue(choice.Family,out source)?LocalFonts.Point(folder,source[0],source[1]):LocalFonts.Point(folder,choice.Family);
+   try{string[] source;Font point=fontSources.TryGetValue(choice.Family,out source)?LocalFonts.Point(state,source[0],source[1]):LocalFonts.Point(state,choice.Family);
     if(point==null)throw new InvalidOperationException("point font unavailable");pointFonts.Add(choice.Family,point);coverage[point.GetInstanceID()]=coverage[smooth.GetInstanceID()];
     if(PixelFilter(point))pointStatus[choice.Family]="ready";
    }catch(Exception e){pointStatus[choice.Family]="unavailable:"+e.GetType().Name;}
   }
   foreach(Font point in pointFonts.Values)PixelFilter(point);
   sansStatus=fontStatus["sans"];serifStatus=fontStatus["serif"];
-  try{var rows=new List<string>();foreach(var entry in fontStatus)rows.Add("\""+entry.Key+"\":\""+entry.Value+"\"");string data="{\"format\":1,\"registry_sha256\":\""+registryHash+"\",\"fonts\":{"+String.Join(",",rows.ToArray())+"}}";string temp=Path.Combine(folder,"font-status.tmp");File.WriteAllText(temp,data);string target=Path.Combine(folder,"font-status.json");if(File.Exists(target))File.Delete(target);File.Move(temp,target);}catch(Exception e){Debug.LogWarning("CW3Localization font status unavailable: "+e.GetType().Name);}
+  try{if(!paths.EnsureState())throw new IOException("State directory unavailable");var rows=new List<string>();foreach(var entry in fontStatus)rows.Add("\""+entry.Key+"\":\""+entry.Value+"\"");string data="{\"format\":1,\"registry_sha256\":\""+registryHash+"\",\"fonts\":{"+String.Join(",",rows.ToArray())+"}}";string temp=Path.Combine(state,"font-status.tmp");File.WriteAllText(temp,data);string target=Path.Combine(state,"font-status.json");if(File.Exists(target))File.Delete(target);File.Move(temp,target);}catch(Exception e){Debug.LogWarning("CW3Localization font status unavailable: "+e.GetType().Name);}
  }
  static string FileHash(string path){using(var stream=File.OpenRead(path))using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}
  static string LoadFace(string folder,string family,string file,string expected,string cmap,string prefix,int probe,int advance){

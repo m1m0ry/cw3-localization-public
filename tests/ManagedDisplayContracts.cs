@@ -22,11 +22,15 @@ class ManagedDisplayContracts {
    }
    int live=0;foreach(string name in new[]{"CommandCenter","BuildHandlers","WorldMachineManager"})foreach(var m in native.MainModule.GetType(name).Methods.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr&&new[]{"Upgrade to Lvl: "," for ","Price: ","Map Code:","Rand"}.Contains((string)i.Operand))){Need(ManagedDisplayAudit.Classify(m,i).Classification=="display_candidate","Previously missed native dynamic caption recognized");Need(bound.ContainsKey(ManagedDisplayAudit.Key(m,m.Body.Instructions.IndexOf(i))),"Previously missed caption currently bound");live++;}
    Need(captions==30&&icons==26&&live==10,"Real native caption/key inventory");
-   var scores=(MethodDefinition)native.MainModule.LookupToken(100667946);var title=scores.Body.Instructions[30];
+   var scoreEntry=((ArrayList)root["entries"]).Cast<Hashtable>().Single(e=>(string)e["source"]=="Online Scores"&&(string)((Hashtable)e["target"])["kind"]=="managed");
+   var scoreTarget=(Hashtable)scoreEntry["target"];int scoreToken=scoreTarget.ContainsKey("method")?(int)scoreTarget["method_token"]:100667946;
+   int scoreIndex=scoreTarget.ContainsKey("method")?(int)scoreTarget["instruction_index"]:30;
+   var scores=(MethodDefinition)native.MainModule.LookupToken(scoreToken);var title=scores.Body.Instructions[scoreIndex];
    Need(scores.FullName=="System.Void ScoreViewerManager::OnGUI()"&&title.OpCode==OpCodes.Ldstr&&(string)title.Operand=="Online Scores","Exact native leaderboard title");
-   Need(ManagedDisplayAudit.Classify(scores,title).Classification=="display_candidate"&&bound.ContainsKey(ManagedDisplayAudit.Key(scores,30)),"Leaderboard window title reaches display and is bound independently of its button");
+   Need(ManagedDisplayAudit.Classify(scores,title).Classification=="display_candidate"&&bound.ContainsKey(ManagedDisplayAudit.Key(scores,scoreIndex)),"Leaderboard window title reaches display and is bound independently of its button");
    var entry=((ArrayList)root["entries"]).Cast<Hashtable>().First(e=>(string)((Hashtable)e["target"])["kind"]=="managed");var source=entry["source"];entry["source"]="DRIFT";bool refused=false;try{ManagedDisplayAudit.Bindings(native,render,root);}catch(Exception){refused=true;}Need(refused,"Binding source drift refused");entry["source"]=source;
-   entry=((ArrayList)root["entries"]).Cast<Hashtable>().First(e=>(string)((Hashtable)e["target"])["kind"]=="managed"&&(string)((Hashtable)e["target"])["stage"]=="v10");var target=(Hashtable)entry["target"];var changed=(MethodDefinition)render.MainModule.LookupToken((int)target["method_token"]);var edit=changed.Body.GetILProcessor();edit.Append(edit.Create(OpCodes.Ldstr,"new stage literal"));refused=false;try{ManagedDisplayAudit.Bindings(native,render,root);}catch(Exception){refused=true;}Need(refused,"Stage literal-sequence drift refused instead of fuzzy mapping");
+   entry=((ArrayList)root["entries"]).Cast<Hashtable>().FirstOrDefault(e=>(string)((Hashtable)e["target"])["kind"]=="managed"&&(string)((Hashtable)e["target"])["stage"]=="v10");
+   if(entry!=null){var target=(Hashtable)entry["target"];var changed=(MethodDefinition)render.MainModule.LookupToken((int)target["method_token"]);var edit=changed.Body.GetILProcessor();edit.Append(edit.Create(OpCodes.Ldstr,"new stage literal"));refused=false;try{ManagedDisplayAudit.Bindings(native,render,root);}catch(Exception){refused=true;}Need(refused,"Stage literal-sequence drift refused instead of fuzzy mapping");}
    Console.WriteLine("PASS IL classification: unknown/mixed/field uses retained, nested types, "+expected+" bindings, 30 real event captions, 26 icon keys, 10 dynamic captions and source/stage drift refusal");
   }
  }

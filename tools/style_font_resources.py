@@ -7,7 +7,7 @@ import copy
 import hashlib
 import struct
 from fontTools.ttLib import TTFont
-from unity15_metadata import read_unity15_metadata, preserve_script_indices
+from unity15_metadata import read_unity15_metadata, preserve_script_indices, verify_text_only_changes
 
 PREFIX = 'cw3-localization/fonts/'
 FAMILIES = ('sans', 'serif')
@@ -17,10 +17,10 @@ def asset_name(family, digest):
     return 'CW3Style_' + family + '_' + digest[:12]
 
 
-def _save_added(original, file, added):
-    before, before_meta = read_unity15_metadata(original)
+def _save_added(original, file, added, expected_platform=5):
+    before, before_meta = read_unity15_metadata(original, expected_platform)
     saved = file.save()
-    after, after_meta = read_unity15_metadata(saved)
+    after, after_meta = read_unity15_metadata(saved, expected_platform)
     assert set(after_meta) == set(before_meta) | set(added)
     assert [t.class_id for t in before.types] == [t.class_id for t in after.types]
     assert str(before.script_types) == str(after.script_types)
@@ -37,7 +37,7 @@ def _save_added(original, file, added):
     for ident in added:
         assert after_meta[ident].script_index == -1 and after_meta[ident].stripped == 0
     result = bytes(repaired)
-    checked, meta = read_unity15_metadata(result)
+    checked, meta = read_unity15_metadata(result, expected_platform)
     for ident, old in before_meta.items():
         assert checked.objects[ident].get_raw_data() == before.objects[ident].get_raw_data(), ('Original object changed', ident)
         assert meta[ident].script_index == old.script_index
@@ -46,14 +46,24 @@ def _save_added(original, file, added):
     return result
 
 
-def build(shared_raw, main_raw, fonts, metadata=None):
+def build(shared_raw, main_raw, fonts, metadata=None, expected_platform=5):
     """Return exactly two guarded resource payloads for the declared controlled faces."""
     from font_registry import font_id
     assert fonts and set(fonts)<=set(FAMILIES)
     for family in fonts:font_id(family)
-    shared, _ = read_unity15_metadata(shared_raw)
+    # Validate both source envelopes before constructing any replacement objects.
+    # Their shaders and ResourceManager fields belong to this exact platform.
+    shared, _ = read_unity15_metadata(shared_raw, expected_platform)
+    main, _ = read_unity15_metadata(main_raw, expected_platform)
     original_ids = set(shared.objects)
     assert max(original_ids)==756
+    assert [shared.objects[i].type.name for i in (755,4,6)] == ['Font','Material','Texture2D']
+    source_font = shared.objects[755].parse_as_dict()
+    assert source_font['m_DefaultMaterial'] == {'m_FileID':0,'m_PathID':4}
+    assert source_font['m_Texture'] == {'m_FileID':0,'m_PathID':6}
+    source_shader = shared.objects[4].parse_as_dict()['m_Shader']
+    assert source_shader == {'m_FileID':2,'m_PathID':10101}
+    assert shared.externals[1].path == 'library/unity default resources'
     next_id=10001
     refs = {}
     added = []
@@ -90,8 +100,7 @@ def build(shared_raw, main_raw, fonts, metadata=None):
             shared.objects[ident] = obj
             added.append(ident)
         refs[PREFIX+family] = font_id
-    updated_shared = _save_added(shared_raw, shared, added)
-    main, _ = read_unity15_metadata(main_raw)
+    updated_shared = _save_added(shared_raw, shared, added, expected_platform)
     external = [i+1 for i,x in enumerate(main.externals) if x.path == 'sharedassets0.assets']
     assert len(external) == 1
     manager = main.objects[13]
@@ -103,9 +112,10 @@ def build(shared_raw, main_raw, fonts, metadata=None):
     assert original_count == 548
     content['m_Container'].extend((key, {'m_FileID':external[0], 'm_PathID':ident}) for key,ident in refs.items())
     manager.patch(content)
-    updated_main, _ = preserve_script_indices(main_raw, main.save())
-    checked, _ = read_unity15_metadata(updated_main)
-    original, _ = read_unity15_metadata(main_raw)
+    updated_main, _ = preserve_script_indices(main_raw, main.save(), expected_platform)
+    verify_text_only_changes(main_raw, updated_main, {13:['m_Container']}, expected_platform)
+    checked, _ = read_unity15_metadata(updated_main, expected_platform)
+    original, _ = read_unity15_metadata(main_raw, expected_platform)
     for ident, obj in checked.objects.items():
         if ident != 13:
             assert obj.get_raw_data() == original.objects[ident].get_raw_data()

@@ -8,8 +8,9 @@ POLICY={
     'RuntimeContracts':['Json.cs','FontFile.cs'],
     'LocalFontContracts':['LocalFontFile.cs'],
     'NativeFontBundleContracts':['LocalFontFile.cs','NativeFontBundle.cs'],
+    'RuntimePathsContracts':['RuntimePaths.cs'],
     'FontSettingsContracts':['Json.cs','TextStylePolicy.cs','FontSettingsModel.cs'],
-    'TextStyleContracts':['Json.cs','FontRegistry.cs','TextStylePolicy.cs','TextStyles.cs','CaptionLayout.cs'],
+    'TextStyleContracts':['Json.cs','FontRegistry.cs','TextStylePolicy.cs','TextStyles.cs','CaptionLayout.cs','RuntimePaths.cs'],
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
@@ -24,11 +25,13 @@ class Contracts:
         if name in POLICY:
             sources=[runtime/s for s in POLICY[name]]+[test/(name+'.cs')]
             args=[]
-            if name=='CandidateContracts':args=[w(o)]
+            if name in ('CandidateContracts','RuntimePathsContracts'):args=[w(o)]
             elif name in ('TextStyleContracts','FontSettingsContracts'):pass
             elif name=='NativeFontBundleContracts':
                 import native_font_template
-                generated=o/'NativeFontTemplate.cs';generated.write_text(native_font_template.build(m.location('original')));sources.append(generated)
+                import game_target
+                platform=game_target.load(m.config)['platform']
+                generated=o/'NativeFontTemplate.cs';generated.write_text(native_font_template.build(m.location('original'),expected_platform=platform));sources.append(generated)
                 args=[w(m.location('build')/'CW3Localization/font.ttf'),w(o/'native-contract.bundle')]
             elif name=='LocalFontContracts':
                 import font_registry
@@ -41,7 +44,9 @@ class Contracts:
                 sources.append(m.location('build').parent/'generated/Definitions.cs')
                 args=[w(o/'message-candidates.json')] if name=='MessageCandidateContracts' else [w(ROOT/'translations/zh-CN.json')]
             self.execute(name,sources,args)
-            if name=='NativeFontBundleContracts':subprocess.run([sys.executable,str(test/'check_native_font_bundle.py'),str(o/'native-contract.bundle'),str(m.location('build')/'CW3Localization/font.ttf')],check=True)
+            if name=='NativeFontBundleContracts':subprocess.run([sys.executable,str(test/'check_native_font_bundle.py'),str(o/'native-contract.bundle'),str(m.location('build')/'CW3Localization/font.ttf'),'--platform',str(platform)],check=True)
+            if name=='TextStyleContracts':
+                for mode in ('native','native-state-unavailable'):m.run(o/(name+'.exe'),[mode,w(o)])
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
         elif name=='MeshLifetimeContracts':
             self.execute(name,runtime_sources(m.location('build').parent/'generated')+[test/(name+'.cs')],flags=['-r:System.Xml'])
@@ -57,14 +62,15 @@ class Contracts:
             m.run(patched,[])
         elif name=='CaptionLayoutContracts':self.execute(name,[runtime/'CaptionLayout.cs',test/(name+'.cs')])
         elif name=='RenderingOrderContracts':
-            engine=o/'UnityEngine.dll';shutil.copy2(m.location('game')/'CW3_Data/Managed/UnityEngine.dll',engine)
+            engine=o/'UnityEngine.dll';shutil.copy2(m.location('original')/'CW3_Data/Managed/UnityEngine.dll',engine)
             self.execute(name,[ROOT/'src/rendering/CW3Rendering.cs',test/(name+'.cs')],flags=['-r:'+w(engine)])
         else:
             flags=[m.prepare_cecil(o)]
+            targets=m.location('build').parent/'generated/targets.json' if name in ('NativeNoticeContracts','ManagedDisplayContracts') and m.config.get('target_id')=='macos-steam-22453699' else ROOT/'translations/zh-CN.json'
             if name=='AssemblyStructureContracts':self.execute(name,[ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],flags=flags+['-r:System.Core'])
             elif name=='GuiCaptionContracts':self.execute(name,[runtime/'GuiCaptionAudit.cs',test/(name+'.cs')],flags=flags)
-            elif name=='NativeNoticeContracts':self.execute(name,[runtime/s for s in ('NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs','MessageBindings.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(ROOT/'translations/zh-CN.json')],flags+['-r:System.Core'])
-            elif name=='ManagedDisplayContracts':self.execute(name,[runtime/s for s in ('ManagedDisplayAudit.cs','NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(m.location('build').parent/'managed/render.dll'),w(ROOT/'translations/zh-CN.json')],flags+['-r:System.Core','-main:ManagedDisplayContracts'])
+            elif name=='NativeNoticeContracts':self.execute(name,[runtime/s for s in ('NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs','MessageBindings.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(targets)],flags+['-r:System.Core'])
+            elif name=='ManagedDisplayContracts':self.execute(name,[runtime/s for s in ('ManagedDisplayAudit.cs','NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(m.location('build').parent/'managed/render.dll'),w(targets)],flags+['-r:System.Core','-main:ManagedDisplayContracts'])
             elif name=='MainMenuClickContracts':
                 menu=m.compile(o,'MainMenuClickFixture.exe',[test/'MainMenuClickFixture.cs']);patched=o/'MainMenuClickFixture.patched.exe';reversed_=o/'MainMenuClickFixture.reversed.exe'
                 m.run(menu,['original']);self.execute(name,[runtime/'MainMenuClickPatch.cs',test/(name+'.cs')],[w(menu),w(patched),w(reversed_)],flags)

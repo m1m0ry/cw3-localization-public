@@ -14,7 +14,7 @@ namespace UnityEngine {
  public struct CharacterInfo {public int advance;}
  public class Font:Object {public void RequestCharactersInTexture(string text,int size,FontStyle style){}public bool GetCharacterInfo(char c,out CharacterInfo ci,int size,FontStyle style){ci=new CharacterInfo{advance=20};return true;}public int fontSize=20;public bool dynamic=true;public Material material=new Material();public bool HasCharacter(char c){return true;}}
  public static class Debug {public static void LogWarning(string message){}}
- public static class Application {public static string dataPath;}
+ public static class Application {public static string dataPath,persistentDataPath;}
  public static class Resources {public static Dictionary<string,Object> values=new Dictionary<string,Object>();public static Object Load(string path,Type type){Object value;return values.TryGetValue(path,out value)?value:null;}}
  public class TextMesh:Component {public Font font;public int fontSize;public string text;}
  public static class Screen {public static int width=1280,height=720;}
@@ -30,6 +30,7 @@ public class UIFont:UnityEngine.Component {public object mUVRect,mFont;public in
 public enum CaptionSymbols {None}
 public class Label:UnityEngine.Component {public UIFont font{get;set;}public string text{get;set;}public CaptionSymbols symbolStyle{get;set;}public bool supportEncoding{get;set;}public bool password{get;set;}public bool shrinkToFit{get;set;}public int lineWidth{get;set;}public int maxLineCount{get;set;}public int marks;public void MarkAsChanged(){marks++;}}
 internal static class CW3StyleFonts {internal static string SansHash="",SerifHash="",AssetsHash="",SansCoverage="",SerifCoverage="";}
+internal static class CW3BuildInfo {internal const bool NativeMac=false;}
 internal static class FontFile {internal static string Family(string path,string prefix){return prefix;}}
 internal static class LocalFonts {internal static UnityEngine.Font Shared;internal static Dictionary<string,UnityEngine.Font> Points=new Dictionary<string,UnityEngine.Font>();internal static UnityEngine.Font Point(string folder,string id){return null;}internal static UnityEngine.Font Point(string folder,string path,string hash){UnityEngine.Font f;if(Points.TryGetValue(hash,out f))return f;f=new UnityEngine.Font{name="Point_"+hash};if(path.EndsWith("serif.ttf"))f.material.mainTexture=Shared.material.mainTexture;Points.Add(hash,f);return f;}internal static string Add(string folder,string id){return "missing";}internal static UnityEngine.Font FontFor(string id){return null;}internal static byte[] Coverage(string id){return new byte[8192];}internal static int PixelUnit(string id){return 0;}internal static bool Owns(UnityEngine.Font f){return false;}internal static void KeepAtlas(UnityEngine.Font f){}internal static void Shutdown(IEnumerable<UnityEngine.Font> borrowed){}internal static Hashtable Status(){return new Hashtable();}}
 
@@ -40,7 +41,7 @@ class TextStyleContracts {
  static void Reject(string value){bool failed=false;try{TextStylePolicy.Parse(value);}catch(FormatException){failed=true;}Need(failed,"reject invalid style");}
  static string Hash(string path){using(var h=SHA256.Create())return BitConverter.ToString(h.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();}
  static string Cmap(string chars){byte[] bits=new byte[8192];foreach(char c in chars)bits[c/8]|=(byte)(1<<(c%8));return Convert.ToBase64String(bits);}
- static void Main(){
+ static void Main(string[] args){
   var defaults=new TextStylePolicy();foreach(string role in new[]{"body","title","ui","status","code_input"})Need(defaults.For(role).Family=="sans"&&defaults.For(role).Percent==100,"v12.5 default metrics");
   Need(TextStylePolicy.Role("MessageText","UI/MessageDialog/MessageText")=="body"&&TextStylePolicy.Role("MessageText","Other/MessageText")=="ui","actual control context");Need(TextStylePolicy.Role("EnergyLabel","")=="status","numeric separation");
   Need(TextStylePolicy.Role("EntryTitle","EntryPoints/ArcEternalEntrySprite/EntryTitle")=="ui","main menu entry titles belong to menu role");
@@ -48,18 +49,37 @@ class TextStyleContracts {
   Need(TextStylePolicy.Parse("{\"format\":1,\"roles\":{\"body\":{\"font\":\"文楷 Screen.ttf\",\"size_percent\":100},\"ui\":{\"font\":\"pixel.ttf\",\"size_percent\":100,\"pixel_size\":12}}}").For("ui").PixelSize==12,"file references and explicit pixel metadata");
   foreach(string bad in new[]{"../font.ttf","C:\\font.ttf",".font.ttf","a/b.ttf","font.woff"})Need(!TextStylePolicy.FontReference(bad),"reject unsafe or unsupported font reference");
   var flags=BindingFlags.Static|BindingFlags.NonPublic;
-  string temp=Path.Combine(Path.GetTempPath(),"cw3-native-font-contract-"+Guid.NewGuid());Directory.CreateDirectory(temp);UnityEngine.Application.dataPath=temp;
+  bool nativeMac=args.Length>0&&args[0].StartsWith("native",StringComparison.Ordinal),blocked=args.Length>0&&args[0]=="native-state-unavailable";
+  string root=Path.Combine(args.Length>1?args[1]:Path.GetTempPath(),"cw3-native-font-contract-"+Guid.NewGuid());Directory.CreateDirectory(root);
+  string persistent=Path.Combine(root,"user-state");if(blocked)File.WriteAllText(persistent,"keep");
+  var paths=RuntimePaths.Resolve(Path.Combine(root,nativeMac?"CW3Localization/Runtime/CW3ExternalRuntime.dll":"CW3_Data/Managed/CW3Runtime.dll"),nativeMac,persistent);
+  string temp=paths.Content;Directory.CreateDirectory(temp);Directory.CreateDirectory(paths.Data);UnityEngine.Application.dataPath=nativeMac?Path.Combine(root,"CW3.app/Contents"):paths.Data;
   Directory.CreateDirectory(Path.Combine(temp,"fonts"));
-  foreach(string file in new[]{"font.ttf","serif.ttf","fonts/pixel.ttf","sharedassets0.assets","mainData"})File.WriteAllText(Path.Combine(temp,file),file);
-  CW3StyleFonts.SansHash=Hash(Path.Combine(temp,"font.ttf"));CW3StyleFonts.SerifHash=Hash(Path.Combine(temp,"serif.ttf"));string pixelHash=Hash(Path.Combine(temp,"fonts/pixel.ttf"));CW3StyleFonts.AssetsHash=Hash(Path.Combine(temp,"sharedassets0.assets"));
+  foreach(string file in new[]{"font.ttf","serif.ttf","fonts/pixel.ttf"})File.WriteAllText(Path.Combine(temp,file),file);
+  foreach(string file in new[]{"sharedassets0.assets","mainData"})File.WriteAllText(Path.Combine(paths.Data,file),file);
+  CW3StyleFonts.SansHash=Hash(Path.Combine(temp,"font.ttf"));CW3StyleFonts.SerifHash=Hash(Path.Combine(temp,"serif.ttf"));string pixelHash=Hash(Path.Combine(temp,"fonts/pixel.ttf"));CW3StyleFonts.AssetsHash=Hash(Path.Combine(paths.Data,"sharedassets0.assets"));
   CW3StyleFonts.SansCoverage=Cmap("中雪龘"+Opening);CW3StyleFonts.SerifCoverage=Cmap("中");string pixelCoverage=Cmap("中"+Opening);
   var sans=new UnityEngine.Font{name="CW3Style_sans_"+CW3StyleFonts.SansHash.Substring(0,12)};var serif=new UnityEngine.Font{name="CW3Style_serif_"+CW3StyleFonts.SerifHash.Substring(0,12)};var pixel=new UnityEngine.Font{name="CW3Style_pixel_custom_"+pixelHash.Substring(0,12)};
   UnityEngine.Resources.values.Add("cw3-localization/fonts/sans",sans);UnityEngine.Resources.values.Add("cw3-localization/fonts/serif",serif);UnityEngine.Resources.values.Add("cw3-localization/fonts/pixel_custom",pixel);
   Func<string,string,string,int,string> face=(file,hash,cmap,unit)=>"{\"file\":\""+file+"\",\"sha256\":\""+hash+"\",\"family\":\"Fixture\",\"coverage\":\""+cmap+"\",\"pixel_size\":"+unit+",\"probe_char\":20013,\"probe_advance\":20}";
-  File.WriteAllText(Path.Combine(temp,"fonts.json"),"{\"format\":1,\"runtime_sha256\":\""+Hash(typeof(TextStyles).Assembly.Location)+"\",\"resources\":{\"CW3_Data/sharedassets0.assets\":\""+CW3StyleFonts.AssetsHash+"\",\"CW3_Data/mainData\":\""+Hash(Path.Combine(temp,"mainData"))+"\"},\"fonts\":{\"sans\":"+face("font.ttf",CW3StyleFonts.SansHash,CW3StyleFonts.SansCoverage,0)+",\"serif\":"+face("serif.ttf",CW3StyleFonts.SerifHash,CW3StyleFonts.SerifCoverage,0)+",\"pixel_custom\":"+face("fonts/pixel.ttf",pixelHash,pixelCoverage,12)+"}}");
+  File.WriteAllText(Path.Combine(temp,"fonts.json"),"{\"format\":1,\"runtime_sha256\":\""+Hash(typeof(TextStyles).Assembly.Location)+"\",\"resources\":{\"CW3_Data/sharedassets0.assets\":\""+CW3StyleFonts.AssetsHash+"\",\"CW3_Data/mainData\":\""+Hash(Path.Combine(paths.Data,"mainData"))+"\"},\"fonts\":{\"sans\":"+face("font.ttf",CW3StyleFonts.SansHash,CW3StyleFonts.SansCoverage,0)+",\"serif\":"+face("serif.ttf",CW3StyleFonts.SerifHash,CW3StyleFonts.SerifCoverage,0)+",\"pixel_custom\":"+face("fonts/pixel.ttf",pixelHash,pixelCoverage,12)+"}}");
   LocalFonts.Shared=sans;File.WriteAllText(Path.Combine(temp,"text-style.json"),"{\"format\":1,\"roles\":{\"ui\":{\"font\":\"sans\",\"size_percent\":100,\"pixel_size\":12},\"title\":{\"font\":\"pixel_custom\",\"size_percent\":100},\"status\":{\"font\":\"serif\",\"size_percent\":100,\"pixel_size\":12}}}");
   var smoothPixel=pixel;smoothPixel.material.mainTexture.filterMode=UnityEngine.FilterMode.Point;
-  TextStyles.Load(temp);Need((string)TextStyles.Status()["sans"]=="ready"&&(string)TextStyles.Status()["serif"]=="ready"&&(string)((Hashtable)TextStyles.Status()["font_status"])["pixel_custom"]=="ready","hash-bound native font resources loaded");
+  if(nativeMac&&!blocked){Directory.CreateDirectory(paths.State);File.Copy(Path.Combine(temp,"text-style.json"),Path.Combine(paths.State,"text-style.json"));}
+  TextStyles.Load(paths);Need((string)TextStyles.Status()["sans"]=="ready"&&(string)TextStyles.Status()["serif"]=="ready","hash-bound native font resources loaded");
+  if(nativeMac){
+   var active=TextStyles.ActivePolicy();
+   Need(blocked?active.For("title").Family=="sans"&&active.For("ui").PixelSize==0:active.For("title").Family=="pixel_custom"&&active.For("status").Family=="serif"&&active.For("ui").PixelSize==12,"Native policy loads only from external state, or defaults when unavailable");
+   Need((string)TextStyles.Status()["config"]==(blocked?"missing_defaults":"loaded"),"Native policy status reports external state");
+   Need(blocked?LocalFonts.Points.Count==0:LocalFonts.Points.ContainsKey(pixelHash)&&LocalFonts.Points.ContainsKey(CW3StyleFonts.SansHash),"Native point variants follow the saved policy");
+   Need((string)((Hashtable)TextStyles.Status()["font_status"])["pixel_custom"]=="ready","Native registered font remains available");
+   Need(TextStyles.Gui(new UnityEngine.GUIStyle(),"中","title").font==(blocked?sans:LocalFonts.Points[pixelHash]),"Native title face follows policy or default");
+   Need(!File.Exists(Path.Combine(temp,"font-status.json"))&&!File.Exists(Path.Combine(paths.Data,"font-status.json")),"Runtime status never writes package content or Data");
+   Need(blocked?File.ReadAllText(persistent)=="keep":File.Exists(Path.Combine(paths.State,"font-status.json")),"Status output stays in external state or reports failure without fallback");
+   if(!blocked)Need(File.ReadAllText(Path.Combine(paths.State,"text-style.json"))==File.ReadAllText(Path.Combine(temp,"text-style.json")),"Native policy leaves the user's existing settings unchanged");
+   Directory.Delete(root,true);Console.WriteLine("PASS native style with "+(blocked?"unavailable":"external")+" state; font choice and point variants follow policy");return;
+  }
+  Need((string)((Hashtable)TextStyles.Status()["font_status"])["pixel_custom"]=="ready","Windows registered custom fonts remain available");
   Need(TextStyles.FontFor("sans")==sans&&TextStyles.FontFor("serif")==serif,"exact resource instances, no OS lookup");pixel=LocalFonts.Points[pixelHash];var sansPoint=LocalFonts.Points[CW3StyleFonts.SansHash];
   Need(pixel!=smoothPixel&&pixel.material!=smoothPixel.material&&pixel.material.mainTexture!=smoothPixel.material.mainTexture&&pixel.material.mainTexture.filterMode==UnityEngine.FilterMode.Point,"pixel variant owns font, material and atlas");
   Need(sans.material.mainTexture.filterMode==UnityEngine.FilterMode.Bilinear&&smoothPixel.material.mainTexture.filterMode==UnityEngine.FilterMode.Bilinear,"startup pixel choices never mutate canonical atlases");
@@ -74,7 +94,7 @@ class TextStyleContracts {
   TextStyles.ReleaseLabel(startup.GetInstanceID());TextStyles.ReleaseLabel(rejected.GetInstanceID());TextStyles.ReleaseMesh(startupMesh.GetInstanceID());
   var load=typeof(TextStyles).GetMethod("LoadFace",flags);File.WriteAllText(Path.Combine(temp,"serif.ttf"),"changed");Need((string)load.Invoke(null,new object[]{temp,"other","serif.ttf",CW3StyleFonts.SerifHash,CW3StyleFonts.SerifCoverage,"Serif",0,0})=="hash_mismatch","changed TTF rejected");
   Need((string)load.Invoke(null,new object[]{temp,"other","absent.ttf",CW3StyleFonts.SerifHash,CW3StyleFonts.SerifCoverage,"Serif",0,0})=="missing","missing font falls back");
-  typeof(TextStyles).GetField("assetsValid",flags).SetValue(null,false);Need((string)load.Invoke(null,new object[]{temp,"other","font.ttf",CW3StyleFonts.SansHash,CW3StyleFonts.SansCoverage,"Sans",0,0})=="resource_hash_mismatch","wrong serialized font bytes rejected");Directory.Delete(temp,true);
+  typeof(TextStyles).GetField("assetsValid",flags).SetValue(null,false);Need((string)load.Invoke(null,new object[]{temp,"other","font.ttf",CW3StyleFonts.SansHash,CW3StyleFonts.SansCoverage,"Sans",0,0})=="resource_hash_mismatch","wrong serialized font bytes rejected");Directory.Delete(root,true);
 
   var policy=TextStylePolicy.Parse("{\"format\":1,\"roles\":{\"body\":{\"font\":\"serif\",\"size_percent\":125},\"ui\":{\"font\":\"pixel_custom\",\"size_percent\":75}}}");typeof(TextStyles).GetField("policy",flags).SetValue(null,policy);
   var native=new UIFont{gameObject=new UnityEngine.GameObject("native"),dynamicFont=new UnityEngine.Font{name="Embedded"},dynamicFontSize=20};
