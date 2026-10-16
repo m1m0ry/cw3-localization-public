@@ -31,7 +31,7 @@ def main():
     dictionary=ROOT/'translations/zh-CN.json';data=dictionary.read_bytes();doc=translation_contract.loads(data.decode());translation_contract.check(doc,translation_contract.read(ROOT/'translations/targets.lock.json'),json.loads((ROOT/'fonts/codepoints.json').read_text()))
     resolved=audit_dictionary(m.location('original'),doc,target);original_hash=sha(original.read_bytes())
     with tempfile.TemporaryDirectory(prefix='cw3-il-audit-')as d:
-        out=Path(d);snapshot=out/'dictionary.json';snapshot.write_text(json.dumps(resolved,ensure_ascii=False))
+        out=Path(d);snapshot=out/'dictionary.json';snapshot.write_text(json.dumps(resolved,ensure_ascii=False),encoding='utf-8')
         exe=m.compile(out,'ManagedDisplayAudit.exe',[ROOT/'src/runtime'/n for n in ('ManagedDisplayAudit.cs','GuiCaptionAudit.cs','NativeEventCaptionAudit.cs','Json.cs')]+[ROOT/'src/verification/BindingAnchor.cs'],[m.prepare_cecil(out),'-r:System.Core'])
         run=m.run(exe,[m.win(original),m.win(snapshot)],capture=True);findings=rows(run.stdout)
     if sha(original.read_bytes())!=original_hash:raise RuntimeError('Assembly input changed during audit; report not written')
