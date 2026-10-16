@@ -1,7 +1,7 @@
 CW3 简体中文补丁 {version}
 适用原生 macOS Steam 2.12 / build 22453699。
 
-1. 完全退出游戏，解压 CW3-Mac-{version}.zip，安装 Python 3.10+。
+1. 完全退出游戏，安装 Python 3.10+。
 2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件，找到包含 CW3.app 的目录。
 3. 双击包内「安装汉化.command」，按提示选择该目录，再选「1 安装/重装汉化」。
 

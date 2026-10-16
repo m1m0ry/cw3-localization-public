@@ -48,32 +48,19 @@ python3 tools/package_player.py \
 
 ## 云构建
 
-PR 与 `main` 提交自动运行译文检查和不需游戏输入的 Python 测试。
+维护者在 GitHub Actions 打开 `Build candidate`，点击 `Run workflow`：
 
-在 `Build candidate` 的 Branch 菜单选择开发分支，可在合并前构建 Windows 或原生 Mac 候选。API/CLI 也支持仓库标签。构建使用所选分支或标签当时的提交；固定输入引用见 [ci-inputs.json](../resources/ci-inputs.json)。
+1. 选择分支。
+2. 填写版本号 `version`（如 `v12.14`），平台 `target` 选择 `windows` 或 `macos`。
+3. 完成后，从该次运行的 Artifacts 下载产物。
 
-首次启用[原生手动入口](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)需要默认分支已有 workflow 定义；之后可选择开发分支独立运行。
-
-首次配置：
-
-1. 在 Settings → Environments 创建 `build-inputs`。
-2. Deployment branches and tags 允许需要构建的分支/标签，或选择 No restriction。
-3. 在该 Environment 添加 `CW3_INPUTS_READ_TOKEN`，不要设为仓库级 Secret。
-
-令牌使用仅选择私有输入仓库的 fine-grained PAT，权限为 `Contents: read`。它可读取所选仓库的全部内容，不能限制为单个 Release。
-
-Required reviewers 可选：启用后须审批，否则由维护者手动触发。
-
-工作副本须保持干净，并检出所选分支/标签的同一提交。使用已登录的 `gh` 下载并校验候选：
+也可在对应分支/标签提交的干净工作副本中，使用已登录的 `gh` 触发、下载并校验：
 
 ```sh
 python3 tools/build_candidate.py --ref feature/example --version v12.14 --target windows
-python3 tools/build_candidate.py --ref feature/example --version v12.14 --target macos
 ```
 
-候选校验使用命令启动时冻结的提交快照。运行 SHA 不符时，下载前停止并打印实际提交。
-
-构建上传补丁 ZIP、`SHA256SUMS.txt` 和 `build-info.json`，保留 14 天。候选命令按确切运行 ID 下载，校验来源、平台和文件哈希，保存到 `local-only/candidate-运行ID/`。构建不创建 Release 或安装补丁。
+`--target` 可改为 `macos`。产物保存在 `local-only/candidate-运行ID/`。
 
 ## 开发检查
 
