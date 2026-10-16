@@ -14,8 +14,6 @@
 
 **手动安装无需 Python。** 更新时保留原有 `CW3Localization` 中的 `fonts/`、`text-style.json` 和 `zh-CN.user.json`，只合并包内文件。
 
-自定义译文若仍在 `zh-CN.json`，先将自定义条目合并到 `zh-CN.user.json`，保留已有内容。
-
 也可安装 Python 3.10+ 后双击包内 `安装汉化.cmd`，按提示选择上述游戏目录，再选 `1 安装/重装汉化`。CrossOver 使用同一 Windows 包，脚本入口为 `安装汉化.command`，选择瓶内包含 `CW3.exe` 的目录。
 
 ### 原生 macOS
@@ -30,6 +28,16 @@
 
 运行对应的安装脚本，选择 `2 清理汉化程序`，再通过 Steam「验证游戏文件完整性」。Steam 不会自动删除额外注入的 DLL。
 
+## 自定义译文
+
+以下文件位于游戏目录的 `CW3Localization` 中：
+
+- `zh-CN.default.json`：随补丁更新的默认译文。
+- `zh-CN.user.json`：可选的自定义译文；有效条目优先于默认译文，安装时保留。
+- `zh-CN.json`：旧版词典，当前游戏不读取；自定义内容使用 `zh-CN.user.json`。
+
+从默认文件复制要修改的条目到用户文件，沿用 `format`、`language`、`entries` 格式，只保留自定义项。仅改 `translation`，保留 ID、原文、标签和占位符；退出游戏后修改，重启生效。
+
 ## 译文与构建
 
 译文统一维护在 `translations/zh-CN.json`。仅修改 `translation`，保留原文、目标、标签和占位符；检查无需游戏文件或翻译服务：
@@ -38,7 +46,7 @@
 python3 tools/workflow.py check
 ```
 
-自定义译文沿用默认文件的 `format`、`language`、`entries` 格式，将要改的条目复制到 `CW3Localization/zh-CN.user.json`，只保留自定义项。仅修改 `translation`，保留 ID、原文、标签和占位符；退出后修改，重启生效。新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
+新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
 
 ## 游戏截图
 
