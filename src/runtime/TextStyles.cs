@@ -28,7 +28,7 @@ internal static class TextStyles {
  static bool assetsValid;
  static readonly Dictionary<string,int> pixelSizes=new Dictionary<string,int>();
  static readonly Dictionary<string,string> fontStatus=new Dictionary<string,string>();
- static string registryStatus="compiled_defaults",registryHash="";
+ static string registryStatus="not_loaded",registryHash="";
  sealed class Clone {internal Component Font;internal int Users;}
  sealed class LabelState {
   internal Component Label,Native;internal Clone Clone;internal Vector3 Base,Applied;
@@ -47,15 +47,12 @@ internal static class TextStyles {
    if(!File.Exists(registryPath))throw new FileNotFoundException("font registry");
    var registry=FontRegistry.Parse(File.ReadAllText(registryPath));registryHash=FileHash(registryPath);
    if(FileHash(typeof(TextStyles).Assembly.Location)!=registry.RuntimeHash)throw new FormatException("font runtime mismatch");
-   if(registry.Faces["sans"].Hash!=CW3StyleFonts.SansHash||registry.Faces["serif"].Hash!=CW3StyleFonts.SerifHash)throw new FormatException("controlled defaults");
    assetsValid=FileHash(Path.Combine(paths.Data,"sharedassets0.assets"))==registry.SharedHash&&FileHash(Path.Combine(paths.Data,"mainData"))==registry.MainHash;
    foreach(var entry in registry.Faces){var face=entry.Value;pixelSizes[entry.Key]=face.PixelSize;fontStatus[entry.Key]=LoadFace(folder,entry.Key,face.File,face.Hash,face.Coverage,face.Family,face.ProbeChar,face.ProbeAdvance);}
    registryStatus=assetsValid?"loaded":"resource_hash_mismatch";
   }catch(Exception e){
    registryStatus="invalid_defaults:"+e.GetType().Name;registryHash="";
-   try{assetsValid=FileHash(Path.Combine(paths.Data,"sharedassets0.assets"))==CW3StyleFonts.AssetsHash;}catch{assetsValid=false;}
-   fontStatus["sans"]=LoadFace(folder,"sans","font.ttf",CW3StyleFonts.SansHash,CW3StyleFonts.SansCoverage,"CW3 Sans SC External",0,0);
-   fontStatus["serif"]=LoadFace(folder,"serif","serif.ttf",CW3StyleFonts.SerifHash,CW3StyleFonts.SerifCoverage,"CW3 Serif SC External",0,0);
+   assetsValid=false;fontStatus["sans"]=fontStatus["serif"]="registry_unavailable";
   }
   if(assetsValid&&state!=null)foreach(string role in TextStylePolicy.Roles){var choice=policy.For(role);if(fontStatus.ContainsKey(choice.Family))continue;string status=LocalFonts.Add(state,choice.Family);fontStatus[choice.Family]=status;if(status=="ready"){Font font=LocalFonts.FontFor(choice.Family);fonts.Add(choice.Family,font);coverage[font.GetInstanceID()]=new BitArray(LocalFonts.Coverage(choice.Family));pixelSizes[choice.Family]=LocalFonts.PixelUnit(choice.Family);}}
 

@@ -11,21 +11,20 @@ class PatchRuntime {
  // earlier binding in the same method could change a later binding's IL window.
  var sites=new List<Site>();var ids=new HashSet<string>();
  foreach(var line in File.ReadAllLines(a[2])){
-  var c=line.Split('\t');Need(c.Length==5||c.Length==6||c.Length==8,"Invalid managed binding row");Need(c[4]=="v9"||c[4]=="v10","Unknown managed binding stage");
-  var origin=(MethodDefinition)(c[4]=="v9"?pristine:asm).MainModule.LookupToken(Int32.Parse(c[0]));var m=originals.Keys.Single(x=>x.FullName==origin.FullName);int at=Int32.Parse(c[1]);
+  var c=line.Split('\t');Need(c.Length==7,"Invalid managed binding row");
+  Need(c[4]==""||c[4]=="event"||c[4]=="gui"||c[4]=="label","Unknown managed display family");
+  var origin=(MethodDefinition)pristine.MainModule.LookupToken(Int32.Parse(c[0]));var m=originals.Keys.Single(x=>x.FullName==origin.FullName);int at=Int32.Parse(c[1]);
   Need(at>=0&&at<originals[m].Length,"Site beyond method "+m.FullName+" token "+c[0]+" #"+c[1]+" length "+originals[m].Length);
   var i=originals[m][at];string source=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[3]));
   Need(ids.Add(c[2])&&!String.IsNullOrEmpty(c[2]),"Duplicate/empty binding ID");Need(boundSites.Add(i),"Duplicate physical display site "+c[2]);Need(i.OpCode==OpCodes.Ldstr&&(string)i.Operand==source,"Guarded ldstr "+c[2]);
-  if(c.Length==8){
-   Need(c[4]=="v9","Anchored coordinates must refer to pristine assembly");string signature=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[6]));
-   // The binding anchor is recorded against pristine IL. RenderingVerify has
-   // already proven that the render stage changes only its declared wrappers
-   // and GUID dispatches; one such dispatch can sit inside this IL window.
-   // The exact rendered instruction and method identity are checked above.
-   BindingAnchor.Require(origin,at,signature,source,c[7]);
-  }
-  if(c.Length>5&&c[5]=="event")NativeEventCaptionAudit.Require(origin,origin.Body.Instructions[at]);
-  if(c.Length>5&&(c[5]=="gui"||c[5]=="label")){var consumer=GuiCaptionAudit.Consumer(m,i);if(c[5]=="gui"){guiMethods.Add(m);var call=(MethodReference)consumer.Operand;if(call.DeclaringType.FullName=="UnityEngine.GUILayout"&&call.Name=="Button")guiButtons.Add(consumer);if(call.DeclaringType.FullName=="GUIUtils")guiMethods.Add(method("GUIUtils",call.Name));}}
+  string signature=System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(c[5]));
+  // The binding anchor is recorded against pristine IL. RenderingVerify has
+  // already proven that the render stage changes only its declared wrappers
+  // and GUID dispatches; one such dispatch can sit inside this IL window.
+  // The exact rendered instruction and method identity are checked above.
+  BindingAnchor.Require(origin,at,signature,source,c[6]);
+  if(c[4]=="event")NativeEventCaptionAudit.Require(origin,origin.Body.Instructions[at]);
+  if(c[4]=="gui"||c[4]=="label"){var consumer=GuiCaptionAudit.Consumer(m,i);if(c[4]=="gui"){guiMethods.Add(m);var call=(MethodReference)consumer.Operand;if(call.DeclaringType.FullName=="UnityEngine.GUILayout"&&call.Name=="Button")guiButtons.Add(consumer);if(call.DeclaringType.FullName=="GUIUtils")guiMethods.Add(method("GUIUtils",call.Name));}}
   sites.Add(new Site{Method=m,Instruction=i,Source=source,Id=c[2]});
  }
  foreach(var site in sites){var il=site.Method.Body.GetILProcessor();edit(site.Method,site.Instruction,new Instruction[0],new[]{il.Create(OpCodes.Ldstr,site.Source),il.Create(OpCodes.Call,api("Text"))},null);site.Instruction.Operand=site.Id;}

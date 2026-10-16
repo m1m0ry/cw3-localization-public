@@ -60,14 +60,16 @@ def main():
     config=read(a.config)
     if a.action=='prepare':
         import game_target
-        target=game_target.load(config);original=location(config,'original');game=location(config,'game');files=target['original_hashes']
-        if sha((game/target['executable']).read_bytes())!=target['exe_sha256']:raise ValueError('Game executable fingerprint mismatch')
-        for name,expected in files.items():
-            if sha(game_target.installed(game,name,target).read_bytes())!=expected:raise ValueError('A clean matching game is required: '+name)
+        target=game_target.load(config);original=location(config,'original');files=target['original_hashes']
         for name,expected in files.items():
             dst=original/name
             if dst.exists():assert sha(dst.read_bytes())==expected
-        for name in files:
+        missing=[name for name in files if not (original/name).exists()]
+        if missing:
+            game=location(config,'game')
+            for name in missing:
+                if sha(game_target.installed(game,name,target).read_bytes())!=files[name]:raise ValueError('A clean matching input is required: '+name)
+        for name in missing:
             dst=original/name;dst.parent.mkdir(parents=True,exist_ok=True)
             if not dst.exists():shutil.copy2(game_target.installed(game,name,target),dst)
         print('Prepared',len(files),'hash-verified originals');return

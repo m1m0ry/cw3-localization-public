@@ -3,5 +3,9 @@
   "version": "2.12 Steam",
   "steam_build": "22453699",
   "unity_version": "5.2.3f1",
-  "exe_sha256": "e738a7ee12e2eafb48366e84f8cd089c4433d2a2223954f3642a1c71ce80e456"
+  "exe_sha256": "e738a7ee12e2eafb48366e84f8cd089c4433d2a2223954f3642a1c71ce80e456",
+  "target_id": "windows-steam-22453699",
+  "platform": 5,
+  "data_dir": "CW3_Data",
+  "executable": "CW3.exe"
 }

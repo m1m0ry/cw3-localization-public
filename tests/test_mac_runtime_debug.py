@@ -20,8 +20,7 @@ class RuntimeDebug(unittest.TestCase):
         manifest=dict(target_id=player.MACOS,**player.TARGETS[player.MACOS])
         runtime=game/debug.RUNTIME;runtime.parent.mkdir(parents=True);runtime.write_bytes(b'fixed runtime')
         digest=hashlib.sha256(b'fixed runtime').hexdigest()
-        manifest['files']=[dict(file=debug.RUNTIME,before=None,after=digest)]
-        backup=game/player.BACKUP;backup.mkdir();(backup/'state.json').write_text(json.dumps(manifest))
+        (game/'CW3Localization/fonts.json').write_text(json.dumps(dict(runtime_sha256=digest)))
         return game,state,runtime
 
     def test_marker_is_locked_to_installed_external_runtime(self):
@@ -32,8 +31,10 @@ class RuntimeDebug(unittest.TestCase):
                 marker=state/'cw3-debug/enabled.txt'
                 self.assertEqual(marker.read_text().strip(),player.digest(runtime))
                 runtime.write_bytes(b'other runtime')
-                with self.assertRaisesRegex(RuntimeError,'differs'):debug.action(game,state,['disable'],Path(directory)/'evidence')
-                runtime.write_bytes(b'fixed runtime')
+                with self.assertRaisesRegex(RuntimeError,'differs'):debug.action(game,state,['command','runtime_probe'],Path(directory)/'evidence')
+                (state/'font-status.json').unlink()
+                marker.write_text('obsolete marker')
+                runtime.unlink()
                 debug.action(game,state,['disable'],Path(directory)/'evidence')
             self.assertFalse(marker.exists())
 

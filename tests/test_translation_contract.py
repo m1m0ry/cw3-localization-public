@@ -62,8 +62,15 @@ class TranslationContract(unittest.TestCase):
         doc = copy.deepcopy(self.doc)
         entry = next(e for e in doc['entries'] if e['target']['kind'] == 'crpl')
         entry['translation'] += '"'
-        with self.assertRaisesRegex(AssertionError, 'Unsafe CRPL literal'):
-            self.check(doc)
+        self.check(doc)
+
+    def test_output_placeholders_allow_order_but_preserve_counts_formats_and_tags(self):
+        from translation_contract import tokens_match
+        source='[b]{0:N2} {1} {0:N2}[/b] %s %d'
+        self.assertTrue(tokens_match(source,'[b]{1} {0:N2} {0:N2}[/b] %s %d','crpl_output'))
+        for bad in ('[b]{1} {0:N2}[/b] %s %d','[b]{1} {0} {0:N2}[/b] %s %d','[b]{2} {0:N2} {0:N2}[/b] %s %d','[/b]{1} {0:N2} {0:N2}[b] %s %d','[b]{1} {0:N2} {0:N2}[/b] %d %s'):
+            self.assertFalse(tokens_match(source,bad,'crpl_output'),bad)
+        self.assertFalse(tokens_match('{0} {1}','{1} {0}','managed'))
 
 if __name__ == '__main__':
     unittest.main()

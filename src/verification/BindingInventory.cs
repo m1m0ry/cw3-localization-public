@@ -13,22 +13,14 @@ internal static class BindingInventory {
  static string Decode(string s){return Encoding.UTF8.GetString(Convert.FromBase64String(s));}
  static string Encode(string s){return Convert.ToBase64String(Encoding.UTF8.GetBytes(s));}
  static void Main(string[] args){
-  if(args.Length!=4)throw new ArgumentException("windows-original windows-render macos-original canonical-managed.tsv");
-  using(var windows=AssemblyDefinition.ReadAssembly(args[0]))using(var render=AssemblyDefinition.ReadAssembly(args[1]))using(var macos=AssemblyDefinition.ReadAssembly(args[2])){
+  if(args.Length!=3)throw new ArgumentException("windows-original macos-original canonical-managed.tsv");
+  using(var windows=AssemblyDefinition.ReadAssembly(args[0]))using(var macos=AssemblyDefinition.ReadAssembly(args[1])){
    var methods=macos.MainModule.Types.SelectMany(Types).SelectMany(t=>t.Methods).ToDictionary(m=>m.FullName);
-   var originals=windows.MainModule.Types.SelectMany(Types).SelectMany(t=>t.Methods).ToDictionary(m=>m.FullName);
    var sites=new HashSet<string>();var output=new List<string>();
-   foreach(string line in File.ReadAllLines(args[3])){
-    var c=line.Split('\t');if(c[4]!="v9"&&c[4]!="v10")throw new InvalidOperationException("Unknown canonical stage");
-    var staged=(MethodDefinition)(c[4]=="v9"?windows:render).MainModule.LookupToken(Int32.Parse(c[0]));int at=Int32.Parse(c[1]);string source=Decode(c[3]);
-    if(!staged.HasBody||at<0||at>=staged.Body.Instructions.Count||staged.Body.Instructions[at].OpCode!=OpCodes.Ldstr||(string)staged.Body.Instructions[at].Operand!=source)throw new InvalidOperationException("Canonical stage source drift: "+c[2]);
-    var original=originals[staged.FullName];
-    if(c[4]=="v10"){
-     var before=original.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr).ToArray();var after=staged.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr).ToArray();
-     if(!before.Select(i=>(string)i.Operand).SequenceEqual(after.Select(i=>(string)i.Operand)))throw new InvalidOperationException("Canonical stage literal sequence drift: "+c[2]);
-     at=original.Body.Instructions.IndexOf(before[Array.IndexOf(after,staged.Body.Instructions[at])]);
-    }
-    if(!original.HasBody||at<0||at>=original.Body.Instructions.Count||original.Body.Instructions[at].OpCode!=OpCodes.Ldstr||(string)original.Body.Instructions[at].Operand!=source)throw new InvalidOperationException("Canonical pristine source drift: "+c[2]);
+   foreach(string line in File.ReadAllLines(args[2])){
+    var c=line.Split('\t');if(c.Length!=7)throw new InvalidOperationException("Invalid canonical managed row");
+    var original=(MethodDefinition)windows.MainModule.LookupToken(Int32.Parse(c[0]));int at=Int32.Parse(c[1]);string source=Decode(c[3]);
+    BindingAnchor.Require(original,at,Decode(c[5]),source,c[6]);
     MethodDefinition target;if(!methods.TryGetValue(original.FullName,out target)||!target.HasBody)throw new InvalidOperationException("Missing exact method: "+original.FullName);
     var matches=target.Body.Instructions.Select((i,index)=>new{Instruction=i,Index=index}).Where(x=>x.Instruction.OpCode==OpCodes.Ldstr&&(string)x.Instruction.Operand==source).ToArray();
     if(matches.Length!=1){

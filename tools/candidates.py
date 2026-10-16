@@ -1,7 +1,7 @@
 """Local candidate review export/merge. Never creates bindings or calls a service."""
 from pathlib import Path
 import argparse, copy, hashlib, json, re
-from translation_contract import loads
+from translation_contract import loads, tokens_match
 ROOT = Path(__file__).resolve().parents[1]
 FIELDS = ('source', 'kind', 'scene', 'context', 'reason', 'id')
 REASONS = {'missing_translation', 'bound_source_mismatch', 'unknown_id', 'unbound_source', 'unbound_context', 'unbound_script_literal', 'unknown_resource', 'unknown_message_list', 'unbound_target', 'ambiguous_target', 'message_list_mismatch'}
@@ -73,11 +73,7 @@ def merge(review, dictionary):
         value = row.get('translation')
         if not isinstance(value, str) or not value.strip() or len(value) > 4096 or e['id'] in chosen:
             raise ValueError('Empty, oversized or duplicate approved translation')
-        for pattern in (r'\{\d+(?:[^{}]*)\}|%(?:\d+\$)?[sdif]', r'\[(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8}|-|/?[bius]|/?url(?:=[^\]]+)?)\]'):
-            if re.findall(pattern, e['source']) != re.findall(pattern, value):
-                raise ValueError('Placeholder/tag order mismatch')
-        if e['target']['kind'] == 'crpl' and any(c in value.replace('\\n', '') for c in '\"\r\n\\'):
-            raise ValueError('Unsafe CRPL translation')
+        if not tokens_match(e['source'],value,e['target']['kind']):raise ValueError('Placeholder/tag mismatch')
         e['translation'] = value
         chosen.add(e['id'])
     return result, len(chosen)

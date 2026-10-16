@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 POLICY={
     'CandidateContracts':['Candidates.cs','Json.cs'],
     'RuntimeContracts':['Json.cs','FontFile.cs'],
+    'TranslationFileContracts':['Json.cs','TranslationFiles.cs'],
     'LocalFontContracts':['LocalFontFile.cs'],
     'NativeFontBundleContracts':['LocalFontFile.cs','NativeFontBundle.cs'],
     'RuntimePathsContracts':['RuntimePaths.cs'],
@@ -25,7 +26,7 @@ class Contracts:
         if name in POLICY:
             sources=[runtime/s for s in POLICY[name]]+[test/(name+'.cs')]
             args=[]
-            if name in ('CandidateContracts','RuntimePathsContracts'):args=[w(o)]
+            if name in ('CandidateContracts','RuntimePathsContracts','TranslationFileContracts'):args=[w(o)]
             elif name in ('TextStyleContracts','FontSettingsContracts'):pass
             elif name=='NativeFontBundleContracts':
                 import native_font_template
@@ -46,7 +47,7 @@ class Contracts:
             self.execute(name,sources,args)
             if name=='NativeFontBundleContracts':subprocess.run([sys.executable,str(test/'check_native_font_bundle.py'),str(o/'native-contract.bundle'),str(m.location('build')/'CW3Localization/font.ttf'),'--platform',str(platform)],check=True)
             if name=='TextStyleContracts':
-                for mode in ('native','native-state-unavailable'):m.run(o/(name+'.exe'),[mode,w(o)])
+                for mode in ('native','native-state-unavailable','registry-missing','registry-invalid','registry-runtime','registry-resource'):m.run(o/(name+'.exe'),[mode,w(o)])
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
         elif name=='MeshLifetimeContracts':
             self.execute(name,runtime_sources(m.location('build').parent/'generated')+[test/(name+'.cs')],flags=['-r:System.Xml'])
@@ -70,7 +71,7 @@ class Contracts:
             if name=='AssemblyStructureContracts':self.execute(name,[ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],flags=flags+['-r:System.Core'])
             elif name=='GuiCaptionContracts':self.execute(name,[runtime/'GuiCaptionAudit.cs',test/(name+'.cs')],flags=flags)
             elif name=='NativeNoticeContracts':self.execute(name,[runtime/s for s in ('NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs','MessageBindings.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(targets)],flags+['-r:System.Core'])
-            elif name=='ManagedDisplayContracts':self.execute(name,[runtime/s for s in ('ManagedDisplayAudit.cs','NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs')]+[test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(m.location('build').parent/'managed/render.dll'),w(targets)],flags+['-r:System.Core','-main:ManagedDisplayContracts'])
+            elif name=='ManagedDisplayContracts':self.execute(name,[runtime/s for s in ('ManagedDisplayAudit.cs','NativeEventCaptionAudit.cs','GuiCaptionAudit.cs','Json.cs')]+[ROOT/'src/verification/BindingAnchor.cs',test/(name+'.cs')],[w(m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll'),w(targets)],flags+['-r:System.Core','-main:ManagedDisplayContracts'])
             elif name=='MainMenuClickContracts':
                 menu=m.compile(o,'MainMenuClickFixture.exe',[test/'MainMenuClickFixture.cs']);patched=o/'MainMenuClickFixture.patched.exe';reversed_=o/'MainMenuClickFixture.reversed.exe'
                 m.run(menu,['original']);self.execute(name,[runtime/'MainMenuClickPatch.cs',test/(name+'.cs')],[w(menu),w(patched),w(reversed_)],flags)

@@ -6,7 +6,7 @@ import game_target
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--generated',required=True);p.add_argument('--output',required=True);a=p.parse_args();c=json.loads(Path(a.config).read_text())
 m=MonoTools(c);path=m.location;win=m.win;run=m.run
-target=game_target.load(c);game_target.verify_inputs(path('original'),target)
+target=game_target.load(c);game_target.verify_inputs(path('original'),target,[n for n in target['original_hashes'] if n.startswith('CW3_Data/Managed/')])
 g=path('original')/'CW3_Data/Managed';out=Path(a.output);out.mkdir(parents=True,exist_ok=True);shutil.copy2(m.cecil,out/'Mono.Cecil.dll')
 def compile(name,files,library=False):
  flags=[]

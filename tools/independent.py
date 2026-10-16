@@ -24,7 +24,7 @@ def definitions(entries,original,expected_platform=5):
         return (object_path(f,f.objects[parent].parse_as_dict()['m_GameObject']['m_PathID'])+'/' if parent else '')+go['m_Name']
     for e in entries:
         t=e['target'];d={k:e[k] for k in ('id','source')};d['kind']=t['kind']
-        if t['kind']=='managed':d.update(site=str(t['method_token'])+':'+str(t['instruction_index']),stage=t['stage'])
+        if t['kind']=='managed':d.update(site=str(t['method_token'])+':'+str(t['instruction_index']))
         if t['kind'] in ('label','textmesh'):
             f=resource(t['file']);o=f.objects[t['object_id']]
             gid=struct.unpack_from('<q',o.get_raw_data(),4)[0] if t['kind']=='label' else o.parse_as_dict()['m_GameObject']['m_PathID']
@@ -100,10 +100,12 @@ def build(config,out):
     if out.exists() and (not out.is_dir() or any(out.iterdir())):
         raise ValueError('Choose an empty output directory; keep existing candidates and recovery points')
     stage=out.with_name(out.name+'.building-'+uuid.uuid4().hex[:12])
-    _build(config,stage,out)
-    # A failed build retains its staging directory for inspection, never a ready manifest at out.
-    if out.exists():out.rmdir()
-    stage.rename(out)
+    try:
+        _build(config,stage,out)
+        if out.exists():out.rmdir()
+        stage.rename(out)
+    finally:
+        if stage.exists():shutil.rmtree(stage)
     print('Verified offline candidate:',out)
 
 def _build(config,out,final_out):
@@ -130,8 +132,7 @@ def _build(config,out,final_out):
     for e in entries:
         t=e['target']
         if t['kind']=='managed':
-            row=[str(t['method_token']),str(t['instruction_index']),e['id'],base64.b64encode(e['source'].encode()).decode(),t['stage'], 'event' if e['context'].startswith('Native event caption / ') else 'gui' if e['context'].startswith('GUI caption / ') else 'label' if e['context'].startswith('UILabel caption / ') else '']
-            if layout['platform']==2:row += [base64.b64encode(t['method'].encode()).decode(),t['anchor_sha256']]
+            row=[str(t['method_token']),str(t['instruction_index']),e['id'],base64.b64encode(e['source'].encode()).decode(), 'event' if e['context'].startswith('Native event caption / ') else 'gui' if e['context'].startswith('GUI caption / ') else 'label' if e['context'].startswith('UILabel caption / ') else '',base64.b64encode(t['method'].encode()).decode(),t['anchor_sha256']]
             rows.append('\t'.join(row))
     (generated/'managed.tsv').write_text('\n'.join(rows)+'\n')
     planned=list(resource_plan(layout));changed_names={name for name,fixes,embedded in planned}
@@ -150,10 +151,6 @@ def _build(config,out,final_out):
     resources=style_font_resources.build((dest/'CW3_Data/sharedassets0.assets').read_bytes(),(original/'CW3_Data/mainData').read_bytes(),faces,font_specs,expected_platform=layout['platform'])
     for name,data in resources.items():
         (dest/name).write_bytes(data);required_originals.pop(name,None)
-    constants={'SansHash':font_hashes['sans'],'SerifHash':font_hashes['serif'],
-               'AssetsHash':workflow.sha(resources['CW3_Data/sharedassets0.assets']),
-               'SansCoverage':font_specs['sans']['coverage'],'SerifCoverage':font_specs['serif']['coverage']}
-    (generated/'StyleFonts.cs').write_text('internal static class CW3StyleFonts {\n'+''.join(' internal const string '+key+'="'+value+'";\n' for key,value in constants.items())+'}\n')
     import native_font_template
     (generated/'NativeFontTemplate.cs').write_text(native_font_template.build(original,expected_platform=layout['platform']))
     cfg=out/'builder-config.json';workflow.save(cfg,config)
@@ -163,7 +160,7 @@ def _build(config,out,final_out):
     if layout['platform']==2:
         runtime=dest/'CW3Localization/Runtime/CW3ExternalRuntime.dll';runtime.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(out/'managed/CW3ExternalRuntime.dll',runtime)
-    d=dest/'CW3Localization';d.mkdir(exist_ok=True);shutil.copy2(ROOT/'translations/zh-CN.json',d/'zh-CN.json');shutil.copy2(ROOT/'fonts/OFL.txt',d/'OFL.txt')
+    d=dest/'CW3Localization';d.mkdir(exist_ok=True);shutil.copy2(ROOT/'translations/zh-CN.json',d/'zh-CN.default.json');shutil.copy2(ROOT/'fonts/OFL.txt',d/'OFL.txt')
     # Full OFL source-derived font is prepared separately and hash-checked above.
     font=ROOT/'local-only/independent-font/font.ttf';assert font.exists(),'Prepare the full static OFL font first';shutil.copy2(font,d/'font.ttf')
     shutil.copy2(serif,d/'serif.ttf');shutil.copy2(ROOT/'fonts/Serif-OFL.txt',d/'Serif-OFL.txt')

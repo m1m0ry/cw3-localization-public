@@ -1,31 +1,22 @@
 # Creeper World 3 简体中文补丁
 
-面向 **Windows Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。原生 macOS 候选见下节。社区内容和地图编辑器可能保留英文。
+面向 **Windows 与原生 macOS 的 Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。社区内容和地图编辑器可能保留英文。
 
 ## 下载与安装
 
-从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载 `CW3-Windows-v12.5.zip`。这是完整覆盖补丁，附安装和恢复入口；GitHub 的源码 ZIP 不是安装包。须自备匹配的正版游戏。
+从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载完整补丁包；源码 ZIP 不是安装包。须自备匹配的正版游戏与 Python 3.10+。
 
-完全退出游戏。解压后运行 `安装或恢复.cmd`（Windows）或 `安装或恢复.command`（CrossOver），需要 Python 3.10+，无需其他 Python 包。安装器校验版本与哈希、备份原版；兼容版本可直接升级，跨类型补丁按提示先恢复并另存旧备份。恢复使用同包入口，保留 `.cw3-zh-backup`。
-
-Steam 中右键游戏 → 管理 → 浏览本地文件，定位包含 `CW3.exe` 的目录：
-
-- Windows：`<Steam 库>\steamapps\common\Creeper World 3`
-- CrossOver：`~/Library/Application Support/CrossOver/Bottles/<瓶名>/drive_c/Program Files (x86)/Steam/steamapps/common/Creeper World 3`
-
-手工覆盖须先备份 `CW3_Data`，将包内 `CW3_Data` 和 `CW3Localization` 合并到游戏目录，保留其他文件。恢复自己的备份，并删除新增的 `CW3_Data/Managed/CW3Rendering.dll`、`CW3_Data/Managed/CW3Runtime.dll` 及 `CW3Localization` 中的 `zh-CN.json`、`font.ttf`、`serif.ttf`、`fonts.json`、`OFL.txt`、`Serif-OFL.txt`；包内不含 `text-style.json` 和 `fonts` 自定义字体目录，覆盖、升级及恢复会保留它们；自改词典先另存。安装和恢复不改存档。
-
-## 原生 macOS
-
-仅提供同版本已安装候选的更新与回退，Steam 原版暂无首次安装入口。退出游戏后先预检：
+完全退出游戏，解压后运行 `安装汉化.cmd`（Windows）或 `安装汉化.command`（macOS、CrossOver）。安装、更新、降级和中断后重试均使用完整包。也可使用源码安装器：
 
 ```sh
-python3 tools/macos_adhoc_update.py --game GAME --old-package OLD --new-package NEW
+python3 tools/player_install.py --package PACKAGE --game GAME --action install
 ```
 
-预检通过后追加 `--apply`；回退改用 `--game GAME --recover --new-package NEW`。保留 `.cw3-zh-backup`。字体使用见[字体与字号](docs/text-style.md)。
+`GAME` 是 Steam「管理 → 浏览本地文件」打开的目录，包含 `CW3.exe` 或 `CW3.app`。原生 Mac 包内程序变化时会做必要的 ad-hoc 重签；如系统阻止启动，确认来源后按系统提示手动允许。
 
-如系统阻止启动，确认来源后按提示手动允许；卸载恢复原版请通过 Steam 重新安装。
+`CW3Localization/zh-CN.default.json` 随完整包更新；自定义译文放在独立的 `zh-CN.user.json`，字体设置、自定义字体、存档与旧备份保留。未知旧 `zh-CN.json` 会使本次安装停止，按提示迁移后重试。
+
+恢复原版：先在安装入口选择清理汉化程序，再通过 Steam「验证游戏文件完整性」。Steam 不会自动删除额外注入的 DLL。若提示未覆盖的资源版本不符，也先执行这两步，再安装目标版本。
 
 ## 译文与构建
 
@@ -35,7 +26,7 @@ python3 tools/macos_adhoc_update.py --game GAME --old-package OLD --new-package 
 python3 tools/workflow.py check
 ```
 
-已安装补丁的词典位于 `CW3Localization/zh-CN.json`，退出后替换，重启生效。新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
+自定义译文沿用默认文件的 `format`、`language`、`entries` 格式，将要改的条目复制到 `CW3Localization/zh-CN.user.json`，只保留自定义项。仅修改 `translation`，保留 ID、原文、标签和占位符；退出后修改，重启生效。新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
 
 ## 游戏截图
 

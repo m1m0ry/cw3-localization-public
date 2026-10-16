@@ -1,4 +1,4 @@
-"""Shared local font registry: strict paths, source cmap and native glyph probes."""
+"""The two shipped font faces: source cmap, identity and native glyph probes."""
 from pathlib import Path
 import base64
 import hashlib
@@ -9,7 +9,6 @@ ID = re.compile(r'[a-z][a-z0-9_-]{0,31}\Z')
 HASH = re.compile(r'[a-f0-9]{64}\Z')
 RESOURCES = ('CW3_Data/sharedassets0.assets', 'CW3_Data/mainData')
 REGISTRY = 'CW3Localization/fonts.json'
-MAX_FONTS = 16
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
@@ -22,9 +21,7 @@ def font_id(value):
 def font_path(value):
     if value in ('font.ttf', 'serif.ttf'):
         return value
-    if not isinstance(value, str) or not re.fullmatch(r'fonts/[a-z][a-z0-9_-]{0,31}\.(ttf|otf)', value):
-        raise ValueError('Invalid font path')
-    return value
+    raise ValueError('Invalid shipped font path')
 
 def inspect_font(path, pixel_size=0):
     from fontTools.ttLib import TTLibError
@@ -65,11 +62,11 @@ def validate(d):
         raise ValueError('Font registry format')
     if not isinstance(d['runtime_sha256'],str) or not HASH.fullmatch(d['runtime_sha256']):raise ValueError('Font runtime hash')
     if set(d['resources'])!=set(RESOURCES) or not all(isinstance(v,str) and HASH.fullmatch(v) for v in d['resources'].values()):raise ValueError('Font resource hashes')
-    if not isinstance(d['fonts'],dict) or not 2<=len(d['fonts'])<=MAX_FONTS or not {'sans','serif'}<=set(d['fonts']):raise ValueError('Font registry count/defaults')
+    if not isinstance(d['fonts'],dict) or set(d['fonts'])!={'sans','serif'}:raise ValueError('Font registry requires only shipped sans/serif faces')
     for ident,spec in d['fonts'].items():
         font_id(ident)
         if not isinstance(spec,dict) or set(spec)!= {'file','sha256','family','coverage','pixel_size','probe_char','probe_advance'}:raise ValueError('Font registry entry')
-        font_path(spec['file'])
+        if font_path(spec['file']) != {'sans':'font.ttf','serif':'serif.ttf'}[ident]:raise ValueError('Font face/path mismatch')
         if not isinstance(spec['sha256'],str) or not HASH.fullmatch(spec['sha256']) or not isinstance(spec['family'],str) or not 0<len(spec['family'])<=256:raise ValueError('Font identity')
         if len(base64.b64decode(spec['coverage'],validate=True))!=8192:raise ValueError('Font coverage')
         if any(type(spec[k]) is not int for k in ('pixel_size','probe_char','probe_advance')) or not 0<=spec['pixel_size']<=64 or not 33<=spec['probe_char']<65536 or not 0<=spec['probe_advance']<=4096:raise ValueError('Font metadata')
