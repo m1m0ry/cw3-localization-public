@@ -15,6 +15,10 @@ class TranslationFileContracts {
   values=TranslationFiles.Load(folder,defs,message=>warnings++);Need(values["edited"]=="USER"&&values["corrected"]=="NEXT CORRECTION"&&values["added"]=="NEXT ENTRY"&&File.ReadAllText(user)==custom,"Default upgrades and new entries are visible while user bytes survive");
   File.WriteAllText(user,Doc(Row("corrected","corrected","BAD PARTIAL")+","+Row("corrected","corrected","DUPLICATE")));
   values=TranslationFiles.Load(folder,defs,message=>warnings++);Need(values["corrected"]=="NEXT CORRECTION"&&warnings==1,"Malformed override cannot partially overwrite defaults");
+  defs["output"]=new Hashtable{{"source","[b]{0:N2} {1} {0:N2}[/b]"},{"kind","crpl_output"}};
+  File.WriteAllText(user,Doc(Row("output","[b]{0:N2} {1} {0:N2}[/b]","[b]{1} {0:N2} {0:N2}[/b]")));
+  values=TranslationFiles.Load(folder,defs,message=>warnings++);Need(values.ContainsKey("output"),"Numbered output tokens may reorder");
+  foreach(string bad in new[]{"[b]{1} {0:N2}[/b]","[b]{1} {0} {0:N2}[/b]","[/b]{1} {0:N2} {0:N2}[b]"}){File.WriteAllText(user,Doc(Row("output","[b]{0:N2} {1} {0:N2}[/b]",bad)));values=TranslationFiles.Load(folder,defs,message=>warnings++);Need(!values.ContainsKey("output"),"Counts, format and rich tags stay protected");}
   File.Delete(user);File.Delete(defaults);values=TranslationFiles.Load(folder,defs,message=>warnings++);Need(values.Count==0&&warnings==2,"A missing release file cannot silently reactivate retired legacy defaults");
   Console.WriteLine("PASS release defaults, corrections/new entries, persistent user overrides, source/token guards and malformed override isolation");
  }

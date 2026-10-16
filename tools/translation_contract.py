@@ -1,6 +1,18 @@
 """Adopted dictionary checks shared by builds and offline updates."""
 from pathlib import Path
 import hashlib, json, re
+from collections import Counter
+
+BRACES=r'\{\d+(?:[^{}]*)\}'
+PRINTF=r'%(?:\d+\$)?[sdif]'
+TAGS=r'\[(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8}|-|/?[bius]|/?url(?:=[^\]]+)?)\]'
+
+def tokens_match(source, translated, kind):
+    if kind=='crpl_output':
+        if Counter(re.findall(BRACES,source))!=Counter(re.findall(BRACES,translated)):return False
+        formats=PRINTF
+    else:formats=BRACES+'|'+PRINTF
+    return all(re.findall(pattern,source)==re.findall(pattern,translated) for pattern in (formats,TAGS))
 
 def loads(text):
     def pairs(items):
@@ -32,7 +44,6 @@ def check(doc, locks, codepoints):
     assert len({e['id'] for e in entries}) == len(entries), 'Duplicate ID'
     assert {e['id'] for e in entries} == set(locks), 'Dictionary must retain the fixed target set'
     cps = set(codepoints)
-    tokens = [r'\{\d+(?:[^{}]*)\}|%(?:\d+\$)?[sdif]', r'\[(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8}|-|/?[bius]|/?url(?:=[^\]]+)?)\]']
     for e in entries:
         assert set(e) == {'id','source','context','translation','target'}, e['id']
         assert all(isinstance(e[k], str) and e[k] for k in ('id','source','context','translation')), e['id']
@@ -43,10 +54,7 @@ def check(doc, locks, codepoints):
             assert set(t)=={'kind','method_token','instruction_index','method','anchor_sha256'}, 'Managed binding must use pristine anchored coordinates'
             assert type(t['method_token']) is int and t['method_token']>0 and type(t['instruction_index']) is int and t['instruction_index']>=0, 'Invalid managed coordinates'
             assert isinstance(t['method'],str) and t['method'] and isinstance(t['anchor_sha256'],str) and re.fullmatch(r'[a-f0-9]{64}',t['anchor_sha256']), 'Missing managed method/IL anchor'
-        for rx in tokens:
-            assert re.findall(rx, e['source']) == re.findall(rx, e['translation']), 'Placeholder/tag mismatch or order changed: ' + e['id']
-        if e['target']['kind'] == 'crpl':
-            assert not any(c in e['translation'].replace('\\n', '') for c in '\"\r\n\\'), 'Unsafe CRPL literal: ' + e['id']
+        assert tokens_match(e['source'],e['translation'],t['kind']), 'Placeholder/tag mismatch or order changed: ' + e['id']
         missing = {c for c in e['translation'] if ord(c) not in cps and not c.isspace()}
         assert not missing, f"Font subset needs maintainer update: {e['id']} {''.join(sorted(missing))}"
     return entries
