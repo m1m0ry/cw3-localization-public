@@ -79,9 +79,9 @@ class PinnedBuild(unittest.TestCase):
                 with patch.object(verify_package,'ROOT',root):
                     _,inspected=verify_package.inspect_zip(z,manifest,supported,None)
                     self.assertEqual(inspected['source_commit'],provenance['source_commit'])
-                    invalid_exe=root/'invalid-exe';invalid_exe.write_bytes(b'wrong executable')
-                    with self.assertRaisesRegex(ValueError,'CW3.exe does not match'):
-                        verify_package.inspect_zip(z,manifest,supported,invalid_exe)
+                    invalid_game=root/'invalid-game';(invalid_game/'CW3_Data').mkdir(parents=True);(invalid_game/'CW3.exe').write_bytes(b'wrong executable')
+                    with self.assertRaisesRegex(RuntimeError,'版本不匹配'):
+                        verify_package.inspect_zip(z,manifest,supported,invalid_game)
             checked=subprocess.run([sys.executable,str(ROOT/'tools/verify_package.py'),'--config',str(config),
                                     '--package',str(output)+'.zip','--inspect-only'],check=True,capture_output=True,text=True)
             self.assertIn('Actual executable unavailable',checked.stdout)

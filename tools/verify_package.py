@@ -12,7 +12,7 @@ import tempfile
 import zipfile
 
 from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, instructions, supported_target, target_description, validate_release_payload
-from player_install import RUNTIME, atomic_copy, installed_path, target_identity, target_layout
+from player_install import RUNTIME, atomic_copy, check_game_identity, installed_path, target_identity, target_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -49,7 +49,7 @@ def valid_hash(value):
     return isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value) is not None
 
 
-def inspect_zip(archive, build, supported, exe):
+def inspect_zip(archive, build, supported, game):
     require(isinstance(build, dict), 'Invalid build manifest')
     require(build.get('format') == 1 and build.get('revision') == 'independent-v12-candidate',
             'Expected the current independent build manifest')
@@ -78,8 +78,8 @@ def inspect_zip(archive, build, supported, exe):
     require(player.get('target') == target and player.get('exe_sha256') == supported['exe_sha256'],
             'Player target or executable hash mismatch')
     require(target_identity(player) == target_identity(supported), 'Player platform or install layout mismatch')
-    if exe is not None:
-        require(sha(exe) == player['exe_sha256'], 'Installed '+target_layout(player)['executable']+' does not match the package target')
+    if game is not None:
+        check_game_identity(game, player)
     for key in ('required_originals', 'controlled_fonts'):
         require(player.get(key, {}) == build.get(key, {}), 'Player/build metadata mismatch: ' + key)
     for key in ('source_repo', 'source_commit', 'source_dirty', 'build_inputs_sha256'):
@@ -144,6 +144,7 @@ def inspect_zip(archive, build, supported, exe):
 
 
 def exercise_fixture(archive, root, player, original, exe):
+    executable_hash = sha(exe)
     with tempfile.TemporaryDirectory(prefix='cw3-package-gate-') as folder:
         tmp = Path(folder)
         archive.extractall(tmp / 'package')
@@ -184,7 +185,7 @@ def exercise_fixture(archive, root, player, original, exe):
         require(all(not installed_path(game,name,player).exists() for name in INJECTED), 'Injected program remains after cleanup')
         require(all(sha(installed_path(game, name, player)) == expected for name, expected in player.get('required_originals',{}).items()), 'Untouched original changed in fixture')
         # Steam, rather than this installer, restores the patched original assets.
-        require(sha(executable) == player['exe_sha256'], 'Fixture executable changed')
+        require(sha(executable) == executable_hash, 'Fixture executable changed')
         require(sentinel.read_bytes() == b'UNCHANGED SAVE SENTINEL', 'Fixture save sentinel changed')
 
 
@@ -201,17 +202,18 @@ def main():
     build = json.loads((loc('package') / 'manifest.json').read_text())
     supported = supported_target(build)
     package = Path(args.package)
-    exe = loc('game') / target_layout(supported)['executable']
+    game = loc('game')
+    exe = game / target_layout(supported)['executable']
     # Locked build inputs need no executable; installed-game and fixture checks still require it.
-    checked_exe = None if args.inspect_only and not exe.is_file() else exe
+    checked_game = None if args.inspect_only and not exe.is_file() else game
     with zipfile.ZipFile(package) as archive:
-        root, player = inspect_zip(archive, build, supported, checked_exe)
+        root, player = inspect_zip(archive, build, supported, checked_game)
         if not args.inspect_only:
             exercise_fixture(archive, root, player, loc('original'), exe)
     print('ZIP SHA256:', sha(package))
     print('PASS ZIP integrity:', len(player['files']), 'payload files +', len(PLAYER_CONTROLS), 'player controls;', player['version'])
     print('Supported target executable SHA256:', player['exe_sha256'])
-    print('Actual executable hash verified.' if checked_exe is not None else 'Actual executable unavailable; only the package target metadata was checked.')
+    print('Actual executable identity verified.' if checked_game is not None else 'Actual executable unavailable; only the package target metadata was checked.')
     if 'source_commit' in player:
         print('Source commit:', player['source_commit'], '; source_dirty:', player.get('source_dirty'))
     if args.inspect_only:

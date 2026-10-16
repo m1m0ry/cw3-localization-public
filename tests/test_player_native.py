@@ -1,6 +1,6 @@
 """Native full-package replay and signing boundaries, with tiny Mach-O fixtures."""
 from pathlib import Path
-import copy,io,json,re,shutil,subprocess,sys,tempfile,unittest,zipfile,os
+import copy,io,json,re,shutil,struct,subprocess,sys,tempfile,unittest,zipfile,os
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
@@ -130,9 +130,29 @@ class NativeInstall(unittest.TestCase):
             out=root/'local-only/package'
             with patch.object(package_player,'ROOT',root),patch.object(sys,'argv',['pack','--config',str(config),'--output',str(out)]):package_player.main()
             with zipfile.ZipFile(str(out)+'.zip') as archive,patch.object(verify_package,'ROOT',root):
-                _,packed=verify_package.inspect_zip(archive,build,supported,game/manifest['executable'])
+                _,packed=verify_package.inspect_zip(archive,build,supported,game)
                 self.assertEqual(player.target_identity(packed),player.target_identity(manifest))
                 self.assertIn('清理汉化程序',archive.read('package/使用说明.txt').decode())
+                exe=game/manifest['executable']
+                for signature in (b'',b'NEW ADHOC SIGNATURE SIZE'):
+                    with self.subTest(signature=signature):
+                        exe.write_bytes(macho(signature))
+                        player.check_game_identity(game,manifest)
+                        verify_package.inspect_zip(archive,build,supported,game)
+                # Signing changes the blob, its length and __LINKEDIT sizes.
+                # CPU subtype, other header/segment fields, signature start and
+                # code bytes in either Intel slice must retain their identity.
+                original=macho(b'RESIGNED');changes={}
+                for i,wide in enumerate((False,True)):
+                    start=struct.unpack_from('>I',original,16+20*i)[0];header=32 if wide else 28;segment=72 if wide else 56
+                    offsets={'cpu_subtype':12+20*i,'header_flags':start+24,'linkedit_fileoff':start+header+(40 if wide else 32),'signature_start':start+header+segment+8,'code':start+header+segment+16}
+                    for name,offset in offsets.items():
+                        changed=bytearray(original);changed[offset]^=1;changes[str(i)+'/'+name]=changed
+                for name,changed in changes.items():
+                    with self.subTest(tamper=name):
+                        exe.write_bytes(changed)
+                        with self.assertRaises((ValueError,RuntimeError)):player.check_game_identity(game,manifest)
+                        with self.assertRaises((ValueError,RuntimeError)):verify_package.inspect_zip(archive,build,supported,game)
                 wrong=dict(supported,target_id=player.WINDOWS,**player.TARGETS[player.WINDOWS])
                 with self.assertRaises(ValueError):verify_package.inspect_zip(archive,build,wrong,None)
             with self.assertRaisesRegex(ValueError,'CW3ExternalRuntime.dll'):package_player.validate_release_payload(player.PAYLOAD-{player.ADDED},player.MACOS)
