@@ -2,6 +2,7 @@
 from pathlib import Path
 import json,sys,hashlib,subprocess,shutil,os,uuid,time,re
 import game_target
+from player_install import idle
 ROOT=Path(__file__).resolve().parents[1];args=sys.argv[1:];config=ROOT/'config.local.json';R=ROOT/'local-only/debug';state=None
 while args[:1] and args[0].startswith('--'):
  option,value=args[:2];args=args[2:]
@@ -22,8 +23,6 @@ M['base']=str(ROOT/M['base'])
 (ROOT/'local-only/evidence').mkdir(parents=True,exist_ok=True)
 def put(src,dst):
  tmp=dst.with_name(dst.name+'.cw3debug-tmp');assert not tmp.exists();shutil.copy2(src,tmp);assert sha(src)==sha(tmp);os.replace(tmp,dst)
-def idle():
- p=subprocess.run(['/usr/bin/pgrep','-fl','[C]W3[.]exe|[/]CW3[.]app/Contents/MacOS/Menu Helper'],capture_output=True,text=True);assert p.returncode==1,p.stdout+p.stderr
 mode=args[0]
 if mode in ('enable','disable'):
  idle();expected=M['base_sha256'] if mode=='enable' else M['debug_sha256'];assert sha(core)==expected,'Unknown core version'

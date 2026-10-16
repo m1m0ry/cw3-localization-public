@@ -139,7 +139,7 @@ class NativeInstall(unittest.TestCase):
             for row in manifest['files']:
                 if row['before']:
                     target=original/row['file'];target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(player.installed_path(game,row['file'],manifest),target)
-            for relative in package_player.PLAYER_SOURCES.values():
+            for relative in set(package_player.PLAYER_SOURCES.values())|set(package_player.INSTRUCTION_SOURCES.values()):
                 target=root/relative;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/relative,target)
             (root/'resources').mkdir();(root/'resources/macos-target.json').write_text(json.dumps(supported))
             config=root/'config.json';config.write_text(json.dumps(dict(package=str(files),build=str(files))))

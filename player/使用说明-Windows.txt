@@ -1,0 +1,18 @@
+CW3 简体中文补丁 {version}
+适用 Windows Steam 2.12 / build 22453699。
+
+手动安装（无需 Python）
+1. 完全退出游戏。
+2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件。
+3. 解压补丁，将 CW3_Data 和 CW3Localization 复制到游戏安装文件夹（CW3.exe 所在位置），提示时选择覆盖。
+
+更新补丁时，保留原有 CW3Localization 中的 fonts/、text-style.json 和 zh-CN.user.json。
+
+可选脚本安装：安装 Python 3.10+，双击「安装汉化.cmd」，按提示选择游戏安装文件夹，再选「1 安装/重装汉化」。
+
+CrossOver 用户请运行「安装汉化.command」，选择包含 CW3.exe 的游戏安装文件夹。
+
+恢复原版：运行安装脚本，选择「2 清理汉化程序」，再通过 Steam「验证游戏文件完整性」。
+
+字体与字号设置及自定义字体目录见「字体设置.md」。
+文件哈希见 manifest.json，字体许可见 OFL.txt 与 CW3Localization/Serif-OFL.txt。

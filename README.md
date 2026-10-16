@@ -1,47 +1,84 @@
-# Creeper World 3 简体中文补丁
+# Creeper World 3 汉化补丁
 
-面向 **Windows 与原生 macOS 的 Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。社区内容和地图编辑器可能保留英文。
+适用于 **Windows 与原生 macOS 的 Steam 2.12 / build 22453699**，覆盖主菜单、剧情、教程和地图编辑器界面。社区地图的作者文本可能保留原文。
 
 ## 下载与安装
 
-从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载完整补丁包；源码 ZIP 不是安装包。须自备匹配的正版游戏与 Python 3.10+。
+从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载对应平台的补丁包并解压。
 
-完全退出游戏，解压后运行 `安装汉化.cmd`（Windows）或 `安装汉化.command`（macOS、CrossOver）。安装、更新、降级和中断后重试均使用完整包。也可使用源码安装器：
+### Windows
 
-```sh
-python3 tools/player_install.py --package PACKAGE --game GAME --action install
+1. 完全退出游戏。
+2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件。
+3. 将解压出的 `CW3_Data` 和 `CW3Localization` 复制到游戏安装文件夹（`CW3.exe` 所在位置），提示时选择覆盖。
+
+**手动安装无需 Python。** 更新补丁时，保留原有 `CW3Localization` 目录下的 `fonts/`、`text-style.json` 和 `zh-CN.user.json`。
+
+也可在安装 Python 3.10+ 后双击包内的 `安装汉化.cmd`，按提示选择游戏安装文件夹，再选 `1 安装/重装汉化`。
+
+CrossOver 用户使用同一 Windows 补丁包，运行 `安装汉化.command`，选择包含 `CW3.exe` 的游戏安装文件夹。
+
+### 原生 macOS
+
+1. 完全退出游戏，并确认已安装 Python 3.10+。
+2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件，找到包含 `CW3.app` 的目录。
+3. 双击包内 `安装汉化.command`，按提示选择该目录，再选 `1 安装/重装汉化`。
+
+如系统阻止启动，确认来源后按系统提示手动允许。
+
+### 恢复原版
+
+运行对应平台的安装脚本，选择 `2 清理汉化程序`，再通过 Steam「验证游戏文件完整性」。
+
+## 自定义译文
+
+词典文件位于游戏目录的 `CW3Localization` 下：
+
+- `zh-CN.default.json`：随补丁更新的默认译文。
+- `zh-CN.user.json`：可选的自定义译文，有效条目优先于默认译文，更新补丁时保留。
+
+可在 `zh-CN.user.json` 中添加需要覆盖的条目，例如：
+
+```json
+{
+  "format": 1,
+  "language": "zh-CN",
+  "entries": [
+    {
+      "id": "text.edceac6532890c27",
+      "source": "Exit",
+      "translation": "退出游戏"
+    }
+  ]
+}
 ```
 
-`GAME` 是 Steam「管理 → 浏览本地文件」打开的目录，包含 `CW3.exe` 或 `CW3.app`。原生 Mac 包内程序变化时会做必要的 ad-hoc 重签；如系统阻止启动，确认来源后按系统提示手动允许。
-
-`CW3Localization/zh-CN.default.json` 随完整包更新；自定义译文放在独立的 `zh-CN.user.json`，字体设置、自定义字体、存档与旧备份保留。未知旧 `zh-CN.json` 会使本次安装停止，按提示迁移后重试。
-
-恢复原版：先在安装入口选择清理汉化程序，再通过 Steam「验证游戏文件完整性」。Steam 不会自动删除额外注入的 DLL。若提示未覆盖的资源版本不符，也先执行这两步，再安装目标版本。
+可从 `zh-CN.default.json` 复制条目，仅修改 `translation` 字段（保留原文中的标签和占位符），保存后重启游戏生效。
 
 ## 译文与构建
 
-译文统一维护在 `translations/zh-CN.json`。仅修改 `translation`，保留原文、目标、标签和占位符；检查无需游戏文件或翻译服务：
+仓库译文统一维护在 `translations/zh-CN.json`。修改 `translation` 时请保留原文、目标、标签和占位符。校验译文无需游戏文件或翻译服务：
 
 ```sh
 python3 tools/workflow.py check
 ```
 
-自定义译文沿用默认文件的 `format`、`language`、`entries` 格式，将要改的条目复制到 `CW3Localization/zh-CN.user.json`，只保留自定义项。仅修改 `translation`，保留 ID、原文、标签和占位符；退出后修改，重启生效。新增显示位置或字形须重新构建。源码构建需自备匹配游戏文件及构建依赖，见[构建文档](docs/build.md)。
+从源码构建补丁需自备匹配版本的游戏文件及构建依赖，详见[构建文档](docs/build.md)。
 
 ## 游戏截图
 
-中文主菜单。
+中文主菜单
 
 ![中文主菜单](docs/images/main-menu.jpg)
 
-序幕文字。
+序幕文字
 
 ![中文序幕](docs/images/prologue.jpg)
 
-莉娅对话与按键设置。
+莉娅对话与按键设置
 
 ![莉娅对话与中文按键设置](docs/images/dialogue-settings.jpg)
 
-自写代码采用 [MIT](LICENSE)，字体采用 [OFL 1.1](fonts/OFL.txt)。游戏原文、画面及资源不属于本项目的 MIT 授权范围，见 [NOTICE](NOTICE.md)。
+自写代码采用 [MIT](LICENSE) 许可，字体采用 [OFL 1.1](fonts/OFL.txt) 许可。游戏原文、画面及资源不属于本项目的 MIT 授权范围，详见 [NOTICE](NOTICE.md)。
 
 [贡献译文](CONTRIBUTING.md) · [构建与安装](docs/build.md) · [字体与字号](docs/text-style.md) · [字体与第三方许可](docs/licensing.md)

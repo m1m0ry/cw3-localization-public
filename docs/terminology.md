@@ -1,6 +1,6 @@
 # CW3 翻译术语参考
 
-翻译时按下表统一术语。同词多义和专名简称按注明的条件处理。
+翻译时请按下表统一术语；同词多义和专名简称按表中注明的语境条件处理。
 
 ## 单位与建筑
 
@@ -11,7 +11,7 @@
 | Beam | 光束炮（单位）；光束（普通名词） |
 | Bertha / Big Bertha | 贝尔莎炮（界面）；贝尔莎加农炮（叙述）；战术叙述可简称重炮或巨炮 |
 | Bomber | 轰炸机 |
-| Cannon | 加农炮；main cannons译主炮 |
+| Cannon | 加农炮；main cannons 译主炮 |
 | Collector | 收集器 |
 | Command Node | 指挥节点 |
 | Emitter | 发射源 |
@@ -25,7 +25,7 @@
 | Mortar | 迫击炮 |
 | Nexus | 枢纽 |
 | Nullifier | 消除器 |
-| Ore Mine | 矿井；Ore Miner可按描述称采矿机 |
+| Ore Mine | 矿井；Ore Miner 可按描述称采矿机 |
 | Prism Ship | 棱镜飞船 |
 | Pulse Cannon | 脉冲加农炮 |
 | Reactor | 反应堆 |
@@ -35,7 +35,7 @@
 | Shield | 护盾（界面或屏障）；护盾发生器（CW3 装置的叙述） |
 | Singularity Weapon | 奇点武器 |
 | Siphon | 虹吸器 |
-| Slip Emitter | 滑移发射源；Subspace-Slip Emitter译亚空间滑移发射源 |
+| Slip Emitter | 滑移发射源；Subspace-Slip Emitter 译亚空间滑移发射源 |
 | Sniper | 狙击炮 |
 | Spore | 孢子 |
 | Spore Tower | 孢子塔 |
@@ -68,7 +68,7 @@
 
 | 原词 | 译法 |
 | --- | --- |
-| AC Collection Field | AC回收场；开关简称 AC回收（回收反爬行体并转为矿石） |
+| AC Collection Field | AC 回收场；开关简称 AC 回收（回收反爬行体并转为矿石） |
 | Artifact | 神器（收集物）；遗物或造物（古代装置的叙述） |
 | Creeper | 爬行体 |
 | D-Growth | 生长区（显示开关）；数字生化质生长区（说明） |
@@ -90,13 +90,13 @@
 | 原词 | 译法 |
 | --- | --- |
 | Alia | 阿利亚（Aliana 被说到一半，保留话语中断） |
-| Aliana Abraxis | 阿利亚娜·阿布拉克西斯；Aliana译阿利亚娜 |
+| Aliana Abraxis | 阿利亚娜·阿布拉克西斯；Aliana 译阿利亚娜 |
 | CAIN | 该隐；介绍时保留该隐（CAIN） |
 | Dax Joven | 达克斯·乔文 |
 | Lia | 莉娅 |
 | Newton Mont | 牛顿·蒙特 |
 | Platius Abraxis | 普拉提乌斯·阿布拉克西斯 |
-| Skarsgard Abraxis | 斯卡斯加德·阿布拉克西斯；Skars简称斯卡斯 |
+| Skarsgard Abraxis | 斯卡斯加德·阿布拉克西斯；Skars 简称斯卡斯 |
 | Thrade | 色拉德 |
 | Varro Hale | 瓦罗·黑尔 |
 | Zantaros | 赞塔罗斯 |
@@ -106,10 +106,10 @@
 | 原词 | 译法 |
 | --- | --- |
 | Aether Beam | 以太光束 |
-| Arc Eternal | 永恒之弧；Arc可简称弧，普通名词arc按弧线等语境处理 |
+| Arc Eternal | 永恒之弧；Arc 可简称弧，普通名词 arc 按弧线等语境处理 |
 | C.E. | 第N纪元（保留序数） |
 | Command Academy | 指挥学院 |
-| Common Era | 通用纪元；first Common Era译第一纪元 |
+| Common Era | 通用纪元；first Common Era 译第一纪元 |
 | Cyclical Eternity | 循环永恒；论文书名可用《循环永恒论》 |
 | Dark Beam | 暗黑光束 |
 | Dyson | 戴森球（Dyson sphere） |
