@@ -5,6 +5,15 @@ using System.Reflection;
 
 // Run the shipped runtime/styles against a managed Unity-object boundary.
 // Destruction and lazy Renderer.material instances are simulated, not rendered.
+// Compile-time metadata only: this fixture injects bindings/fonts before use.
+// Native font bundle decoding has its own input-dependent contract suite.
+internal static class CW3Definitions {internal const string Data="W10=";}
+internal static class CW3BuildInfo {internal const string Version="fixture";internal const bool NativeMac=false;}
+internal static class NativeFontTemplate {
+ internal const string Key="managed-fixture",FontPrefix="",FontMiddle="",FontSuffix="",BundlePrefix="",BundleSuffix="",Metadata="",Material="",Texture="";
+ internal const int LineSpacing=0,Ascent=0;
+ internal static readonly int[] OffsetFields=new int[0],SizeFields=new int[0];
+}
 public class SetColor:UnityEngine.Component {public UnityEngine.Material material;}
 class NamedOwner {public string GUID="fixture-guid";}
 class MeshLifetimeContracts {

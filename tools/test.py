@@ -18,7 +18,8 @@ POLICY={
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
 SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts')
 STANDALONE=('CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
-            'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts','CaptionLayoutContracts')
+            'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
+            'CaptionLayoutContracts','MeshLifetimeContracts')
 class Contracts:
     def __init__(self,mono,out):self.mono=mono;self.out=out
     def execute(self,name,sources,args=(),flags=()):
@@ -54,7 +55,9 @@ class Contracts:
                 for mode in ('native','native-state-unavailable','registry-missing','registry-invalid','registry-runtime','registry-resource'):m.run(o/(name+'.exe'),[mode,w(o)])
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
         elif name=='MeshLifetimeContracts':
-            self.execute(name,runtime_sources(m.location('build').parent/'generated')+[test/'UnityFixture.cs',test/(name+'.cs')],flags=['-r:System.Xml'])
+            # This fixture injects its bindings/fonts; production build metadata is unused.
+            sources=[p for p in runtime_sources(o) if p.parent!=o]
+            self.execute(name,sources+[test/'UnityFixture.cs',test/(name+'.cs')],flags=['-r:System.Xml'])
         elif name=='ScriptOutputCandidateContracts':
             self.execute('ScriptOutputEngine',[test/'ScriptOutputEngine.cs'],[w(m.location('original')/'CW3_Data/Managed/UnityEngine.dll'),w(o/'UnityEngine.dll')],[m.prepare_cecil(o),'-r:System.Core'])
             sources=runtime_sources(m.location('build').parent/'generated')+[test/(name+'.cs')]
