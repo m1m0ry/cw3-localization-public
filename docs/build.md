@@ -33,7 +33,7 @@ python3 tools/package_player.py \
 
 构建只生成本地文件，不自动安装。安装包包含安装脚本、默认译文和 OFL 字体。`--external-full` 生成完整静态字体；分发字体须保留 OFL。
 
-`workflow.py` 提供 `check` 和 `prepare`；候选由 `independent.py` 构建。译文在运行时按固定目标绑定，资源构建只保留字体和布局修复。
+`workflow.py` 提供 `check` 和 `prepare`；候选由 `independent.py` 构建。新增显示目标须重新审计绑定并构建。
 
 确定性复核须保持以下输入一致：
 
@@ -44,7 +44,7 @@ python3 tools/package_player.py \
 
 ## 安装与更新
 
-安装、更新、恢复和自定义译文见 [README](../README.md)。新增显示目标须重新审计和构建，新增字形须更新字体。
+安装、更新、恢复和自定义译文见 [README](../README.md)。
 
 ## 云构建
 
