@@ -49,7 +49,8 @@ def valid_hash(value):
     return isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value) is not None
 
 
-def inspect_zip(archive, build, supported, game):
+def inspect_zip(archive, build, supported, game, source_root=None):
+    source_root = ROOT if source_root is None else Path(source_root)
     require(isinstance(build, dict), 'Invalid build manifest')
     require(build.get('format') == 1 and build.get('revision') == 'independent-v12-candidate',
             'Expected the current independent build manifest')
@@ -134,10 +135,10 @@ def inspect_zip(archive, build, supported, game):
             for block in iter(lambda: source.read(1024 * 1024), b''):
                 digest.update(block)
         require(digest.hexdigest() == row['after'], 'ZIP payload hash mismatch: ' + row['file'])
-    # Control scripts and licenses must be the current packaging sources, not merely valid ZIP entries.
+    # Controls must match the selected source snapshot, not merely their own ZIP hashes.
     for name, source in PLAYER_SOURCES.items():
-        require(archive.read(files[name]) == (ROOT / source).read_bytes(), 'Player control differs from packaging source: ' + name)
-    expected_instructions = instructions(supported, player['version'], ROOT)
+        require(archive.read(files[name]) == (source_root / source).read_bytes(), 'Player control differs from packaging source: ' + name)
+    expected_instructions = instructions(supported, player['version'], source_root)
     require(archive.read(files['使用说明.txt']).decode('utf8').replace('\r\n', '\n') == expected_instructions,
             'Player instructions differ from the versioned packaging source')
     return root, player
