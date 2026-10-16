@@ -31,6 +31,23 @@ python3 tools/package_player.py \
 
 安装、重装、降级及原版清理步骤见 [README](../README.md)。默认译文 `CW3Localization/zh-CN.default.json` 随包更新；独立的 `zh-CN.user.json` 只保存自定义条目，不随包覆盖。新增显示目标须重新审计和构建，新增字形须更新字体。
 
+## 云构建
+
+PR 与 `main` 提交自动运行译文检查和不需游戏输入的 Python 测试。维护者可在 `Build candidate` 的原生 Branch 菜单选择本仓库开发分支，合并前构建 Windows 或原生 Mac 候选。运行固定到所选分支当时的 `github.sha`；API/CLI 也可选择本仓库标签来指定提交。固定输入引用见 [ci-inputs.json](../resources/ci-inputs.json)。
+
+首次启用[原生手动入口](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)需要默认分支已有 workflow 定义；之后可选择开发分支独立运行。
+
+在仓库 Settings → Environments 创建 `build-inputs`，Deployment branches and tags 允许需要构建的分支/标签或选择 No restriction；在该 Environment 添加 `CW3_INPUTS_READ_TOKEN`。Required reviewers 为可选设置；启用后须审批，未启用时由维护者手动触发即可。使用仅选择私有输入仓库的 fine-grained PAT，仓库权限仅需 `Contents: read`。该权限可读取所选仓库全部内容，不能限制为单个 Release。不要将它配置为仓库级 Secret。
+
+在所选分支的工作副本中，使用已登录的 `gh` 下载并校验候选：
+
+```sh
+python3 tools/build_candidate.py --ref feature/example --version v12.14 --target windows
+python3 tools/build_candidate.py --ref feature/example --version v12.14 --target macos
+```
+
+每次构建固定源码提交及对应平台输入，只上传补丁 ZIP、`SHA256SUMS.txt` 和 `build-info.json`，保留 14 天。候选命令等待返回的确切运行 ID，校验来源、平台和文件哈希；产物保存到 `local-only/candidate-运行ID/`。构建不创建 Release 或安装补丁。
+
 ## 开发检查
 
 不需游戏文件的检查：

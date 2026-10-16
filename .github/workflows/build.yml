@@ -1,0 +1,74 @@
+name: Build candidate
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Package version (for example v12.14); creates no tag or release
+        required: true
+        type: string
+      target:
+        description: Game platform
+        required: true
+        default: windows
+        type: choice
+        options: [windows, macos]
+permissions:
+  contents: read
+concurrency:
+  group: cw3-build-${{ github.sha }}-${{ inputs.version }}-${{ inputs.target }}
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'm1m0ry/cw3-localization-public' && github.event_name == 'workflow_dispatch' && github.actor == 'm1m0ry' && github.triggering_actor == 'm1m0ry'
+    environment: build-inputs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Authorize selected source
+        env:
+          BUILD_VERSION: ${{ inputs.version }}
+        run: python3 tools/ci_source.py --version "$BUILD_VERSION"
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12.15'
+      # Environment branch/tag rules must permit the selected ref; PR jobs do not use it.
+      # Download before installing wheels, which can add Python startup hooks.
+      - name: Fetch and verify fixed inputs
+        id: inputs
+        env:
+          GH_TOKEN: ${{ secrets.CW3_INPUTS_READ_TOKEN }}
+          BUILD_TARGET: ${{ inputs.target }}
+        run: python tools/ci_inputs.py --target "$BUILD_TARGET" --source-commit "$GITHUB_SHA"
+      - name: Runtime and locked public Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            mono-runtime=6.8.0.105+dfsg-3.6ubuntu2 \
+            libmono-system4.0-cil=6.8.0.105+dfsg-3.6ubuntu2 \
+            libmono-system-core4.0-cil=6.8.0.105+dfsg-3.6ubuntu2 \
+            libmono-system-xml4.0-cil=6.8.0.105+dfsg-3.6ubuntu2
+          python -m pip install -r requirements-build.txt
+      - name: Build and verify package
+        id: package
+        env:
+          BUILD_VERSION: ${{ inputs.version }}
+          BUILD_TARGET: ${{ inputs.target }}
+          INPUTS_SHA: ${{ steps.inputs.outputs.sha256 }}
+        run: |
+          python tools/ci_build.py --config local-only/ci-config.json \
+            --source-commit "$GITHUB_SHA" --tag "$BUILD_VERSION" --target "$BUILD_TARGET" --inputs-sha256 "$INPUTS_SHA" \
+            > local-only/ci-build.log 2>&1 || { echo 'Build or package verification failed.'; exit 1; }
+      - name: Upload patch and provenance
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cw3-package-${{ github.sha }}-${{ inputs.target }}
+          path: |
+            local-only/ci-release/${{ steps.package.outputs.archive }}
+            local-only/ci-release/SHA256SUMS.txt
+            local-only/ci-release/build-info.json
+          if-no-files-found: error
+          retention-days: 14
