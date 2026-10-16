@@ -1,4 +1,4 @@
-"""Gate the exact main checkout before a manual build can read private inputs."""
+"""Gate the dispatched repository ref before a manual build reads private inputs."""
 from pathlib import Path
 import argparse
 import os
@@ -10,13 +10,24 @@ SOURCE_REPO = 'm1m0ry/cw3-localization-public'
 WORKFLOW = '.github/workflows/build.yml'
 
 
+def validate_ref_name(ref):
+    if (not ref or ref.startswith('refs/') or
+            subprocess.run(['git', 'check-ref-format', '--branch', ref],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode):
+        raise ValueError('Select a branch or tag name in the fixed repository')
+
+
 def authorize(env):
+    ref = env.get('GITHUB_REF', '')
+    prefix = next((prefix for prefix in ('refs/heads/', 'refs/tags/') if ref.startswith(prefix)), None)
+    if prefix is None:
+        raise ValueError('Only a repository branch or tag may receive a manual dispatch')
+    validate_ref_name(ref[len(prefix):])
     expected = dict(GITHUB_REPOSITORY=SOURCE_REPO, GITHUB_EVENT_NAME='workflow_dispatch',
-                    GITHUB_REF='refs/heads/main', GITHUB_ACTOR='m1m0ry',
-                    GITHUB_TRIGGERING_ACTOR='m1m0ry',
-                    GITHUB_WORKFLOW_REF=SOURCE_REPO + '/' + WORKFLOW + '@refs/heads/main')
+                    GITHUB_ACTOR='m1m0ry', GITHUB_TRIGGERING_ACTOR='m1m0ry',
+                    GITHUB_WORKFLOW_REF=SOURCE_REPO + '/' + WORKFLOW + '@' + ref)
     if any(env.get(key) != value for key, value in expected.items()):
-        raise ValueError('Only the owner may dispatch or rerun the main build workflow')
+        raise ValueError('Only the owner may dispatch or rerun this repository build workflow')
 
 
 def verify_checkout(root, commit):
@@ -40,7 +51,7 @@ def main():
     authorize(os.environ)
     validate_version(args.version)
     verify_checkout(ROOT, os.environ.get('GITHUB_SHA', ''))
-    print('Authorized main source:', os.environ['GITHUB_SHA'])
+    print('Authorized source:', os.environ['GITHUB_REF'], os.environ['GITHUB_SHA'])
 
 
 if __name__ == '__main__':

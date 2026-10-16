@@ -1,4 +1,4 @@
-"""Dispatch main, wait for its exact Actions run, and verify the candidate ZIP."""
+"""Dispatch a repository ref, wait for its exact Actions run, and verify the ZIP."""
 from pathlib import Path
 import argparse
 import base64
@@ -10,7 +10,7 @@ import subprocess
 import zipfile
 
 from ci_inputs import TARGETS
-from ci_source import SOURCE_REPO, WORKFLOW, validate_version
+from ci_source import SOURCE_REPO, WORKFLOW, validate_ref_name, validate_version
 from package_player import supported_target
 from verify_package import inspect_zip
 
@@ -77,17 +77,18 @@ def verify_download(folder, commit, version, inputs_sha, target):
     return archive_sha
 
 
-def check_run(run, run_id, commit=None):
-    if (run.get('id') != run_id or run.get('path') != WORKFLOW or run.get('head_branch') != 'main'
+def check_run(run, run_id, ref, commit=None):
+    if (run.get('id') != run_id or run.get('path') != WORKFLOW or run.get('head_branch') != ref
             or run.get('event') != 'workflow_dispatch' or
             run.get('repository', {}).get('full_name') != SOURCE_REPO or
             not re.fullmatch(r'[0-9a-f]{40}', run.get('head_sha', '')) or
             (commit is not None and run['head_sha'] != commit)):
-        raise ValueError('Run differs from the expected main build workflow')
+        raise ValueError('Run differs from the requested repository ref or build workflow')
     return run['head_sha']
 
 
-def build(version, output=None, target='windows'):
+def build(ref, version, output=None, target='windows'):
+    validate_ref_name(ref)
     validate_version(version)
     if target not in TARGETS:
         raise ValueError('Unsupported build target')
@@ -97,19 +98,19 @@ def build(version, output=None, target='windows'):
             raise ValueError('Choose a new output directory under local-only')
     # The dispatch response owns the run identity; never select the latest run.
     response = api('repos/' + SOURCE_REPO + '/actions/workflows/build.yml/dispatches',
-                   dict(ref='main', inputs=dict(version=version, target=target)))
+                   dict(ref=ref, inputs=dict(version=version, target=target)))
     run_id = response.get('workflow_run_id')
     if type(run_id) is not int or run_id <= 0:
         raise ValueError('Dispatch returned no exact run ID; do not blindly dispatch again')
     print('Run: https://github.com/' + SOURCE_REPO + '/actions/runs/' + str(run_id), flush=True)
-    commit = check_run(api('repos/' + SOURCE_REPO + '/actions/runs/' + str(run_id)), run_id)
-    print('Pinned main source:', commit, flush=True)
+    commit = check_run(api('repos/' + SOURCE_REPO + '/actions/runs/' + str(run_id)), run_id, ref)
+    print('Pinned source:', ref, '->', commit, flush=True)
     subprocess.run(['gh', 'run', 'watch', str(run_id), '--repo', GH_REPO, '--exit-status', '--interval', '20'], check=True)
     run = api('repos/' + SOURCE_REPO + '/actions/runs/' + str(run_id))
-    check_run(run, run_id, commit)
+    check_run(run, run_id, ref, commit)
     if run.get('conclusion') != 'success':
         raise ValueError('Build did not succeed')
-    # Read input references at the run SHA, even if local main has since moved.
+    # Read input references at the run SHA, even if the selected ref has moved.
     lock_file = api('repos/' + SOURCE_REPO + '/contents/resources/ci-inputs.json?ref=' + commit)
     metadata = json.loads(base64.b64decode(lock_file['content'], validate=False))
     output = output or ROOT / 'local-only' / ('candidate-' + str(run_id))
@@ -128,12 +129,13 @@ def build(version, output=None, target='windows'):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--ref', required=True, help='Branch or tag in the fixed public repository; native dispatch ref')
     parser.add_argument('--version', required=True, help='Package version; creates no release or tag')
     parser.add_argument('--target', choices=TARGETS, default='windows')
     parser.add_argument('--output', help='New directory under local-only; default includes the exact run ID')
     args = parser.parse_args()
     try:
-        build(args.version, args.output, args.target)
+        build(args.ref, args.version, args.output, args.target)
     except (ValueError, OSError, KeyError, TypeError, subprocess.CalledProcessError, zipfile.BadZipFile) as error:
         parser.exit(1, 'Candidate failed: ' + str(error) + '\n')
     except KeyboardInterrupt:

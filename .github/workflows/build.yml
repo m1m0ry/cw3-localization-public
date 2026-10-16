@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.repository == 'm1m0ry/cw3-localization-public' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && github.actor == 'm1m0ry' && github.triggering_actor == 'm1m0ry'
+    if: github.repository == 'm1m0ry/cw3-localization-public' && github.event_name == 'workflow_dispatch' && github.actor == 'm1m0ry' && github.triggering_actor == 'm1m0ry'
     environment: build-inputs
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -28,14 +28,14 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Authorize main source
+      - name: Authorize selected source
         env:
           BUILD_VERSION: ${{ inputs.version }}
         run: python3 tools/ci_source.py --version "$BUILD_VERSION"
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12.15'
-      # Configure this Environment to allow main only. Keep its secret out of PR jobs.
+      # Environment branch/tag rules must permit the selected ref; PR jobs do not use it.
       # Download before installing wheels, which can add Python startup hooks.
       - name: Fetch and verify fixed inputs
         id: inputs

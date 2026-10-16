@@ -20,7 +20,7 @@ COMMIT = 'a' * 40
 VERSION = 'v12.14'
 FAKE_GH = '''import base64,json,os,shutil,sys
 from pathlib import Path
-args=sys.argv[1:];root=Path(os.environ['CANDIDATE_FIXTURE']);run_id=int(os.environ.get('FAKE_RUN_ID','101'));case=os.environ.get('FAKE_CASE','ok');target=os.environ.get('FAKE_TARGET','windows')
+args=sys.argv[1:];root=Path(os.environ['CANDIDATE_FIXTURE']);run_id=int(os.environ.get('FAKE_RUN_ID','101'));case=os.environ.get('FAKE_CASE','ok');target=os.environ.get('FAKE_TARGET','windows');ref=os.environ.get('FAKE_REF','feature/native-mac')
 calls=root/('calls-'+str(run_id)+'.jsonl')
 with calls.open('a') as f:f.write(json.dumps(args)+'\\n')
 if args[0]=='api':
@@ -28,11 +28,11 @@ if args[0]=='api':
  assert endpoint.startswith('repos/m1m0ry/cw3-localization-public/')
  if endpoint.endswith('/dispatches'):
   assert endpoint.endswith('/workflows/build.yml/dispatches')
-  assert json.load(sys.stdin)=={'ref':'main','inputs':{'version':'v12.14','target':target}}
+  assert json.load(sys.stdin)=={'ref':ref,'inputs':{'version':'v12.14','target':target}}
   if case=='empty_response':raise SystemExit(0)
   result={} if case=='missing_id' else {'workflow_run_id':run_id}
  elif endpoint.endswith('/actions/runs/'+str(run_id)):
-  result={'id':run_id,'path':'.github/workflows/build.yml','head_branch':'main','event':'workflow_dispatch','conclusion':'success','head_sha':'a'*40,'repository':{'full_name':'m1m0ry/cw3-localization-public'}}
+  result={'id':run_id,'path':'.github/workflows/build.yml','head_branch':ref,'event':'workflow_dispatch','conclusion':'success','head_sha':'a'*40,'repository':{'full_name':'m1m0ry/cw3-localization-public'}}
   if case=='wrong_run':result['head_branch']='other'
   if case=='wrong_repo':result['repository']['full_name']='fork/repository'
   if case=='moving_run' and any(json.loads(line)[:2]==['run','watch'] for line in calls.read_text().splitlines()):result['head_sha']='b'*40
@@ -107,7 +107,7 @@ class CandidateCommand(unittest.TestCase):
                     CANDIDATE_FIXTURE=str(root), FAKE_TARGET=target)
 
     def command(self, root, env, extra=()):
-        return subprocess.run([sys.executable, str(root / 'tools/build_candidate.py'), '--version', VERSION,
+        return subprocess.run([sys.executable, str(root / 'tools/build_candidate.py'), '--ref', env.get('FAKE_REF', 'feature/native-mac'), '--version', VERSION,
                                '--target', env['FAKE_TARGET'], *extra], env=env, capture_output=True, text=True)
 
     def test_concurrent_requests_keep_their_exact_run_and_directory(self):
@@ -154,6 +154,14 @@ class CandidateCommand(unittest.TestCase):
             self.assertTrue((root / 'local-only/candidate-101'/('CW3-Mac-' + VERSION + '.zip')).is_file())
             self.assertIn('cw3-package-' + COMMIT + '-macos', (root / 'calls-101.jsonl').read_text())
 
+    def test_tag_dispatch_uses_native_ref_and_pins_its_actual_commit(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            env = dict(self.fixture(root), FAKE_REF='candidate-v12.14')
+            result = self.command(root, env)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn('Pinned source: candidate-v12.14 -> ' + COMMIT, result.stdout)
+
     def test_partial_download_preserves_other_outputs(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
@@ -173,8 +181,8 @@ class CandidateCommand(unittest.TestCase):
             existing = root / 'local-only/existing'
             existing.mkdir(parents=True)
             (existing / 'keep').write_bytes(b'keep')
-            for extra in (('--source-ref', 'topic'), ('--output', str(existing))):
-                result = self.command(root, env, extra)
+            for ref, extra in [('refs/pull/8/head', ()), ('fork:topic', ()), ('feature/native-mac', ('--output', str(existing)))]:
+                result = self.command(root, dict(env, FAKE_REF=ref), extra)
                 self.assertNotEqual(result.returncode, 0)
             self.assertFalse((root / 'calls-101.jsonl').exists())
             self.assertEqual((existing / 'keep').read_bytes(), b'keep')

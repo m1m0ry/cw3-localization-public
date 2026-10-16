@@ -10,13 +10,20 @@ from ci_source import SOURCE_REPO, WORKFLOW, authorize
 
 
 class WorkflowBoundary(unittest.TestCase):
-    def test_only_owner_manual_main_workflow_can_authorize_inputs(self):
+    def test_owner_can_dispatch_repository_development_branches_and_tags(self):
+        for ref in ('refs/heads/main', 'refs/heads/feature/native-mac', 'refs/tags/candidate-v12.14'):
+            env = dict(GITHUB_REPOSITORY=SOURCE_REPO, GITHUB_EVENT_NAME='workflow_dispatch',
+                       GITHUB_REF=ref, GITHUB_ACTOR='m1m0ry', GITHUB_TRIGGERING_ACTOR='m1m0ry',
+                       GITHUB_WORKFLOW_REF=SOURCE_REPO + '/' + WORKFLOW + '@' + ref)
+            authorize(env)
+
+    def test_fork_pr_unauthorized_actor_or_mismatched_workflow_cannot_authorize_inputs(self):
         env = dict(GITHUB_REPOSITORY=SOURCE_REPO, GITHUB_EVENT_NAME='workflow_dispatch',
-                   GITHUB_REF='refs/heads/main', GITHUB_ACTOR='m1m0ry', GITHUB_TRIGGERING_ACTOR='m1m0ry',
-                   GITHUB_WORKFLOW_REF=SOURCE_REPO + '/' + WORKFLOW + '@refs/heads/main')
+                   GITHUB_REF='refs/heads/feature/native-mac', GITHUB_ACTOR='m1m0ry', GITHUB_TRIGGERING_ACTOR='m1m0ry',
+                   GITHUB_WORKFLOW_REF=SOURCE_REPO + '/' + WORKFLOW + '@refs/heads/feature/native-mac')
         authorize(env)
         for key, value in [('GITHUB_REPOSITORY', 'fork/repository'), ('GITHUB_EVENT_NAME', 'pull_request'),
-                           ('GITHUB_REF', 'refs/heads/topic'), ('GITHUB_REF', 'refs/tags/v12.14'),
+                           ('GITHUB_REF', 'refs/pull/8/head'), ('GITHUB_REF', 'refs/heads/../bad'),
                            ('GITHUB_ACTOR', 'contributor'), ('GITHUB_TRIGGERING_ACTOR', 'contributor'),
                            ('GITHUB_WORKFLOW_REF', SOURCE_REPO + '/' + WORKFLOW + '@refs/heads/topic')]:
             with self.subTest(key=key, value=value), self.assertRaises(ValueError):
@@ -33,7 +40,10 @@ class WorkflowBoundary(unittest.TestCase):
     def test_secret_precedes_dependencies_and_only_three_outputs_are_uploaded(self):
         build = (ROOT / '.github/workflows/build.yml').read_text()
         self.assertIn('environment: build-inputs', build)
-        self.assertIn("github.ref == 'refs/heads/main'", build)
+        self.assertNotIn("github.ref == 'refs/heads/main'", build)
+        self.assertIn("github.event_name == 'workflow_dispatch'", build)
+        self.assertIn("github.actor == 'm1m0ry'", build)
+        self.assertIn("github.triggering_actor == 'm1m0ry'", build)
         self.assertIn('ref: ${{ github.sha }}', build)
         self.assertNotIn('source_ref', build)
         self.assertEqual(build.count('secrets.'), 1)
