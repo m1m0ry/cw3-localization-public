@@ -2,7 +2,7 @@
 
 本仓库包含源码、译文和构建脚本。
 
-目标为 Windows 与原生 macOS 的 Steam 2.12 / build 22453699 / Unity 5.2.3f1。需要 Python 3.10+、配置中的 Mono 工具链与 Cecil、`requirements-build.txt` 中的依赖及匹配的原版游戏文件。原版输入与构建产物不提交 Git。
+目标为 Windows 与原生 macOS 的 Steam 2.12 / build 22453699 / Unity 5.2.3f1。构建已验证于 Python 3.12（CI 使用 3.12.15）；另需配置中的 Mono 工具链与 Cecil、`requirements-build.txt` 中的依赖及匹配的原版游戏文件。原版输入与构建产物不提交 Git。
 
 ## 构建
 
