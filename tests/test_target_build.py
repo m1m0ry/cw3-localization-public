@@ -55,6 +55,12 @@ class TargetBuild(unittest.TestCase):
                 workflow.main()
             for name in references:self.assertEqual((original/name).read_bytes(),contents[name])
             game_target.verify_inputs(original,target)
+            # A patched installation cannot invalidate already verified cached inputs.
+            (game/'CW3_Data/level2').write_bytes(b'PATCHED GAME RESOURCE')
+            for missing in (None,'CW3_Data/Managed/UnityEngine.dll'):
+                if missing:(original/missing).unlink()
+                with patch.object(workflow,'check'),patch.object(game_target,'load',return_value=target),patch.object(sys,'argv',['workflow','prepare','--config',str(config)]):workflow.main()
+                game_target.verify_inputs(original,target)
             changed=original/'CW3_Data/Managed/UnityEngine.dll';changed.write_bytes(b'DRIFT')
             with self.assertRaisesRegex(ValueError,'fingerprint mismatch'):game_target.verify_inputs(original,target)
 

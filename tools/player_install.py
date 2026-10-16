@@ -330,7 +330,9 @@ def install(game,manifest,package=PACKAGE):
     print('安装完成。默认译文已更新；用户覆盖词典、字体设置、自定义字体和旧备份均保留。')
 
 def clean(game,manifest):
-    idle();check_game_identity(game,manifest)
+    idle();layout=target_layout(manifest)
+    if not confined(game,layout['data_dir']).is_dir() or not confined(game,layout['executable']).is_file():
+        raise RuntimeError('所选目录不包含目标游戏')
     targets=[installed_path(game,name,manifest) for name in sorted(INJECTED)]
     if any(p.exists() and not p.is_file() for p in targets):raise RuntimeError('汉化程序路径不是普通文件')
     for target in targets:

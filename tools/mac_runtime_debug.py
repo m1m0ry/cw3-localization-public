@@ -16,38 +16,41 @@ COMMANDS={'runtime_probe','style_probe','font_probe','settings_native_open','set
           'prelude_preview','preview_return','quit','audio_probe'}
 
 
-def context(game,state):
-    if state is None or state.name!='CW3Localization' or not (state/'font-status.json').is_file():
+def diagnostics_folder(state):
+    if state is None or state.name!='CW3Localization' or not state.is_dir():
         raise RuntimeError('Pass the existing Unity persistentDataPath/CW3Localization with --state')
     if state.is_symlink():raise RuntimeError('Persistent state path is linked')
+    return player.confined(state,'cw3-debug')
+
+
+def context(game,state):
+    folder=diagnostics_folder(state)
+    if not (state/'font-status.json').is_file():raise RuntimeError('Runtime font status is missing')
     layout=dict(target_id=player.MACOS,**player.TARGETS[player.MACOS])
     expected=player.read(player.installed_path(game,'CW3Localization/fonts.json',layout))['runtime_sha256']
     runtime=player.installed_path(game,RUNTIME,layout)
     if not re.fullmatch('[0-9a-f]{64}',expected) or not runtime.is_file() or player.digest(runtime)!=expected:
         raise RuntimeError('External runtime differs from its packaged font registry')
-    folder=state/'cw3-debug'
-    if folder.is_symlink():raise RuntimeError('Diagnostics directory is linked')
     return runtime,folder,expected
 
 
 def action(game,state,args,evidence_root):
-    runtime,folder,expected=context(game,state)
     mode=args[0]
+    if mode=='disable':
+        player.idle();folder=diagnostics_folder(state);marker=player.confined(folder,'enabled.txt')
+        if marker.exists() and not marker.is_file():raise RuntimeError('Diagnostics marker is not a regular file')
+        marker.unlink(missing_ok=True)
+        print(json.dumps({'mode':mode,'marker_present':False}))
+        return
+    runtime,folder,expected=context(game,state)
     marker=folder/'enabled.txt'
-    if mode in ('enable','disable'):
+    if mode=='enable':
         player.idle()
-        if mode=='enable':
-            folder.mkdir(exist_ok=True)
-            if marker.exists() or marker.is_symlink():raise RuntimeError('Diagnostics marker already exists')
-            with marker.open('x') as output:output.write(expected+'\n')
-            marker.chmod(0o600)
-        else:
-            if marker.is_symlink() or not marker.is_file() or marker.read_text().strip()!=expected:
-                raise RuntimeError('Diagnostics marker is missing or changed')
-            marker.unlink()
-            request=folder/'request.txt'
-            if request.exists() and not request.is_symlink():
-                request.rename(folder/('request-retained-'+uuid.uuid4().hex+'.txt'))
+        folder.mkdir(exist_ok=True)
+        if marker.exists() or marker.is_symlink():raise RuntimeError('Diagnostics marker already exists')
+        if (folder/'request.txt').exists() or (folder/'request.txt').is_symlink():raise RuntimeError('A diagnostics request is outstanding')
+        with marker.open('x') as output:output.write(expected+'\n')
+        marker.chmod(0o600)
         print(json.dumps({'mode':mode,'runtime_sha256':expected,'marker_present':marker.exists()}))
         return
     if mode!='command' or len(args)<2:raise ValueError('Expected enable, disable or command NAME')

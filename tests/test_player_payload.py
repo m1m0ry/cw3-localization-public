@@ -84,6 +84,7 @@ class CompleteInstall(unittest.TestCase):
                 path=player.installed_path(game,name,manifest);path.parent.mkdir(parents=True,exist_ok=True)
                 if not path.exists():path.write_bytes(b'OLD HELPER')
             core=game/'CW3_Data/Managed/Assembly-CSharp.dll';patched=core.read_bytes()
+            (game/manifest['executable']).write_bytes(b'Steam-updated executable')
             player.clean(game,manifest);player.clean(game,manifest)
             self.assertTrue(all(not player.installed_path(game,n,manifest).exists() for n in player.INJECTED))
             self.assertEqual(core.read_bytes(),patched)  # Steam verification is still required.

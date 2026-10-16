@@ -31,8 +31,10 @@ class RuntimeDebug(unittest.TestCase):
                 marker=state/'cw3-debug/enabled.txt'
                 self.assertEqual(marker.read_text().strip(),player.digest(runtime))
                 runtime.write_bytes(b'other runtime')
-                with self.assertRaisesRegex(RuntimeError,'differs'):debug.action(game,state,['disable'],Path(directory)/'evidence')
-                runtime.write_bytes(b'fixed runtime')
+                with self.assertRaisesRegex(RuntimeError,'differs'):debug.action(game,state,['command','runtime_probe'],Path(directory)/'evidence')
+                (state/'font-status.json').unlink()
+                marker.write_text('obsolete marker')
+                runtime.unlink()
                 debug.action(game,state,['disable'],Path(directory)/'evidence')
             self.assertFalse(marker.exists())
 
