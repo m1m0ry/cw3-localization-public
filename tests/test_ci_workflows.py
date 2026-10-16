@@ -45,6 +45,7 @@ class WorkflowBoundary(unittest.TestCase):
         self.assertNotIn('GH_TOKEN', build[dependencies:])
         self.assertNotIn('secrets.', build[dependencies:])
         self.assertIn('> local-only/ci-build.log 2>&1', build)
+        self.assertIn('--target "$BUILD_TARGET" --inputs-sha256', build)
         upload = build[build.index('          path: |'):build.index('          if-no-files-found:')]
         self.assertEqual(upload.splitlines()[1:], [
             '            local-only/ci-release/${{ steps.package.outputs.archive }}',
@@ -57,10 +58,15 @@ class WorkflowBoundary(unittest.TestCase):
                 self.assertNotIn(forbidden, text)
 
     def test_package_names_follow_explicit_platform_without_repacking(self):
-        self.assertEqual(package_stem('windows-steam-22453699', 'v12.14'), 'CW3-Windows-v12.14')
-        self.assertEqual(package_stem('macos-steam-22453699', 'v12.14'), 'CW3-Mac-v12.14')
+        self.assertEqual(package_stem('windows-steam-22453699', 'v12.14', 'windows'), 'CW3-Windows-v12.14')
+        self.assertEqual(package_stem('macos-steam-22453699', 'v12.14', 'macos'), 'CW3-Mac-v12.14')
+        with self.assertRaises(ValueError):package_stem('macos-steam-22453699', 'v12.14', 'windows')
         with self.assertRaises(ValueError):package_stem('unknown', 'v12.14')
         with self.assertRaises(ValueError):package_stem('macos-steam-22453699', '../v12.14')
+
+    def test_private_fallback_keeps_the_envelope_it_already_normalizes(self):
+        for target in ('windows', 'macos'):
+            self.assertEqual(package_stem(target + '-steam-22453699', 'v12.14'), 'CW3-Windows-v12.14')
 
 
 if __name__ == '__main__':

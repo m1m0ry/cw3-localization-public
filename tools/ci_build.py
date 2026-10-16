@@ -12,10 +12,16 @@ from ci_source import SOURCE_REPO, validate_version, verify_checkout
 
 ROOT = Path(__file__).resolve().parents[1]
 
-def package_stem(target_id, tag):
+def package_stem(target_id, tag, requested_target=None):
     validate_version(tag)
-    for selected in TARGETS.values():
+    for target, selected in TARGETS.items():
         if selected['target_id'] == target_id:
+            # The private fallback invokes this CLI without --target and still
+            # normalizes its Windows envelope. Retire this default with that workflow.
+            if requested_target is None:
+                return 'CW3-Windows-' + tag
+            if requested_target != target:
+                raise ValueError('Built platform differs from requested package target')
             return selected['prefix'] + '-' + tag
     raise ValueError('Unsupported package target')
 
@@ -39,6 +45,7 @@ def main():
     p.add_argument('--tag', required=True)
     p.add_argument('--source-commit', required=True)
     p.add_argument('--inputs-sha256', required=True)
+    p.add_argument('--target', choices=TARGETS, help='Explicit platform for the public workflow package name')
     p.add_argument('--check-plan', action='store_true', help='Validate checkout and print provenance without building')
     a = p.parse_args()
     provenance = plan(ROOT, a.tag, a.source_commit, a.inputs_sha256)
@@ -58,7 +65,7 @@ def main():
     manifest.update({k: v for k, v in provenance.items() if k != 'version'})
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
     release.mkdir()
-    package = release/package_stem(manifest['target_id'], a.tag)
+    package = release/package_stem(manifest['target_id'], a.tag, a.target)
     run(sys.executable, ROOT/'tools/package_player.py', '--config', build/'install-config.json', '--output', package)
     archive = Path(str(package)+'.zip')
     player = json.loads((package/'manifest.json').read_text())
