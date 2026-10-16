@@ -39,7 +39,7 @@ PR 与 `main` 提交自动运行译文检查和不需游戏输入的 Python 测�
 
 在仓库 Settings → Environments 创建 `build-inputs`，Deployment branches and tags 允许需要构建的分支/标签或选择 No restriction；在该 Environment 添加 `CW3_INPUTS_READ_TOKEN`。Required reviewers 为可选设置；启用后须审批，未启用时由维护者手动触发即可。使用仅选择私有输入仓库的 fine-grained PAT，仓库权限仅需 `Contents: read`。该权限可读取所选仓库全部内容，不能限制为单个 Release。不要将它配置为仓库级 Secret。
 
-在所选分支的工作副本中，使用已登录的 `gh` 下载并校验候选：
+在与所选分支/标签提交一致的干净工作副本中，使用已登录的 `gh` 下载并校验候选。命令冻结该提交的控制文件基准，等待期间本地分支前进或文件变化不影响校验；运行 SHA 不一致时在下载前停止并给出实际提交：
 
 ```sh
 python3 tools/build_candidate.py --ref feature/example --version v12.14 --target windows
@@ -69,7 +69,7 @@ python3 tools/audit_managed_display.py \
   --output local-only/managed-review-new.json
 ```
 
-`--suite` 可重复、去重，只运行所选 C# 套件；不指定时运行全套。IL 审计区分已有绑定、显示候选、内部键及未知，不自动改译文。配置须提供已校验的原版输入，输出使用新的 `local-only` 路径。
+`--suite` 可重复、去重，只运行所选 C# 套件；不指定时运行全套。IL 审计区分已有绑定、显示候选、内部键及未知，不自动改译文。配置须提供显式 `target_id` 和匹配平台的原版输入；审计校验原版哈希及对应的 pristine 绑定，输出使用新的 `local-only` 路径。
 
 漏译候选采集默认关闭。创建游戏目录下的 `CW3Localization/discover.enabled` 并重启可启用，删除后重启关闭；结果写入同目录 `candidates.json`，需人工审核，不自动翻译或上传。
 

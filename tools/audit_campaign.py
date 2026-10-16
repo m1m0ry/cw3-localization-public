@@ -2,13 +2,18 @@
 from pathlib import Path
 import argparse,base64,collections,json,re,xml.etree.ElementTree as ET
 from resource_text import unpack_script,paths,scripts,display_calls,show_calls
+import game_target
 ROOT=Path(__file__).resolve().parents[1]
 
-def audit(original,entries):
+def audit(original,entries,target):
     from unity15_metadata import read_unity15_metadata
+    game_target.verify_inputs(original,target)
+    if target['platform']==2:
+        from target_bindings import resolve
+        entries=resolve(entries,original,target)
     resources={};counts=collections.Counter();missing=[]
     def resource(name):
-        if name not in resources:resources[name]=read_unity15_metadata((original/name).read_bytes())[0]
+        if name not in resources:resources[name]=read_unity15_metadata((original/name).read_bytes(),target['platform'])[0]
         return resources[name]
     targets={};outputs=collections.defaultdict(list)
     for e in entries:
@@ -51,10 +56,11 @@ def audit(original,entries):
                     for row in rows:output_definition(code,row['target'],row['source'])
                     if rows:counts['reviewed_output_positions']+=1
                     if ordinal not in registered and not rows:missing.append(dict(family='show_output',context=name+'/'+script+' output '+str(ordinal+1),source='variable/concatenated output requires source review'))
-    return dict(counts=dict(counts),missing=missing)
+    return dict(target_id=target['id'],platform=target['platform'],counts=dict(counts),missing=missing)
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--config',default=str(ROOT/'config.local.json'));a=p.parse_args()
     config=json.loads(Path(a.config).read_text());original=Path(config['original']);original=original if original.is_absolute() else ROOT/original
-    result=audit(original,json.loads((ROOT/'translations/zh-CN.json').read_text())['entries']);print(json.dumps(result,ensure_ascii=False,indent=2))
+    target=game_target.load(config)
+    result=audit(original,json.loads((ROOT/'translations/zh-CN.json').read_text())['entries'],target);print(json.dumps(result,ensure_ascii=False,indent=2))
     if result['missing']:raise SystemExit(1)

@@ -2,16 +2,18 @@
 from pathlib import Path
 import argparse
 import base64
+from contextlib import contextmanager
 import hashlib
 import json
 import re
 import shutil
 import subprocess
+import tempfile
 import zipfile
 
 from ci_inputs import TARGETS
-from ci_source import SOURCE_REPO, WORKFLOW, validate_ref_name, validate_version
-from package_player import supported_target
+from ci_source import SOURCE_REPO, WORKFLOW, validate_ref_name, validate_version, verify_checkout
+from package_player import PLAYER_SOURCES, supported_target
 from verify_package import inspect_zip
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,7 +32,23 @@ def api(endpoint, payload=None):
     return json.loads(result.stdout)
 
 
-def verify_download(folder, commit, version, inputs_sha, target):
+@contextmanager
+def verification_source(commit):
+    """Freeze trusted client source data before waiting; never execute fetched code."""
+    names = set(PLAYER_SOURCES.values()) | {'player/使用说明-v12.txt',
+            'resources/supported-build.json', 'resources/macos-target.json'}
+    with tempfile.TemporaryDirectory(prefix='cw3-candidate-source-') as folder:
+        snapshot = Path(folder)
+        for name in names:
+            # Match checkout filters, including the committed CRLF policy for .cmd.
+            data = subprocess.check_output(['git', 'cat-file', '--filters', commit + ':' + name], cwd=ROOT)
+            path = snapshot / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        yield snapshot
+
+
+def verify_download(folder, commit, version, inputs_sha, target, source_root):
     selected = TARGETS[target]
     info = json.loads((folder / 'build-info.json').read_text())
     expected = dict(source_repo=SOURCE_REPO, source_commit=commit, source_dirty=False,
@@ -61,12 +79,12 @@ def verify_download(folder, commit, version, inputs_sha, target):
         for key, value in expected.items():
             if manifest.get(key) != value:
                 raise ValueError('Candidate manifest provenance mismatch: ' + key)
-        supported = supported_target(manifest)
+        supported = supported_target(manifest, source_root)
         # Reuse the package gate for paths, payload allowlist, hashes, installer
         # sources and instructions. It needs no original game input in this mode.
         build_manifest = dict(manifest, format=1, revision='independent-v12-candidate',
                               patch_version=version, version=supported['version'], steam_build=supported['steam_build'])
-        inspected_root, _ = inspect_zip(archive, build_manifest, supported, None)
+        inspected_root, _ = inspect_zip(archive, build_manifest, supported, None, source_root)
         if inspected_root != root:
             raise ValueError('Candidate package root differs from its archive name')
         hashes = {row['file']: row['after'] for row in manifest['files']}
@@ -96,6 +114,14 @@ def build(ref, version, output=None, target='windows'):
         output = Path(output).resolve()
         if not output.is_relative_to((ROOT / 'local-only').resolve()) or output.exists():
             raise ValueError('Choose a new output directory under local-only')
+    client_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    verify_checkout(ROOT, client_commit)
+    with verification_source(client_commit) as source_root:
+        verify_checkout(ROOT, client_commit)
+        return dispatch_and_verify(ref, version, output, target, client_commit, source_root)
+
+
+def dispatch_and_verify(ref, version, output, target, client_commit, source_root):
     # The dispatch response owns the run identity; never select the latest run.
     response = api('repos/' + SOURCE_REPO + '/actions/workflows/build.yml/dispatches',
                    dict(ref=ref, inputs=dict(version=version, target=target)))
@@ -105,6 +131,9 @@ def build(ref, version, output=None, target='windows'):
     print('Run: https://github.com/' + SOURCE_REPO + '/actions/runs/' + str(run_id), flush=True)
     commit = check_run(api('repos/' + SOURCE_REPO + '/actions/runs/' + str(run_id)), run_id, ref)
     print('Pinned source:', ref, '->', commit, flush=True)
+    if commit != client_commit:
+        raise ValueError('Run source differs from this client. Use a clean checkout of ' + commit
+                         + '; no candidate was downloaded. The printed run remains available.')
     subprocess.run(['gh', 'run', 'watch', str(run_id), '--repo', GH_REPO, '--exit-status', '--interval', '20'], check=True)
     run = api('repos/' + SOURCE_REPO + '/actions/runs/' + str(run_id))
     check_run(run, run_id, ref, commit)
@@ -119,7 +148,7 @@ def build(ref, version, output=None, target='windows'):
     try:
         subprocess.run(['gh', 'run', 'download', str(run_id), '--repo', GH_REPO,
                         '-n', 'cw3-package-' + commit + '-' + target, '-D', str(output)], check=True)
-        sha = verify_download(output, commit, version, metadata['targets'][target]['sha256'], target)
+        sha = verify_download(output, commit, version, metadata['targets'][target]['sha256'], target, source_root)
     except BaseException:
         shutil.rmtree(output)
         raise

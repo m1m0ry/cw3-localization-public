@@ -9,10 +9,11 @@ sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 def target_description(supported):
     return ('macOS native Steam ' if target_layout(supported)['target_id']==MACOS else 'Windows Steam ')+supported['version'].removesuffix(' Steam')+' / build '+supported['steam_build']+' / Unity '+supported['unity_version']
 
-def supported_target(build):
+def supported_target(build,root=None):
+    root=ROOT if root is None else Path(root)
     layout=target_layout(build)
     name='macos-target.json' if layout['target_id']==MACOS else 'supported-build.json'
-    supported=json.loads((ROOT/'resources'/name).read_text())
+    supported=json.loads((root/'resources'/name).read_text())
     if target_identity(build)!=target_identity(supported):raise ValueError('Build/profile target fingerprint mismatch')
     return supported
 
