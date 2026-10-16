@@ -2,11 +2,11 @@
 
 本仓库包含源码、译文和构建脚本。
 
-目标为 Windows Steam 2.12 / build 22453699 / Unity 5.2.3f1。构建已验证于 macOS + CrossOver（wine-mono 10.4.1），需要 Python 3.10+、`requirements-build.txt` 中的依赖及自备的匹配原版游戏文件。原版输入与构建产物保存在 `local-only/`，不提交 Git。
+目标为 Windows 与原生 macOS 的 Steam 2.12 / build 22453699 / Unity 5.2.3f1。需要 Python 3.10+、配置中的 Mono 工具链与 Cecil、`requirements-build.txt` 中的依赖及匹配的原版游戏文件。原版输入与构建产物不提交 Git。
 
 ## 构建
 
-复制 `config.example.json` 为 `config.local.json`，填写游戏和 CrossOver 路径。游戏须为匹配的干净原版，原版文件按固定 SHA 校验。按 [fonts/provenance.json](../fonts/provenance.json) 的来源与 SHA 准备 Noto Sans SC 源字体。
+复制 `config.example.json` 为 `config.local.json`，填写目标、游戏、原版输入和工具链路径。`prepare` 按固定 SHA 复用已有原版输入，仅从匹配安装补齐缺失项。按 [fonts/provenance.json](../fonts/provenance.json) 的来源与 SHA 准备 Noto Sans SC 源字体。
 
 原生 Mac 配置使用 `target_id: macos-steam-22453699`，`game` 指向 `CW3.app` 父目录；原版输入须来自 Mac。
 

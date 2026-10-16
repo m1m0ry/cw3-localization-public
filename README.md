@@ -1,12 +1,12 @@
 # Creeper World 3 简体中文补丁
 
-面向 **Windows Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。原生 macOS 候选见下节。社区内容和地图编辑器可能保留英文。
+面向 **Windows 与原生 macOS 的 Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。社区内容和地图编辑器可能保留英文。
 
 ## 下载与安装
 
 从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载完整补丁包；源码 ZIP 不是安装包。须自备匹配的正版游戏与 Python 3.10+。
 
-完全退出游戏，解压后运行 `安装汉化.cmd`（Windows）或 `安装汉化.command`（macOS、CrossOver）。安装、更新、降级和中断后重试均使用现行格式的完整包，不自动回滚；历史包需重新构建。也可使用源码安装器：
+完全退出游戏，解压后运行 `安装汉化.cmd`（Windows）或 `安装汉化.command`（macOS、CrossOver）。安装、更新、降级和中断后重试均使用完整包。也可使用源码安装器：
 
 ```sh
 python3 tools/player_install.py --package PACKAGE --game GAME --action install
