@@ -61,7 +61,7 @@ jobs:
         run: |
           python tools/ci_build.py --config local-only/ci-config.json \
             --source-commit "$GITHUB_SHA" --tag "$BUILD_VERSION" --target "$BUILD_TARGET" --inputs-sha256 "$INPUTS_SHA" \
-            > local-only/ci-build.log 2>&1 || { echo 'Build or package verification failed.'; exit 1; }
+            > local-only/ci-build.log 2>&1 || { echo 'Build failed; see the fixed-field step summary.'; exit 1; }
       - name: Upload patch and provenance
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

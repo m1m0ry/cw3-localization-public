@@ -1,5 +1,6 @@
 UnityPy==1.25.2
 fonttools==4.66.1
+PyYAML==6.0.3
 # Resolved build dependencies; update together and repeat the package comparison.
 Pillow==12.3.0
 archspec==0.2.6

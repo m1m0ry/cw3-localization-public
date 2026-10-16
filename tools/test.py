@@ -1,6 +1,6 @@
 """Default: all Python/C# checks. --suite: only selected C# suites and their fixtures."""
 from pathlib import Path
-import argparse,json,shutil,subprocess,sys,tempfile
+import argparse,json,shutil,subprocess,sys,tempfile,time
 from mono_tools import MonoTools, runtime_sources
 ROOT=Path(__file__).resolve().parents[1]
 POLICY={
@@ -11,11 +11,14 @@ POLICY={
     'NativeFontBundleContracts':['LocalFontFile.cs','NativeFontBundle.cs'],
     'RuntimePathsContracts':['RuntimePaths.cs'],
     'FontSettingsContracts':['Json.cs','TextStylePolicy.cs','FontSettingsModel.cs'],
+    'FontSettingsViewContracts':['Json.cs','TextStylePolicy.cs','FontSettingsModel.cs','FontSettingsView.cs'],
     'TextStyleContracts':['Json.cs','FontRegistry.cs','TextStylePolicy.cs','TextStyles.cs','CaptionLayout.cs','RuntimePaths.cs'],
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
 SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts')
+STANDALONE=('CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
+            'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts','CaptionLayoutContracts')
 class Contracts:
     def __init__(self,mono,out):self.mono=mono;self.out=out
     def execute(self,name,sources,args=(),flags=()):
@@ -25,9 +28,10 @@ class Contracts:
         print('RUN '+name,flush=True)
         if name in POLICY:
             sources=[runtime/s for s in POLICY[name]]+[test/(name+'.cs')]
+            if name=='FontSettingsViewContracts':sources.append(test/'UnityFixture.cs')
             args=[]
             if name in ('CandidateContracts','RuntimePathsContracts','TranslationFileContracts'):args=[w(o)]
-            elif name in ('TextStyleContracts','FontSettingsContracts'):pass
+            elif name in ('TextStyleContracts','FontSettingsContracts','FontSettingsViewContracts'):pass
             elif name=='NativeFontBundleContracts':
                 import native_font_template
                 import game_target
@@ -50,7 +54,7 @@ class Contracts:
                 for mode in ('native','native-state-unavailable','registry-missing','registry-invalid','registry-runtime','registry-resource'):m.run(o/(name+'.exe'),[mode,w(o)])
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
         elif name=='MeshLifetimeContracts':
-            self.execute(name,runtime_sources(m.location('build').parent/'generated')+[test/(name+'.cs')],flags=['-r:System.Xml'])
+            self.execute(name,runtime_sources(m.location('build').parent/'generated')+[test/'UnityFixture.cs',test/(name+'.cs')],flags=['-r:System.Xml'])
         elif name=='ScriptOutputCandidateContracts':
             self.execute('ScriptOutputEngine',[test/'ScriptOutputEngine.cs'],[w(m.location('original')/'CW3_Data/Managed/UnityEngine.dll'),w(o/'UnityEngine.dll')],[m.prepare_cecil(o),'-r:System.Core'])
             sources=runtime_sources(m.location('build').parent/'generated')+[test/(name+'.cs')]
@@ -81,13 +85,32 @@ class Contracts:
                 self.execute(name,[runtime/'MissionScopePatch.cs',test/(name+'.cs')],[w(fixture),w(o)],flags+['-r:System.Core'])
             else:raise ValueError('Unknown suite: '+name)
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--config',default=str(ROOT/'config.local.json'));p.add_argument('--suite',action='append',choices=SUITES,help='Repeat to select C# suites; Python checks are skipped');p.add_argument('--list',action='store_true',help='List C# suites without loading config or compiling');a=p.parse_args()
-    if a.list:print('\n'.join(SUITES));return
-    selected=list(dict.fromkeys(a.suite)) if a.suite else list(SUITES)
-    if not a.suite:subprocess.run([sys.executable,'-m','unittest','discover','-s',str(ROOT/'tests'),'-v'],cwd=ROOT,check=True)
-    m=MonoTools(json.loads(Path(a.config).read_text()))
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--config',help='Configured Mono/game inputs; full runs default to config.local.json')
+    p.add_argument('--suite',action='append',choices=SUITES,help='Repeat to select C# suites; Python checks are skipped')
+    p.add_argument('--standalone',action='store_true',help='Only C# suites needing no game files, generated bindings or Cecil; uses Mono/mcs on PATH unless --config is given')
+    p.add_argument('--list',action='store_true',help='List C# suites without loading config or compiling')
+    a=p.parse_args()
+    if a.list:
+        print('\n'.join(STANDALONE if a.standalone else SUITES))
+        return
+    selected=list(dict.fromkeys(a.suite)) if a.suite else list(STANDALONE if a.standalone else SUITES)
+    configured=any(name not in STANDALONE for name in selected)
+    if a.standalone and configured:
+        p.error('--standalone cannot run suites requiring configured inputs or Cecil')
+    if not a.suite and not a.standalone:
+        subprocess.run([sys.executable,'-m','unittest','discover','-s',str(ROOT/'tests'),'-v'],cwd=ROOT,check=True)
+    config=Path(a.config) if a.config else None
+    if config is None and configured:
+        config=ROOT/'config.local.json'
+    if config is not None and not config.is_file():
+        p.error('Configured suites need --config; use --standalone for game-independent C# checks')
+    started=time.monotonic()
+    m=MonoTools(json.loads(config.read_text())) if config is not None else MonoTools()
     with tempfile.TemporaryDirectory(prefix='cw3-contracts-')as d:
         runner=Contracts(m,Path(d))
         for name in selected:runner.suite(name)
-    print('PASS '+('selected C# suites (Python skipped)' if a.suite else 'all Python checks and C# suites')+'; '+str(len(selected))+' suites; '+str(len(m.compilations))+' compilations: '+', '.join(m.compilations))
+    mode='standalone C# suites' if a.standalone else 'selected C# suites (Python skipped)' if a.suite else 'all Python checks and C# suites'
+    print(f'PASS {mode}; {len(selected)} suites; {len(m.compilations)} compilations: '
+          +', '.join(m.compilations)+f'; elapsed {time.monotonic()-started:.2f}s')
 if __name__=='__main__':main()
