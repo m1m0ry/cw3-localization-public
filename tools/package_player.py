@@ -21,16 +21,15 @@ def instructions(supported,version,root=ROOT):
     if target_layout(supported)['target_id']!=MACOS:
         return (root/'player/使用说明-v12.txt').read_text().replace(' v12\n',' '+version+'\n',1)
     return ('CW3 简体中文补丁 '+version+'\n适用 '+target_description(supported)+'。\n\n'
-            '1. 完全退出游戏，解压 CW3-Mac-'+version+'.zip，准备 Python 3.10+。\n'
+            '1. 完全退出游戏，解压 CW3-Mac-'+version+'.zip，安装 Python 3.10+。\n'
             '2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件，找到包含 CW3.app 的目录。\n'
             '3. 双击包内「安装汉化.command」，按提示选择该目录，再选「1 安装/重装汉化」。\n\n'
-            '安装器负责将资源写入 CW3.app 并做必要的 ad-hoc 重签，保留用户词典、字体设置、自定义字体和存档。系统阻止启动时，确认来源后按系统提示手动允许。\n'
+            '安装器会更新 CW3.app 并在需要时重新签名，保留用户词典、字体设置、自定义字体和存档。系统阻止启动时，确认来源后按系统提示手动允许。\n'
             '字体与字号设置及自定义字体目录见「字体设置.md」。\n'
-            '恢复原版：运行安装脚本，选择「2 清理汉化程序」，再通过 Steam「验证游戏文件完整性」。Steam 不会自动删除额外注入的 DLL。\n'
+            '恢复原版：运行安装脚本，选择「2 清理汉化程序」，再通过 Steam「验证游戏文件完整性」。\n'
             '\n自定义译文\n以下文件位于游戏目录的 CW3Localization 中：\n'
             '- zh-CN.default.json：随补丁更新的默认译文。\n'
             '- zh-CN.user.json：可选的自定义译文；有效条目优先于默认译文，安装时保留。\n'
-            '- zh-CN.json：旧版词典，当前游戏不读取；自定义内容使用 zh-CN.user.json。\n'
             '从默认文件复制要修改的条目到用户文件，沿用 format、language、entries 格式，只保留自定义项。仅改 translation，保留 ID、原文、标签和占位符；退出游戏后修改，重启生效。\n'
             '文件哈希见 manifest.json，许可见 OFL.txt 与 CW3Localization/Serif-OFL.txt。\n')
 

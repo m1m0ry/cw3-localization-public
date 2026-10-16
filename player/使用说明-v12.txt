@@ -2,21 +2,22 @@ CW3 简体中文补丁 v12
 适用 Windows Steam 2.12 / build 22453699；CrossOver 使用同一 Windows 游戏版本。
 
 手动安装（无需 Python）
-1. 完全退出游戏，解压补丁 ZIP。
-2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件，找到包含 CW3.exe 的目录。
-3. 把解压包内的 CW3_Data 和 CW3Localization 两个文件夹复制到该目录，与 CW3.exe 同级；合并文件夹并覆盖同名文件。
+1. 完全退出游戏。
+2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件。
+3. 解压补丁，将 CW3_Data 和 CW3Localization 复制到游戏安装文件夹（CW3.exe 所在位置），提示时选择覆盖。
 
 更新时保留原有 CW3Localization 中的 fonts/、text-style.json 和 zh-CN.user.json，只合并包内文件。
 
-可选脚本安装：准备 Python 3.10+，双击「安装汉化.cmd」，按提示选择上述目录，再选「1 安装/重装汉化」。CrossOver 使用「安装汉化.command」，选择瓶内包含 CW3.exe 的目录。
+可选脚本安装：安装 Python 3.10+，双击「安装汉化.cmd」，按提示选择游戏安装文件夹，再选「1 安装/重装汉化」。
 
-恢复原版：运行安装脚本，选择「2 清理汉化程序」，再通过 Steam「验证游戏文件完整性」。Steam 不会自动删除额外注入的 DLL。
+CrossOver 使用「安装汉化.command」，选择包含 CW3.exe 的游戏安装文件夹。
+
+恢复原版：运行安装脚本，选择「2 清理汉化程序」，再通过 Steam「验证游戏文件完整性」。
 
 自定义译文
 以下文件位于游戏目录的 CW3Localization 中：
 - zh-CN.default.json：随补丁更新的默认译文。
 - zh-CN.user.json：可选的自定义译文；有效条目优先于默认译文，安装时保留。
-- zh-CN.json：旧版词典，当前游戏不读取；自定义内容使用 zh-CN.user.json。
 从默认文件复制要修改的条目到用户文件，沿用 format、language、entries 格式，只保留自定义项。仅改 translation，保留 ID、原文、标签和占位符；退出游戏后修改，重启生效。
 
 默认 sans、100%。在游戏设置「字体与字号」选择并保存；字号即时生效，字体更换重启生效。自备静态 TTF/OTF 放入 CW3Localization/fonts，详见「字体设置.md」。
