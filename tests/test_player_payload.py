@@ -27,6 +27,12 @@ class CompleteInstall(unittest.TestCase):
                     self.assertEqual(player.digest(player.installed_path(game,row['file'],doc)),row['after'])
                 for name,content in preserved.items():self.assertEqual((game/name).read_bytes(),content)
 
+    def test_identical_reinstall_needs_no_writes_or_space(self):
+        with tempfile.TemporaryDirectory() as folder:
+            game,package,manifest=fixture(Path(folder));player.install(game,manifest,package);before=snapshot(game)
+            with patch.object(player.shutil,'disk_usage',return_value=type('Disk',(),{'free':0})()),patch.object(player.os,'access',return_value=False):player.install(game,manifest,package)
+            self.assertEqual(snapshot(game),before)
+
     def test_known_legacy_default_upgrades_and_new_defaults_keep_updating(self):
         with tempfile.TemporaryDirectory() as folder:
             game,package,manifest=fixture(Path(folder));legacy=game/player.LEGACY_DICTIONARY;legacy.parent.mkdir(parents=True,exist_ok=True);legacy.write_bytes(b'OLD OFFICIAL')

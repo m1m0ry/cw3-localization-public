@@ -222,23 +222,39 @@ def idle():
     else:raise RuntimeError('此安装入口仅支持 Windows 或 macOS')
     if running:raise RuntimeError('请先完全退出 CW3（包括其他 bottle 中的 CW3），再安装或清理')
 
-def ensure_writable(game,rows,required,manifest):
-    if shutil.disk_usage(game).free<required:raise RuntimeError(f'空间不足：本操作需要约 {required//1048576+1} MiB 可用空间')
-    folders={game}
-    for f in rows:
-        target=installed_path(game,f['file'],manifest)
-        if target.is_file() and target.stat().st_nlink!=1:raise RuntimeError('受控程序文件存在硬链接：'+str(target))
-        if target.exists() and not os.access(target,os.W_OK):raise RuntimeError('游戏文件不可写，请检查该安装目录的权限：'+str(target))
-        folder=target.parent
-        if not folder.is_dir():
-            if f['file'] not in EXTERNAL or f['before'] is not None:raise RuntimeError('目录布局不完整：'+str(folder))
-            # Only a manifest-declared new sidecar may create directories. Test
-            # its nearest existing parent now; creation follows full staging.
-            while not folder.exists():
-                if folder.is_symlink():raise RuntimeError('新增目录路径不能是符号链接：'+str(folder))
-                folder=folder.parent
-            if not folder.is_dir():raise RuntimeError('目录布局不完整：'+str(folder))
-        folders.add(folder)
+def ensure_writable(game,rows,manifest,stage=None,remove=(),sign=False):
+    folders=set();volumes={};native=target_layout(manifest)['target_id']==MACOS
+    def existing_parent(path):
+        while not path.exists():path=path.parent
+        if not path.is_dir():raise RuntimeError('目录布局不完整：'+str(path))
+        return path
+    def account(folder,temporary,delta=0):
+        folder=existing_parent(folder);key=folder.stat().st_dev
+        entry=volumes.setdefault(key,dict(path=folder,used=0,peak=0))
+        entry['peak']=max(entry['peak'],entry['used']+temporary);entry['used']+=delta
+    def writable_file(path):
+        if path.exists() and not path.is_file():raise RuntimeError('程序路径不是普通文件：'+str(path))
+        if path.is_file() and path.stat().st_nlink!=1:raise RuntimeError('受控程序文件存在硬链接：'+str(path))
+        if path.exists() and not os.access(path,os.W_OK):raise RuntimeError('游戏文件不可写，请检查该安装目录的权限：'+str(path))
+    if rows:
+        if stage is None:raise ValueError('需要实际暂存目录')
+        size=sum(row['bytes'] for row in rows);account(stage,size,size)
+    for row in rows:
+        target=installed_path(game,row['file'],manifest);writable_file(target);folder=target.parent
+        if not folder.is_dir() and (row['file'] not in EXTERNAL or row['before'] is not None):raise RuntimeError('目录布局不完整：'+str(folder))
+        folder=existing_parent(folder);old=target.stat().st_size if target.exists() else 0;growth=row['bytes']-old
+        if native and target.exists():account(folder,max(0,growth),growth)
+        else:folders.add(folder);account(folder,row['bytes'],growth)
+    for target in remove:folders.add(target.parent)
+    if sign:
+        layout=target_layout(manifest);exe=confined(game,layout['executable']);resource=confined(game,'CW3.app/Contents/_CodeSignature/CodeResources')
+        for path in (exe,resource):writable_file(path);folders.add(existing_parent(path.parent))
+        # codesign rewrites the executable and resource manifest. Reserve these
+        # existing sizes plus 1 MiB for new signatures/entries in this fixed bundle.
+        size=exe.stat().st_size+(resource.stat().st_size if resource.exists() else 0)+1048576
+        account(exe.parent,size)
+    for entry in volumes.values():
+        if entry['peak']>shutil.disk_usage(entry['path']).free:raise RuntimeError('空间不足：'+str(entry['path'])+' 所在卷需要约 '+str(entry['peak']//1048576+1)+' MiB 可用空间')
     for folder in folders:
         try:
             fd,name=tempfile.mkstemp(prefix='.cw3-write-check-',dir=folder);os.close(fd);Path(name).unlink()
@@ -303,30 +319,33 @@ def install(game,manifest,package=PACKAGE):
     for name in stale:
         target=installed_path(game,name,manifest)
         if target.exists() and not target.is_file():raise RuntimeError('旧程序路径不是普通文件：'+name)
-    ensure_writable(game,rows,sum(r['bytes'] for r in rows)+10485760,manifest)
-    # Stage and hash the entire package before touching the installation.
-    with tempfile.TemporaryDirectory(prefix='cw3-install-') as directory:
-        stage=Path(directory)
-        for row in rows:
-            source=safe(package,row['file'])
-            if digest(source)!=row['after'] or source.stat().st_size!=row['bytes']:raise RuntimeError('安装包损坏：'+row['file'])
-            target=safe(stage,row['file']);target.parent.mkdir(parents=True,exist_ok=True);atomic_copy(source,target)
-        idle();check_game_identity(game,manifest);check_required_originals(game,manifest);check_legacy_dictionary(game,manifest)
-        bundle_changed=False
-        for row in rows:
-            name=row['file'];target=installed_path(game,name,manifest)
-            if digest(target)==row['after']:continue
-            target.parent.mkdir(parents=True,exist_ok=True)
-            if native and target.exists():write_existing(safe(stage,name),target,metadata(target))
-            else:atomic_copy(safe(stage,name),target)
-            if digest(target)!=row['after']:raise RuntimeError('安装后校验失败：'+name)
-            bundle_changed|=native and name.startswith('CW3_Data/')
-        for name in stale:
-            target=installed_path(game,name,manifest)
-            if target.exists():target.unlink();bundle_changed|=native and name.startswith('CW3_Data/')
-        if native:
-            valid=subprocess.run(['codesign','--verify','--deep','--strict',str(game/'CW3.app')],capture_output=True,text=True,timeout=60).returncode==0
-            if bundle_changed or not valid:signing(game)
+    # Validate every delivered source, even when the installed copy is identical.
+    for row in rows:
+        source=safe(package,row['file'])
+        if digest(source)!=row['after'] or source.stat().st_size!=row['bytes']:raise RuntimeError('安装包损坏：'+row['file'])
+    changed=[row for row in rows if digest(installed_path(game,row['file'],manifest))!=row['after']]
+    removals=[installed_path(game,name,manifest) for name in stale if installed_path(game,name,manifest).exists()]
+    bundle_changed=native and (any(row['file'].startswith('CW3_Data/') for row in changed) or any(name.startswith('CW3_Data/') and installed_path(game,name,manifest).exists() for name in stale))
+    needs_signing=native and (bundle_changed or subprocess.run(['codesign','--verify','--deep','--strict',str(game/'CW3.app')],capture_output=True,text=True,timeout=60).returncode!=0)
+    if changed or removals or needs_signing:
+        with tempfile.TemporaryDirectory(prefix='cw3-install-') as directory:
+            stage=Path(directory);ensure_writable(game,changed,manifest,stage,removals,needs_signing)
+            for row in changed:
+                target=safe(stage,row['file']);target.parent.mkdir(parents=True,exist_ok=True);atomic_copy(safe(package,row['file']),target)
+            idle();check_game_identity(game,manifest);check_required_originals(game,manifest);check_legacy_dictionary(game,manifest)
+            planned={row['file'] for row in changed}
+            if any(row['file'] not in planned and digest(installed_path(game,row['file'],manifest))!=row['after'] for row in rows):raise RuntimeError('预检后游戏文件已变化，请重新运行安装')
+            for row in changed:
+                name=row['file'];target=installed_path(game,name,manifest)
+                if digest(target)==row['after']:continue
+                target.parent.mkdir(parents=True,exist_ok=True)
+                if native and target.exists():write_existing(safe(stage,name),target,metadata(target))
+                else:atomic_copy(safe(stage,name),target)
+                if digest(target)!=row['after']:raise RuntimeError('安装后校验失败：'+name)
+            for name in stale:
+                target=installed_path(game,name,manifest)
+                if target.exists():target.unlink()
+            if needs_signing:signing(game)
     print('安装完成。默认译文已更新；用户覆盖词典、字体设置、自定义字体和旧备份均保留。')
 
 def clean(game,manifest):

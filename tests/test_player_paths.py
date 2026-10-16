@@ -33,14 +33,14 @@ class PlayerPaths(unittest.TestCase):
             self.assertEqual(player.safe(game,'CW3Localization/zh-CN.json'),game/'CW3Localization/zh-CN.json')
             for file in ('CW3Localization/other.json','CW3Localization/../outside','other/font.ttf'):
                 with self.assertRaises(ValueError):player.safe(game,file)
-            player.ensure_writable(game,[{'file':player.DEFAULT_DICTIONARY,'before':None}],0,self.layout)
+            player.ensure_writable(game,[{'file':player.DEFAULT_DICTIONARY,'before':None,'bytes':1}],self.layout,game)
             self.assertFalse((game/'CW3Localization').exists())
 
     def test_low_space_refused_before_writes(self):
         with tempfile.TemporaryDirectory() as name:
             root=Path(name)
             with patch.object(player.shutil,'disk_usage',return_value=type('Disk',(),{'free':0})()):
-                with self.assertRaisesRegex(RuntimeError,'空间不足'):player.ensure_writable(root,[],1,self.layout)
+                with self.assertRaisesRegex(RuntimeError,'空间不足'):player.ensure_writable(root,[{'file':player.DEFAULT_DICTIONARY,'before':None,'bytes':1}],self.layout,root)
             self.assertEqual(list(root.iterdir()),[])
 
     def test_read_only_game_file_is_refused(self):
@@ -48,8 +48,21 @@ class PlayerPaths(unittest.TestCase):
             root=Path(name);data=root/'CW3_Data';data.mkdir();file=data/'level1';file.write_bytes(b'original');file.chmod(0o444)
             try:
                 if os.access(file,os.W_OK):self.skipTest('Current filesystem/user bypasses read-only mode')
-                with self.assertRaisesRegex(RuntimeError,'文件不可写'):player.ensure_writable(root,[{'file':'CW3_Data/level1'}],0,self.layout)
+                with self.assertRaisesRegex(RuntimeError,'文件不可写'):player.ensure_writable(root,[{'file':'CW3_Data/level1','bytes':10}],self.layout,root)
                 self.assertEqual(file.read_bytes(),b'original')
             finally:file.chmod(0o644)
+
+    def test_staging_volume_is_checked_independently(self):
+        with tempfile.TemporaryDirectory() as name:
+            root=Path(name);stage=root/'stage';stage.mkdir();game=root/'game';game.mkdir();real_stat=Path.stat
+            def stat(path,*args,**kwargs):
+                result=real_stat(path,*args,**kwargs)
+                if path==stage:
+                    fields=list(result);fields[2]+=1;return os.stat_result(fields)
+                return result
+            def space(path):return type('Disk',(),{'free':0 if path==stage else 1000000})()
+            with patch.object(Path,'stat',stat),patch.object(player.shutil,'disk_usage',side_effect=space):
+                with self.assertRaisesRegex(RuntimeError,'空间不足'):player.ensure_writable(game,[{'file':player.DEFAULT_DICTIONARY,'before':None,'bytes':10}],self.layout,stage)
+            self.assertEqual(list(game.iterdir()),[])
 
 if __name__=='__main__':unittest.main()

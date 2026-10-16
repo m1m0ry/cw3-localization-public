@@ -83,6 +83,22 @@ class NativeInstall(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'硬链接'):player.install(game,manifest,package)
             self.assertEqual(snapshot(game),before);self.assertEqual(custom.read_bytes(),b'CUSTOM FONT')
 
+    def test_external_update_does_not_require_bundle_write_permissions(self):
+        with tempfile.TemporaryDirectory() as folder:
+            game,package,manifest=fixture(Path(folder),native=True)
+            with patch.object(player,'signing'),patch.object(player.subprocess,'run',return_value=subprocess.CompletedProcess([],0,'','')):
+                player.install(game,manifest,package)
+                source=package/player.ADDED;source.write_bytes(b'NEW EXTERNAL RUNTIME')
+                row=next(r for r in manifest['files'] if r['file']==player.ADDED);row.update(after=sha(source.read_bytes()),bytes=source.stat().st_size)
+                access=player.os.access
+                with patch.object(player.os,'access',side_effect=lambda path,mode:False if 'CW3.app' in Path(path).parts else access(path,mode)):
+                    player.install(game,manifest,package)
+                self.assertEqual((game/player.ADDED).read_bytes(),b'NEW EXTERNAL RUNTIME')
+                before=snapshot(game)
+                with patch.object(player.subprocess,'run',return_value=subprocess.CompletedProcess([],1,'','')),patch.object(player.os,'access',return_value=False):
+                    with self.assertRaisesRegex(RuntimeError,'文件不可写'):player.install(game,manifest,package)
+                self.assertEqual(snapshot(game),before)
+
     def test_new_hardlink_after_path_check_is_refused_on_open_descriptor(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);font=root/'font.ttf';font.write_bytes(b'CUSTOM FONT');custom=root/'custom.ttf';source=root/'new.ttf';source.write_bytes(b'NEW PROGRAM FONT')
@@ -126,7 +142,7 @@ class NativeInstall(unittest.TestCase):
             for relative in package_player.PLAYER_SOURCES.values():
                 target=root/relative;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/relative,target)
             (root/'resources').mkdir();(root/'resources/macos-target.json').write_text(json.dumps(supported))
-            config=root/'config.json';config.write_text(json.dumps(dict(package=str(files),build=str(files),original=str(original))))
+            config=root/'config.json';config.write_text(json.dumps(dict(package=str(files),build=str(files))))
             out=root/'local-only/package'
             with patch.object(package_player,'ROOT',root),patch.object(sys,'argv',['pack','--config',str(config),'--output',str(out)]):package_player.main()
             with zipfile.ZipFile(str(out)+'.zip') as archive,patch.object(verify_package,'ROOT',root):
