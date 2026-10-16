@@ -154,41 +154,122 @@ internal static class TextStyles {
    Detach(state);Set(label,"font",state.Native);label.transform.localScale=state.Base;state.Applied=state.Base;state.Reason="ngui_native_fallback";state.PixelUnit=0;Count(state.Reason);}
  }
  internal static int LabelPixelUnit(Component label){LabelState state;return label!=null&&labels.TryGetValue(label.GetInstanceID(),out state)?state.PixelUnit:0;}
- internal static void Fitted(Component label){
-  LabelState state;if(label==null||!labels.TryGetValue(label.GetInstanceID(),out state))return;
-  // Body/title fitting steps in pixel units; rasterize at the final size, never scale a larger glyph.
-  if((state.Role==TextStylePolicy.Title||state.Role==TextStylePolicy.Body)&&state.PixelUnit>0&&state.Clone!=null){
-   int size=(int)Math.Round(Math.Abs(label.transform.localScale.x));
-   if(size>=state.PixelUnit&&size%state.PixelUnit==0&&(int)Get(state.Clone.Font,"dynamicFontSize")!=size){
-    Clone clone=CloneFont(state.Native,state.Family,Get(state.Clone.Font,"dynamicFont") as Font,size);
-    Detach(state);clone.Users++;state.Clone=clone;Set(label,"font",clone.Font);
-   }
-  }
-  state.Applied=label.transform.localScale;
- }
+    internal static void Fitted(Component label)
+    {
+        LabelState state;
+        if (label == null || !labels.TryGetValue(label.GetInstanceID(), out state))
+            return;
+        // Body/title fitting steps in pixel units; rasterize at the final size, never scale a larger glyph.
+        if ((state.Role == TextStylePolicy.Title || state.Role == TextStylePolicy.Body)
+            && state.PixelUnit > 0 && state.Clone != null)
+        {
+            int size = (int)Math.Round(Math.Abs(label.transform.localScale.x));
+            if (size >= state.PixelUnit && size % state.PixelUnit == 0
+                && (int)Get(state.Clone.Font, "dynamicFontSize") != size)
+            {
+                Clone clone = CloneFont(state.Native, state.Family,
+                    Get(state.Clone.Font, "dynamicFont") as Font, size);
+                Detach(state);
+                clone.Users++;
+                state.Clone = clone;
+                Set(label, "font", clone.Font);
+            }
+        }
+        state.Applied = label.transform.localScale;
+    }
  internal static void FittedMesh(TextMesh mesh){MeshState state;if(mesh!=null&&meshes.TryGetValue(mesh.GetInstanceID(),out state))state.Applied=mesh.fontSize;}
- internal static Hashtable ApplySizes(TextStylePolicy saved,Action<Component> prepareLabel,Action<TextMesh> refreshMaterial){
-  var next=policy.WithSizes(saved);var changed=new HashSet<string>();foreach(string role in TextStylePolicy.Roles)if(next.For(role).Percent!=policy.For(role).Percent)changed.Add(role);policy=next;
-  int labelCount=0,meshCount=0,failures=0;
-  // Snapshot the owned controls: glyph requests may notify atlas observers during refresh.
-  foreach(var state in new List<LabelState>(labels.Values))if(state.Label!=null&&changed.Contains(state.Role))try{
-   prepareLabel(state.Label);var mark=state.Label.GetType().GetMethod("MarkAsChanged",Flags);if(mark==null)throw new MissingMethodException("UILabel.MarkAsChanged");mark.Invoke(state.Label,null);labelCount++;
-  }catch(Exception e){failures++;Debug.LogWarning("CW3Localization size refresh fallback: "+e.GetType().Name);}
-  foreach(var state in new List<MeshState>(meshes.Values))if(state.Mesh!=null&&changed.Contains(state.Role))try{
-   // Keep its already-drawn caption and remembered role; never rewrite a named map/model value.
-   string display=state.Mesh.text;Mesh(state.Mesh,display,state.Role);state.Mesh.text=display;refreshMaterial(state.Mesh);meshCount++;
-  }catch(Exception e){failures++;Debug.LogWarning("CW3Localization mesh size fallback: "+e.GetType().Name);}
-  Cleanup();return new Hashtable{{"changed_roles",changed.Count},{"labels",labelCount},{"meshes",meshCount},{"failures",failures}};
- }
+    internal static Hashtable ApplySizes(TextStylePolicy saved,
+        Action<Component> prepareLabel, Action<TextMesh> refreshMaterial)
+    {
+        var next = policy.WithSizes(saved);
+        var changed = new HashSet<string>();
+        foreach (string role in TextStylePolicy.Roles)
+            if (next.For(role).Percent != policy.For(role).Percent)
+                changed.Add(role);
+        policy = next;
+
+        int labelCount = 0, meshCount = 0, failures = 0;
+        // Snapshot the owned controls: glyph requests may notify atlas observers during refresh.
+        foreach (var state in new List<LabelState>(labels.Values))
+            if (state.Label != null && changed.Contains(state.Role))
+                try
+                {
+                    prepareLabel(state.Label);
+                    var mark = state.Label.GetType().GetMethod("MarkAsChanged", Flags);
+                    if (mark == null)
+                        throw new MissingMethodException("UILabel.MarkAsChanged");
+                    mark.Invoke(state.Label, null);
+                    labelCount++;
+                }
+                catch (Exception e)
+                {
+                    failures++;
+                    Debug.LogWarning("CW3Localization size refresh fallback: " + e.GetType().Name);
+                }
+
+        foreach (var state in new List<MeshState>(meshes.Values))
+            if (state.Mesh != null && changed.Contains(state.Role))
+                try
+                {
+                    // Keep its already-drawn caption and remembered role; never rewrite a named map/model value.
+                    string display = state.Mesh.text;
+                    Mesh(state.Mesh, display, state.Role);
+                    state.Mesh.text = display;
+                    refreshMaterial(state.Mesh);
+                    meshCount++;
+                }
+                catch (Exception e)
+                {
+                    failures++;
+                    Debug.LogWarning("CW3Localization mesh size fallback: " + e.GetType().Name);
+                }
+        Cleanup();
+        return new Hashtable
+        {
+            {"changed_roles", changed.Count}, {"labels", labelCount},
+            {"meshes", meshCount}, {"failures", failures}
+        };
+    }
  internal static int Percent(Component label){return policy.For(TextStylePolicy.Role(label.name,PathOf(label))).Percent;}
  static string PathOf(Component label){string path="";for(Transform t=label.transform;t!=null;t=t.parent)path=t.name+(path.Length==0?"":"/"+path);return path;}
- internal static Font Mesh(TextMesh mesh,string text,string role){
-  int id=mesh.GetInstanceID();MeshState state;if(!meshes.TryGetValue(id,out state)){state=new MeshState{Mesh=mesh,Native=mesh.font,BaseSize=mesh.fontSize,Applied=mesh.fontSize};meshes.Add(id,state);}
-  state.Role=role;if(mesh.fontSize!=state.Applied)state.BaseSize=mesh.fontSize;
-  var style=policy.For(role);string family,reason;int unit;Font selected=Select(role,text,state.Native,out family,out reason,out unit);if(selected!=null)mesh.font=selected;
-  int size=unit>0?TextStylePolicy.PixelSize(state.BaseSize,style.Percent,unit):TextStylePolicy.Size(state.BaseSize,style.Percent);
-   mesh.fontSize=size;state.Applied=mesh.fontSize;state.PixelUnit=unit;state.Role=role;state.Family=family;state.Percent=style.Percent;if(state.Reason!=reason)Count(reason);state.Reason=reason;return mesh.font;
- }
+    internal static Font Mesh(TextMesh mesh, string text, string role)
+    {
+        int id = mesh.GetInstanceID();
+        MeshState state;
+        if (!meshes.TryGetValue(id, out state))
+        {
+            state = new MeshState
+            {
+                Mesh = mesh, Native = mesh.font,
+                BaseSize = mesh.fontSize, Applied = mesh.fontSize
+            };
+            meshes.Add(id, state);
+        }
+        state.Role = role;
+        if (mesh.fontSize != state.Applied)
+            state.BaseSize = mesh.fontSize;
+
+        var style = policy.For(role);
+        string family, reason;
+        int unit;
+        Font selected = Select(role, text, state.Native, out family, out reason, out unit);
+        if (selected != null)
+            mesh.font = selected;
+        int size = unit > 0
+            ? TextStylePolicy.PixelSize(state.BaseSize, style.Percent, unit)
+            : TextStylePolicy.Size(state.BaseSize, style.Percent);
+
+        mesh.fontSize = size;
+        state.Applied = mesh.fontSize;
+        state.PixelUnit = unit;
+        state.Role = role;
+        state.Family = family;
+        state.Percent = style.Percent;
+        if (state.Reason != reason)
+            Count(reason);
+        state.Reason = reason;
+        return mesh.font;
+    }
  internal static int MeshPixelUnit(TextMesh mesh){MeshState state;return mesh!=null&&meshes.TryGetValue(mesh.GetInstanceID(),out state)?state.PixelUnit:0;}
  internal static void ReleaseMesh(int id){meshes.Remove(id);}
  internal static void ReleaseLabel(int id){LabelState state;if(labels.TryGetValue(id,out state)){Detach(state);labels.Remove(id);}Cleanup();}
