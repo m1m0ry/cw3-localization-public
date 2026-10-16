@@ -3,25 +3,28 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
+from ci_inputs import TARGETS
+from ci_source import SOURCE_REPO, validate_version, verify_checkout
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_REPO = 'm1m0ry/cw3-localization-public'
+
+def package_stem(target_id, tag):
+    validate_version(tag)
+    for selected in TARGETS.values():
+        if selected['target_id'] == target_id:
+            return selected['prefix'] + '-' + tag
+    raise ValueError('Unsupported package target')
 
 
 def plan(root, tag, commit, inputs_sha256):
-    if not re.fullmatch(r'v\d+\.\d+(?:\.\d+)?', tag):
-        raise ValueError('Expected a version tag such as v12.6')
-    if not re.fullmatch(r'[0-9a-f]{40}', commit):
-        raise ValueError('Expected a full lowercase source commit SHA')
+    validate_version(tag)
     if not re.fullmatch(r'[0-9a-f]{64}', inputs_sha256):
         raise ValueError('Expected the locked input archive SHA256')
-    def git(*args):
-        return subprocess.check_output(['git', *args], cwd=root, text=True).strip()
-    if git('rev-parse', 'HEAD') != commit or git('status', '--porcelain', '--untracked-files=no'):
-        raise ValueError('Build requires the exact clean source commit')
+    verify_checkout(root, commit)
     build = root / 'local-only/ci-build'
     release = root / 'local-only/ci-release'
     if build.exists() or release.exists():
@@ -55,7 +58,7 @@ def main():
     manifest.update({k: v for k, v in provenance.items() if k != 'version'})
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
     release.mkdir()
-    package = release/f'CW3-Windows-{a.tag}'
+    package = release/package_stem(manifest['target_id'], a.tag)
     run(sys.executable, ROOT/'tools/package_player.py', '--config', build/'install-config.json', '--output', package)
     archive = Path(str(package)+'.zip')
     player = json.loads((package/'manifest.json').read_text())
@@ -64,9 +67,12 @@ def main():
     archive_sha = digest(archive)
     (release/'SHA256SUMS.txt').write_text(archive_sha+'  '+archive.name+'\n')
     (release/'build-info.json').write_text(json.dumps(dict(
-        provenance, archive=archive.name, archive_sha256=archive_sha,
+        provenance, target_id=player['target_id'], archive=archive.name, archive_sha256=archive_sha,
         manifest_sha256=digest(package/'manifest.json'),
         payload_sha256={r['file']: r['after'] for r in player['files']}), indent=2)+'\n')
+    if os.environ.get('GITHUB_OUTPUT'):
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+            output.write('archive='+archive.name+'\n')
     print('Prepared', a.tag, 'from', a.source_commit, '; build only, no publish or install')
 
 

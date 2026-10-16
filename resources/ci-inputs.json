@@ -1,0 +1,23 @@
+{
+  "repository": "m1m0ry/cw3-localization",
+  "release_id": 406998892,
+  "tag": "ci-inputs-cw3-22453699-r2",
+  "tools": {
+    "tools/mcs.exe": "02816f25d79f4b53f74c034cd432846ec080218d00eb003cc835513c1d1e2d0f",
+    "tools/Mono.Cecil.dll": "554160588cc247a539e5e34fc10936ed815a1ae47b9d4bdbbd85a7ea05546080"
+  },
+  "targets": {
+    "windows": {
+      "asset_id": 622252693,
+      "asset": "CW3-CI-inputs-22453699-r2.zip",
+      "bytes": 62891656,
+      "sha256": "da2d911e5907731a48f750e95138b2c2decfedc87e11404832d9a371ea9294ab"
+    },
+    "macos": {
+      "asset_id": 647156085,
+      "asset": "CW3-CI-inputs-macos-22453699-r1.zip",
+      "bytes": 62919723,
+      "sha256": "a8418b7b45c3f4490cdb48e8ed1339555baf20b6c5c62d9f2bd8f97ad63f4f3b"
+    }
+  }
+}

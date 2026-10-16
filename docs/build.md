@@ -31,6 +31,21 @@ python3 tools/package_player.py \
 
 安装、重装、降级及原版清理步骤见 [README](../README.md)。默认译文 `CW3Localization/zh-CN.default.json` 随包更新；独立的 `zh-CN.user.json` 只保存自定义条目，不随包覆盖。新增显示目标须重新审计和构建，新增字形须更新字体。
 
+## 云构建
+
+PR 与 `main` 提交自动运行译文检查和不需游戏输入的 Python 测试。手动 `Build candidate` 仅允许维护者从 `main` 构建 Windows 或原生 Mac，固定输入引用见 [ci-inputs.json](../resources/ci-inputs.json)。
+
+在仓库 Settings → Environments 创建 `build-inputs`，部署分支仅允许 `main`；在该 Environment 添加 `CW3_INPUTS_READ_TOKEN`。使用仅选择私有输入仓库的 fine-grained PAT，仓库权限仅需 `Contents: read`。该权限可读取所选仓库全部内容，不能限制为单个 Release。不要将它配置为仓库级 Secret。
+
+从最新 `main` 使用已登录的 `gh` 下载并校验候选：
+
+```sh
+python3 tools/build_candidate.py --version v12.14 --target windows
+python3 tools/build_candidate.py --version v12.14 --target macos
+```
+
+每次构建固定源码提交及对应平台输入，只上传补丁 ZIP、`SHA256SUMS.txt` 和 `build-info.json`，保留 14 天。候选命令等待返回的确切运行 ID，校验来源、平台和文件哈希；产物保存到 `local-only/candidate-运行ID/`。构建不创建 Release 或安装补丁。
+
 ## 开发检查
 
 不需游戏文件的检查：
