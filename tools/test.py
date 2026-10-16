@@ -47,7 +47,7 @@ class Contracts:
             self.execute(name,sources,args)
             if name=='NativeFontBundleContracts':subprocess.run([sys.executable,str(test/'check_native_font_bundle.py'),str(o/'native-contract.bundle'),str(m.location('build')/'CW3Localization/font.ttf'),'--platform',str(platform)],check=True)
             if name=='TextStyleContracts':
-                for mode in ('native','native-state-unavailable'):m.run(o/(name+'.exe'),[mode,w(o)])
+                for mode in ('native','native-state-unavailable','registry-missing','registry-invalid','registry-runtime','registry-resource'):m.run(o/(name+'.exe'),[mode,w(o)])
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
         elif name=='MeshLifetimeContracts':
             self.execute(name,runtime_sources(m.location('build').parent/'generated')+[test/(name+'.cs')],flags=['-r:System.Xml'])

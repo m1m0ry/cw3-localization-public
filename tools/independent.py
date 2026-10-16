@@ -151,10 +151,6 @@ def _build(config,out,final_out):
     resources=style_font_resources.build((dest/'CW3_Data/sharedassets0.assets').read_bytes(),(original/'CW3_Data/mainData').read_bytes(),faces,font_specs,expected_platform=layout['platform'])
     for name,data in resources.items():
         (dest/name).write_bytes(data);required_originals.pop(name,None)
-    constants={'SansHash':font_hashes['sans'],'SerifHash':font_hashes['serif'],
-               'AssetsHash':workflow.sha(resources['CW3_Data/sharedassets0.assets']),
-               'SansCoverage':font_specs['sans']['coverage'],'SerifCoverage':font_specs['serif']['coverage']}
-    (generated/'StyleFonts.cs').write_text('internal static class CW3StyleFonts {\n'+''.join(' internal const string '+key+'="'+value+'";\n' for key,value in constants.items())+'}\n')
     import native_font_template
     (generated/'NativeFontTemplate.cs').write_text(native_font_template.build(original,expected_platform=layout['platform']))
     cfg=out/'builder-config.json';workflow.save(cfg,config)

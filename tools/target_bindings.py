@@ -143,13 +143,13 @@ class _Resources:
 
 
 def resolve(entries, original, profile):
-    """Return independent entries with verified platform coordinates for this build."""
+    """Resolve explicit coordinates within the caller's hash-verified original snapshot."""
     locks, lock_hash = _canonical(entries)
     if profile.get('platform') == 5:
         require(profile.get('id') == 'windows-steam-22453699', 'Unknown Windows binding profile')
         return copy.deepcopy(entries)
     original = Path(original)
-    _inputs(original, profile)
+    require(profile.get('id') == MACOS and profile.get('platform') == 2, 'Unknown Mac binding profile')
     overlay = translation_contract.read(ROOT / 'resources/macos-bindings.json')
     require(overlay.get('format') == 1 and overlay.get('profile') == MACOS and overlay.get('platform') == 2, 'Mac binding overlay identity mismatch')
     require(overlay.get('canonical_lock_sha256') == lock_hash, 'Mac binding canonical lock mismatch')

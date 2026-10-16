@@ -41,6 +41,14 @@ class TargetBuild(unittest.TestCase):
             file.write_bytes(b'changed')
             with self.assertRaisesRegex(ValueError, 'fingerprint mismatch'):game_target.verify_inputs(root, target)
 
+    def test_compile_checks_only_declared_inputs_and_still_rejects_drift(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);name='CW3_Data/Managed/UnityEngine.dll';path=root/name;path.parent.mkdir(parents=True);path.write_bytes(b'engine')
+            profile={'original_hashes':{name:hashlib.sha256(b'engine').hexdigest(),'CW3_Data/mainData':'0'*64}}
+            game_target.verify_inputs(root,profile,[name])
+            path.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'fingerprint mismatch'):game_target.verify_inputs(root,profile,[name])
+
     def test_windows_prepare_includes_all_fixed_compiler_references(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);game=root/'game';original=root/'original'

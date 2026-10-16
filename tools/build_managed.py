@@ -6,7 +6,7 @@ import argparse,json,shutil,hashlib
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser(description=__doc__);p.add_argument('--config',default=str(ROOT/'config.local.json'));p.add_argument('--debug',action='store_true',required=True);p.add_argument('--output');a=p.parse_args();c=json.loads(Path(a.config).read_text())
 m=MonoTools(c);path=m.location;win=m.win;run=m.run
-target=game_target.load(c);game_target.verify_inputs(path('original'),target)
+target=game_target.load(c);game_target.verify_inputs(path('original'),target,['CW3_Data/Managed/'+n for n in ('mscorlib.dll','UnityEngine.dll','System.Xml.dll')])
 G=path('original')/'CW3_Data/Managed';out=Path(a.output) if a.output else ROOT/'local-only/debug';out.mkdir(parents=True,exist_ok=True);shutil.copy2(m.cecil,out/'Mono.Cecil.dll')
 def compile(name,library=False):
  flags=[]

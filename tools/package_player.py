@@ -44,7 +44,6 @@ def main():
     for row in build['files']:
         name=row['file'];source=loc('build')/name
         assert sha(source)==row['after'] and source.stat().st_size==row['bytes'],name
-        if row['before']:assert sha(loc('original')/name)==row['before'],name
         target=out/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
         assert sha(target)==row['after'],name
     from player_install import RUNTIME

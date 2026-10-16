@@ -28,8 +28,9 @@ def installed(game, logical, target):
     return Path(game) / target['data_dir'] / path.relative_to('CW3_Data')
 
 
-def verify_inputs(original, target):
-    for name, expected in target['original_hashes'].items():
+def verify_inputs(original, target, names=None):
+    for name in target['original_hashes'] if names is None else names:
+        expected=target['original_hashes'][name]
         path = Path(original) / name
         if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
             raise ValueError('Original input fingerprint mismatch: ' + name)
