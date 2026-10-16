@@ -13,7 +13,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
-from package_player import PLAYER_SOURCES, instructions, target_description
+from package_player import INSTRUCTION_SOURCES, PLAYER_SOURCES, instructions, target_description
 from player_install import ADDED, PAYLOAD, RUNTIME, target_identity
 
 VERSION = 'v12.14'
@@ -45,7 +45,7 @@ elif args[:2]==['run','watch']:
  if case=='failed':raise SystemExit(1)
  if case=='local_change':
   (root/'tools/player_install.py').write_text('changed while waiting')
-  (root/'player/使用说明-v12.txt').write_text('later instructions')
+  for name in ('使用说明-Windows.txt','使用说明-Mac.txt'):(root/'player'/name).write_text('later instructions')
   for name in ('supported-build.json','macos-target.json'):(root/'resources'/name).write_text('{}')
  if case=='branch_moves':
   (root/'tools/player_install.py').write_text('later branch source')
@@ -64,10 +64,10 @@ else:raise SystemExit('Unexpected gh command')
 
 class CandidateCommand(unittest.TestCase):
     def fixture(self, root, corruption=None, target='windows'):
-        for name in set(PLAYER_SOURCES.values()) | {
+        for name in set(PLAYER_SOURCES.values()) | set(INSTRUCTION_SOURCES.values()) | {
                 '.gitattributes',
                 'tools/build_candidate.py', 'tools/ci_inputs.py', 'tools/ci_source.py',
-                'tools/package_player.py', 'tools/verify_package.py', 'player/使用说明-v12.txt',
+                'tools/package_player.py', 'tools/verify_package.py',
                 'resources/supported-build.json', 'resources/macos-target.json'}:
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -111,6 +111,7 @@ class CandidateCommand(unittest.TestCase):
         controls['使用说明.txt'] = instructions(supported, VERSION).encode()
         controls['manifest.json'] = manifest
         if corruption == 'installer':controls['install.py'] = b'modified installer'
+        if corruption == 'instructions':controls['使用说明.txt'] = b'obsolete instructions with internally consistent ZIP hashes'
         if corruption == 'extra_file':controls['private-input.bin'] = b'extra fixture'
         if corruption == 'payload_bytes':files[rows[0]['file']] += b'changed'
         with zipfile.ZipFile(artifact / name, 'w') as archive:
@@ -166,7 +167,7 @@ class CandidateCommand(unittest.TestCase):
     def test_dirty_client_is_rejected_before_dispatch_or_output_creation(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder); env = self.fixture(root)
-            (root/'player/使用说明-v12.txt').write_text('uncommitted instructions')
+            (root/'player/使用说明-Windows.txt').write_text('uncommitted instructions')
             result = self.command(root, env)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('exact clean source commit', result.stderr)
@@ -183,6 +184,15 @@ class CandidateCommand(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertNotIn('PASS candidate', result.stdout)
                 self.assertFalse((root / 'local-only/candidate-101').exists())
+
+    def test_obsolete_instructions_are_rejected_for_both_targets(self):
+        for target in ('windows','macos'):
+            with self.subTest(target=target),tempfile.TemporaryDirectory() as folder:
+                root=Path(folder);env=self.fixture(root,'instructions',target)
+                result=self.command(root,env)
+                self.assertNotEqual(result.returncode,0)
+                self.assertIn('Player instructions differ',result.stderr)
+                self.assertFalse((root/'local-only/candidate-101').exists())
 
     def test_mac_uses_its_own_input_hash_and_artifact(self):
         with tempfile.TemporaryDirectory() as folder:

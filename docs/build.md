@@ -31,7 +31,7 @@ python3 tools/package_player.py \
   --output local-only/CW3-local
 ```
 
-构建只写本地产物，不自动安装。完整文件包含安装、清理入口、外部词典和 OFL 字体。`--external-full` 生成完整静态字体；分发字体须保留 OFL。
+构建只生成本地文件，不自动安装。安装包包含安装脚本、默认译文和 OFL 字体。`--external-full` 生成完整静态字体；分发字体须保留 OFL。
 
 `workflow.py` 提供 `check` 和 `prepare`；候选由 `independent.py` 构建。译文在运行时按固定目标绑定，资源构建只保留字体和布局修复。
 

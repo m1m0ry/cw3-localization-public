@@ -13,7 +13,7 @@ import zipfile
 
 from ci_inputs import TARGETS
 from ci_source import SOURCE_REPO, WORKFLOW, validate_ref_name, validate_version, verify_checkout
-from package_player import PLAYER_SOURCES, supported_target
+from package_player import INSTRUCTION_SOURCES, PLAYER_SOURCES, supported_target
 from verify_package import inspect_zip
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,7 +35,7 @@ def api(endpoint, payload=None):
 @contextmanager
 def verification_source(commit):
     """Freeze trusted client source data before waiting; never execute fetched code."""
-    names = set(PLAYER_SOURCES.values()) | {'player/使用说明-v12.txt',
+    names = set(PLAYER_SOURCES.values()) | set(INSTRUCTION_SOURCES.values()) | {
             'resources/supported-build.json', 'resources/macos-target.json'}
     with tempfile.TemporaryDirectory(prefix='cw3-candidate-source-') as folder:
         snapshot = Path(folder)

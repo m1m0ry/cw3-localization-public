@@ -15,11 +15,22 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'tools'))
 from ci_build import plan
+from package_player import INSTRUCTION_SOURCES, instructions
 from unittest.mock import patch
 import verify_package
 
 
 class PinnedBuild(unittest.TestCase):
+    def test_platform_text_templates_only_replace_the_version_marker(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);(root/'player').mkdir()
+            for platform in ('Windows','Mac'):
+                (root/'player'/('使用说明-'+platform+'.txt')).write_bytes((platform+' 中文 {version} / {version}.zip / {0}\n').encode('utf-8'))
+            for platform,profile in (('Windows','supported-build.json'),('Mac','macos-target.json')):
+                with self.subTest(platform=platform):
+                    supported=json.loads((ROOT/'resources'/profile).read_text())
+                    self.assertEqual(instructions(supported,'v99.1',root),platform+' 中文 v99.1 / v99.1.zip / {0}\n')
+
     def test_exact_clean_commit_and_fresh_output_required(self):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)
@@ -45,8 +56,8 @@ class PinnedBuild(unittest.TestCase):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)
             for file in ['tools/package_player.py','tools/player_install.py','tools/font_registry.py','tools/translation_contract.py','resources/supported-build.json',
-                         'player/安装汉化.command','player/安装汉化.cmd','player/使用说明-v12.txt',
-                         'fonts/OFL.txt','LICENSE','NOTICE.md','docs/text-style.md']:
+                         'player/安装汉化.command','player/安装汉化.cmd',
+                         'fonts/OFL.txt','LICENSE','NOTICE.md','docs/text-style.md',*INSTRUCTION_SOURCES.values()]:
                 target=root/file;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/file,target)
             original=root/'original';original.mkdir()
             build=root/'build';build.mkdir()

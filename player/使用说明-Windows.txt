@@ -1,5 +1,5 @@
-CW3 简体中文补丁 v12
-适用 Windows Steam 2.12 / build 22453699；CrossOver 使用同一 Windows 游戏版本。
+CW3 简体中文补丁 {version}
+适用 Windows Steam 2.12 / build 22453699。
 
 手动安装（无需 Python）
 1. 完全退出游戏。
