@@ -71,12 +71,8 @@ class WorkflowBoundary(unittest.TestCase):
         self.assertEqual(package_stem('windows-steam-22453699', 'v12.14', 'windows'), 'CW3-Windows-v12.14')
         self.assertEqual(package_stem('macos-steam-22453699', 'v12.14', 'macos'), 'CW3-Mac-v12.14')
         with self.assertRaises(ValueError):package_stem('macos-steam-22453699', 'v12.14', 'windows')
-        with self.assertRaises(ValueError):package_stem('unknown', 'v12.14')
-        with self.assertRaises(ValueError):package_stem('macos-steam-22453699', '../v12.14')
-
-    def test_private_fallback_keeps_the_envelope_it_already_normalizes(self):
-        for target in ('windows', 'macos'):
-            self.assertEqual(package_stem(target + '-steam-22453699', 'v12.14'), 'CW3-Windows-v12.14')
+        with self.assertRaises(ValueError):package_stem('unknown', 'v12.14', 'windows')
+        with self.assertRaises(ValueError):package_stem('macos-steam-22453699', '../v12.14', 'macos')
 
 
 if __name__ == '__main__':
