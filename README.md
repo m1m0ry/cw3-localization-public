@@ -4,13 +4,13 @@
 
 ## 下载与安装
 
-从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载对应平台的补丁包。须自备上述版本的正版游戏。
+从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载对应平台的补丁包。解压补丁包。须自备上述版本的正版游戏。
 
 ### Windows
 
-1. 完全退出游戏，下载 Windows 补丁包。
+1. 完全退出游戏。
 2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件。
-3. 解压补丁，将 `CW3_Data` 和 `CW3Localization` 复制到游戏安装文件夹（`CW3.exe` 所在位置），提示时选择覆盖。
+3. 将 `CW3_Data` 和 `CW3Localization` 复制到游戏安装文件夹（`CW3.exe` 所在位置），提示时选择覆盖。
 
 **手动安装无需 Python。** 更新时保留原有 `CW3Localization` 中的 `fonts/`、`text-style.json` 和 `zh-CN.user.json`，只合并包内文件。
 
@@ -20,9 +20,10 @@ CrossOver 使用同一 Windows 包，运行 `安装汉化.command`，选择包�
 
 ### 原生 macOS
 
-1. 完全退出游戏，下载并解压 Mac 补丁包，安装 Python 3.10+。
-2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件，找到包含 `CW3.app` 的目录。
-3. 双击包内 `安装汉化.command`，按提示选择该目录，再选 `1 安装/重装汉化`。
+1. 完全退出游戏。
+2. 安装 Python 3.10+。
+3. 在 Steam 中右键游戏 → 管理 → 浏览本地文件，找到包含 `CW3.app` 的目录。
+4. 双击包内 `安装汉化.command`，按提示选择该目录，再选 `1 安装/重装汉化`。
 
 如系统阻止启动，确认来源后按系统提示手动允许。
 
