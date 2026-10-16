@@ -1,10 +1,10 @@
-# Creeper World 3 简体中文补丁
+# Creeper World 3 汉化补丁
 
-面向 **Windows 与原生 macOS 的 Steam 2.12 / build 22453699**，主要菜单、剧情和教程纯离线汉化。社区内容和地图编辑器可能保留英文。
+适用于 **Windows 与原生 macOS 的 Steam 2.12 / build 22453699**。覆盖主要菜单、剧情、教程和地图编辑器界面。社区地图作者文本可能保留原文。
 
 ## 下载与安装
 
-从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载对应平台的补丁包。解压补丁包。须自备上述版本的正版游戏。
+从 [Release](https://github.com/m1m0ry/cw3-localization-public/releases/latest) 下载对应平台的补丁包。解压补丁包。
 
 ### Windows
 
@@ -12,7 +12,7 @@
 2. 在 Steam 中右键游戏 → 管理 → 浏览本地文件。
 3. 将 `CW3_Data` 和 `CW3Localization` 复制到游戏安装文件夹（`CW3.exe` 所在位置），提示时选择覆盖。
 
-**手动安装无需 Python。** 更新时保留原有 `CW3Localization` 中的 `fonts/`、`text-style.json` 和 `zh-CN.user.json`，只合并包内文件。
+**手动安装无需 Python。** 更新时保留原有 `CW3Localization` 中的 `fonts/`、`text-style.json` 和 `zh-CN.user.json`。
 
 也可安装 Python 3.10+ 后双击包内 `安装汉化.cmd`，按提示选择游戏安装文件夹，再选 `1 安装/重装汉化`。
 
@@ -38,7 +38,23 @@ CrossOver 使用同一 Windows 包，运行 `安装汉化.command`，选择包�
 - `zh-CN.default.json`：随补丁更新的默认译文。
 - `zh-CN.user.json`：可选的自定义译文；有效条目优先于默认译文，安装时保留。
 
-从默认文件复制要修改的条目到用户文件，沿用 `format`、`language`、`entries` 格式，只保留自定义项。仅改 `translation`，保留 ID、原文、标签和占位符；退出游戏后修改，重启生效。
+在 `zh-CN.user.json` 中加入要改的条目，例如：
+
+```json
+{
+  "format": 1,
+  "language": "zh-CN",
+  "entries": [
+    {
+      "id": "text.edceac6532890c27",
+      "source": "Exit",
+      "translation": "退出游戏"
+    }
+  ]
+}
+```
+
+只改 `translation`，保存后重启游戏。其他条目可从默认文件复制，保留原文中的标签和占位符。
 
 ## 译文与构建
 
