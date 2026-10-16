@@ -12,14 +12,10 @@ from ci_source import SOURCE_REPO, validate_version, verify_checkout
 
 ROOT = Path(__file__).resolve().parents[1]
 
-def package_stem(target_id, tag, requested_target=None):
+def package_stem(target_id, tag, requested_target):
     validate_version(tag)
     for target, selected in TARGETS.items():
         if selected['target_id'] == target_id:
-            # The private fallback invokes this CLI without --target and still
-            # normalizes its Windows envelope. Retire this default with that workflow.
-            if requested_target is None:
-                return 'CW3-Windows-' + tag
             if requested_target != target:
                 raise ValueError('Built platform differs from requested package target')
             return selected['prefix'] + '-' + tag
@@ -45,7 +41,7 @@ def main():
     p.add_argument('--tag', required=True)
     p.add_argument('--source-commit', required=True)
     p.add_argument('--inputs-sha256', required=True)
-    p.add_argument('--target', choices=TARGETS, help='Explicit platform for the public workflow package name')
+    p.add_argument('--target', choices=TARGETS, required=True, help='Explicit platform for the package name')
     p.add_argument('--check-plan', action='store_true', help='Validate checkout and print provenance without building')
     a = p.parse_args()
     provenance = plan(ROOT, a.tag, a.source_commit, a.inputs_sha256)
