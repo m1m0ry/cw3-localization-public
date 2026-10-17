@@ -10720,20 +10720,6 @@
       }
     },
     {
-      "id": "text.2e72af982685ca69",
-      "source": "Remember, you only need to destroy the Inhibitor to secure this world!",
-      "context": "Ormos / Tutorial.crpl / ShowMessage",
-      "translation": "记住，你只需摧毁抑制器即可确保这个世界的安全！",
-      "target": {
-        "kind": "crpl",
-        "file": "CW3_Data/resources.assets",
-        "object_id": 313,
-        "xml_path": "/Game/Scripts[1]/scripts[1]",
-        "script": "Tutorial.crpl",
-        "literal_index": 8
-      }
-    },
-    {
       "id": "text.23d02ac3b340d9b8",
       "source": "Click the Terraform Button then paint where to change the terrain.\\nNearby Terps will automatically act on nearby terrain.\\nSelect a brush size of 1, and a terrain height of 9.\\nFill in the gaps in the ruin walls and watch the Terps terraform the land.",
       "context": "Ormos / Tutorial.crpl / ShowMessage",

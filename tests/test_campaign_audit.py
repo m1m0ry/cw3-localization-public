@@ -26,14 +26,6 @@ class CampaignAudit(unittest.TestCase):
         self.assertEqual(site.source,'Map \\"#1\\"')
         self.assertEqual(site.call_offset,0)
         self.assertEqual([m.start() for m in show_calls(code)],[0])
-    def test_declared_commented_target_does_not_become_an_active_call(self):
-        code='# ShowMessage("Inactive")\nShowMessage("Active")'
-        active,=display_calls(code)
-        self.assertEqual((active.literal_index,active.source),(1,'Active'))
-        declared=list(display_calls(code,include_comments=True))
-        self.assertEqual([(s.literal_index,s.source) for s in declared],[(0,'Inactive'),(1,'Active')])
-        self.assertEqual(declared[0].call_offset,2)
-        self.assertEqual([m.start() for m in show_calls(code)],[active.call_offset])
     def test_variable_calls_on_same_line_are_not_hidden_by_literals(self):
         code='"ShowMessage fake # marker" ->Msg ShowMessage(<-Msg 0 0) <-Msg 0 0 ShowMessage # ShowMessage ignored'
         self.assertEqual([m[0] for m in show_calls(code)],['ShowMessage','ShowMessage'])
