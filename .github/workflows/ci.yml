@@ -19,3 +19,11 @@ jobs:
       - run: python -m pip install -r requirements-build.txt
       - run: python tools/workflow.py check
       - run: python -m unittest discover -s tests -v
+      - name: Public Mono toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            mono-mcs=6.8.0.105+dfsg-3.6ubuntu2 \
+            libmono-system-xml4.0-cil=6.8.0.105+dfsg-3.6ubuntu2
+      - name: Standalone C# behavior contracts
+        run: python tools/test.py --standalone

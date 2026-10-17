@@ -1,15 +1,28 @@
-"""Configured Mono compiler/runtime for owned test and metadata executables."""
+"""System or configured Mono tools for owned test and metadata executables."""
 from pathlib import Path
 import shutil,subprocess
 ROOT=Path(__file__).resolve().parents[1]
 class MonoTools:
-    def __init__(self,config):
-        self.config=config;self.compilations=[]
-        if config.get('mono_runtime'):
-            self.runtime=self.location('mono_runtime');self.compiler=self.location('mono_compiler');self.cecil=self.location('cecil');self.native=True
+    def __init__(self,config=None):
+        self.config={} if config is None else config
+        self.compilations=[]
+        self.system_compiler=config is None
+        if self.system_compiler:
+            runtime,compiler=shutil.which('mono'),shutil.which('mcs')
+            if not runtime or not compiler:
+                raise FileNotFoundError('Install Mono and mcs on PATH, or select a toolchain with --config')
+            self.runtime=Path(runtime);self.compiler=Path(compiler);self.native=True
+        elif config.get('mono_runtime'):
+            self.runtime=self.location('mono_runtime');self.compiler=self.location('mono_compiler');self.native=True
         else:
             self.runtime=self.location('crossover')/'bin/wine';mono=self.location('crossover')/'share/wine/mono'/config['mono_version']
-            self.compiler=mono/'lib/mono/4.5/mcs.exe';self.cecil=self.location('cecil') if config.get('cecil') else mono/'lib/mono/gac/Mono.Cecil/0.11.1.0__0738eb9f132ed756/Mono.Cecil.dll';self.native=False
+            self.compiler=mono/'lib/mono/4.5/mcs.exe';self.native=False
+    @property
+    def cecil(self):
+        if self.config.get('cecil'):return self.location('cecil')
+        if not self.native:
+            return self.compiler.parents[1]/'gac/Mono.Cecil/0.11.1.0__0738eb9f132ed756/Mono.Cecil.dll'
+        raise ValueError('This suite requires a Cecil path in --config')
     def location(self,key):
         p=Path(self.config[key]);return p if p.is_absolute() else ROOT/p
     def win(self,path):
@@ -27,7 +40,11 @@ class MonoTools:
     def compile(self,out,name,sources,flags=()):
         if not self.compiler.is_file():raise FileNotFoundError('Configured compiler missing: '+str(self.compiler))
         target=out/name;print('COMPILE '+name,flush=True)
-        self.run(self.compiler,['-nologo',*flags,'-out:'+self.win(target),*[self.win(p) for p in sources]])
+        args=['-nologo',*flags,'-out:'+self.win(target),*[self.win(p) for p in sources]]
+        if self.system_compiler:
+            subprocess.run([str(self.compiler),*args],check=True,text=True,timeout=60)
+        else:
+            self.run(self.compiler,args)
         self.compilations.append(name);return target
 
 

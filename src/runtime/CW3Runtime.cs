@@ -18,9 +18,52 @@ public static partial class CW3Runtime {
  static string S(Hashtable d,string k){return d[k] as string;}
  static object Get(object value,string name){if(value==null)return null;Type t=value as Type??value.GetType();var f=t.GetField(name,Flags);if(f!=null)return f.GetValue(value is Type?null:value);var p=t.GetProperty(name,Flags);return p==null?null:p.GetValue(value,null);}
  static string Hash(string text){using(var h=SHA256.Create()){byte[] bytes=h.ComputeHash(Encoding.UTF8.GetBytes(text));return BitConverter.ToString(bytes).Replace("-","").ToLowerInvariant();}}
- static void Load(){if(loaded)return;loaded=true;try{var paths=RuntimePaths.Current;if(paths.State!=null)candidates=new Candidates(File.Exists(Path.Combine(paths.State,"discover.enabled")),Path.Combine(paths.State,"candidates.json"));foreach(Hashtable d in (ArrayList)Json.Read(Encoding.UTF8.GetString(Convert.FromBase64String(CW3Definitions.Data)))){definitions.Add(S(d,"id"),d);messageBindings.Add(d);scriptBindings.Add(d);if(S(d,"kind")=="label_display")displayLabels.Add(d);string source=S(d,"source");List<Hashtable> list;if(!sources.TryGetValue(source,out list))sources.Add(source,list=new List<Hashtable>());list.Add(d);}foreach(var row in TranslationFiles.Load(paths.Content,definitions,message=>Debug.LogWarning("CW3Localization dictionary fallback: "+message)))translations.Add(row.Key,row.Value);foreach(string value in translations.Values)translated.Add(value);Debug.Log("CW3Localization loaded "+translations.Count+" fixed translations");
- TextStyles.Load(paths);external=TextStyles.FontFor("sans");guiExternal=TextStyles.FontFor("sans");Font.textureRebuilt+=FontRebuilt;
- }catch(Exception e){Debug.LogWarning("CW3Localization initialization fallback: "+e.Message);}}
+    static void Load()
+    {
+        if (loaded)
+            return;
+        loaded = true;
+        try
+        {
+            var paths = RuntimePaths.Current;
+            if (paths.State != null)
+                candidates = new Candidates(
+                    File.Exists(Path.Combine(paths.State, "discover.enabled")),
+                    Path.Combine(paths.State, "candidates.json"));
+
+            foreach (Hashtable d in (ArrayList)Json.Read(
+                Encoding.UTF8.GetString(Convert.FromBase64String(CW3Definitions.Data))))
+            {
+                definitions.Add(S(d, "id"), d);
+                messageBindings.Add(d);
+                scriptBindings.Add(d);
+                if (S(d, "kind") == "label_display")
+                    displayLabels.Add(d);
+
+                string source = S(d, "source");
+                List<Hashtable> list;
+                if (!sources.TryGetValue(source, out list))
+                    sources.Add(source, list = new List<Hashtable>());
+                list.Add(d);
+            }
+
+            foreach (var row in TranslationFiles.Load(paths.Content, definitions,
+                message => Debug.LogWarning("CW3Localization dictionary fallback: " + message)))
+                translations.Add(row.Key, row.Value);
+            foreach (string value in translations.Values)
+                translated.Add(value);
+            Debug.Log("CW3Localization loaded " + translations.Count + " fixed translations");
+
+            TextStyles.Load(paths);
+            external = TextStyles.FontFor("sans");
+            guiExternal = TextStyles.FontFor("sans");
+            Font.textureRebuilt += FontRebuilt;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("CW3Localization initialization fallback: " + e.Message);
+        }
+    }
  public static string Text(string id,string original){return Translate(id,original,true);}
  static string Translate(string id,string original,bool observe){Load();string status,value=FixedText.Resolve(definitions,translations,id,original,out status);if(observe&&status!="translated"&&candidates.Enabled){Hashtable d;bool known=id!=null&&definitions.TryGetValue(id,out d);d=known?definitions[id]:null;Observe(original,known?S(d,"kind"):"managed",known?DefinitionContext(d):"guarded Text",status,id);}return value;}
  static string ComponentText(string id,string original,Component c){Load();string status,value=FixedText.Resolve(definitions,translations,id,original,out status);if(status!="translated")ObserveComponent(original,c,c is TextMesh?"textmesh":"label",null,status,id);return value;}
@@ -36,18 +79,110 @@ public static partial class CW3Runtime {
 #endif
  }
  static string PathOf(Component c){string path="";for(Transform t=c.transform;t!=null;t=t.parent){string n=t.name;if(n.EndsWith("(Clone)",StringComparison.Ordinal))n=n.Substring(0,n.Length-7);path=n+(path.Length==0?"":"/"+path);}return path;}
- static string ForComponent(string text,Component c,string kind){Load();List<Hashtable> list;if(text==null||c==null)return text;if(!sources.TryGetValue(text,out list)){ObserveComponent(text,c,kind,null,"unbound_source");return text;}string path=PathOf(c);Hashtable wildcard=null;foreach(var d in list)if(S(d,"kind")==kind){string p=S(d,"path"),scene=S(d,"scene");if((scene==Application.loadedLevelName||(scene=="Splash"&&Application.loadedLevel==0))&&path==p)return ComponentText(S(d,"id"),text,c);if(scene=="*"&&(path==p||path.EndsWith("/"+p,StringComparison.Ordinal)))wildcard=d;}if(wildcard!=null)return ComponentText(S(wildcard,"id"),text,c);ObserveComponent(text,c,kind,path,"unbound_context");return text;}
- static void PrepareStyledLabel(Component label){
-  string raw=Get(label,"text") as string,display=DisplayLabel(raw,label),path=PathOf(label);TextStyles.Label(label,display,path);
-  if(!CaptionLayout.PrepareStyled(label,display,TextStyles.Percent(label),TextStyles.LabelPixelUnit(label))){
-   TextStyles.BodyFallback(label,display,path);CaptionLayout.PrepareStyled(label,display,TextStyles.Percent(label),0);
-  }TextStyles.Fitted(label);
- }
+    static string ForComponent(string text, Component c, string kind)
+    {
+        Load();
+        List<Hashtable> list;
+        if (text == null || c == null)
+            return text;
+        if (!sources.TryGetValue(text, out list))
+        {
+            ObserveComponent(text, c, kind, null, "unbound_source");
+            return text;
+        }
+
+        string path = PathOf(c);
+        Hashtable wildcard = null;
+        foreach (var d in list)
+            if (S(d, "kind") == kind)
+            {
+                string p = S(d, "path"), scene = S(d, "scene");
+                if ((scene == Application.loadedLevelName
+                    || (scene == "Splash" && Application.loadedLevel == 0)) && path == p)
+                    return ComponentText(S(d, "id"), text, c);
+                if (scene == "*" && (path == p || path.EndsWith("/" + p, StringComparison.Ordinal)))
+                    wildcard = d;
+            }
+
+        if (wildcard != null)
+            return ComponentText(S(wildcard, "id"), text, c);
+        ObserveComponent(text, c, kind, path, "unbound_context");
+        return text;
+    }
+
+    static void PrepareStyledLabel(Component label)
+    {
+        string raw = Get(label, "text") as string,
+            display = DisplayLabel(raw, label),
+            path = PathOf(label);
+        TextStyles.Label(label, display, path);
+        if (!CaptionLayout.PrepareStyled(label, display,
+            TextStyles.Percent(label), TextStyles.LabelPixelUnit(label)))
+        {
+            TextStyles.BodyFallback(label, display, path);
+            CaptionLayout.PrepareStyled(label, display, TextStyles.Percent(label), 0);
+        }
+        TextStyles.Fitted(label);
+    }
  public static void PrepareLabel(object value){Load();Component label=value as Component;if(label==null)return;try{PrepareStyledLabel(label);}catch(Exception e){Debug.LogWarning("CW3Localization layout fallback: "+e.GetType().Name);}}
  public static bool LayoutButton(string text,GUILayoutOption[] options){return LayoutStyledButton(text,GUI.skin.button,options);}
  public static bool LayoutStyledButton(string text,GUIStyle style,GUILayoutOption[] options){Load();style=TextStyles.Gui(style,text,TextStylePolicy.Ui);if(translated.Contains(text??""))try{options=CaptionLayout.ButtonOptions(text,style,options);}catch(Exception e){Debug.LogWarning("CW3Localization button layout fallback: "+e.Message);}return GUILayout.Button(text,style,options);}
  public static string ForLabel(string text,object value){Load();return DisplayLabel(text,value as Component);}
- static string DisplayLabel(string text,Component label){if(label==null||text==null)return text;foreach(var d in displayLabels)if(S(d,"selector")==label.name){string source=S(d,"source");if(S(d,"match")=="exact"&&text==source)return ComponentText(S(d,"id"),text,label);if(S(d,"match")=="prefix"&&text.StartsWith(source,StringComparison.Ordinal))return ComponentText(S(d,"id"),source,label)+text.Substring(source.Length);}if(label.name=="InfoBarSystemLabel"){Type sector=label.GetType().Assembly.GetType("SectorManager");object star=Get(Get(sector,"instance"),"currentStar");if(star!=null)return ForName(text,star);}switch(label.name){case "UnitDeactivateButtonLabel":if(text=="ACTIVATE")return ComponentText("text.63b374e8d84d967e",text,label);if(text=="DEACTIVATE")return ComponentText("text.4da1839c612154ca",text,label);break;case "UnitDisarmButtonLabel":if(text=="ARM")return ComponentText("text.bd08ffebeaa89d56",text,label);if(text=="DISARM")return ComponentText("text.791afba48d68c010",text,label);break;case "UnitStopResupplyButtonLabel":if(text=="RESUPPLY")return ComponentText("text.1c1c796fc1ed36a6",text,label);if(text=="STOP RESUPPLY")return ComponentText("text.5f4ba2c5bbe4a3d4",text,label);break;case "MapTitleLabel":if(text.StartsWith("Arc Eternal : ",StringComparison.Ordinal))return ComponentText("text.b33c1c3e1a5be568","Arc Eternal : ",label)+TitleNames(text.Substring(14));break;}if(text=="Current")for(Transform t=label.transform;t!=null;t=t.parent)if(t.name=="MenuWindowResList"||t.name=="Drop-down List")return ComponentText("text.8e506022a417b175",text,label);return ForComponent(text,label,"label");}
+    static string DisplayLabel(string text, Component label)
+    {
+        if (label == null || text == null)
+            return text;
+        foreach (var d in displayLabels)
+            if (S(d, "selector") == label.name)
+            {
+                string source = S(d, "source");
+                if (S(d, "match") == "exact" && text == source)
+                    return ComponentText(S(d, "id"), text, label);
+                if (S(d, "match") == "prefix" && text.StartsWith(source, StringComparison.Ordinal))
+                    return ComponentText(S(d, "id"), source, label) + text.Substring(source.Length);
+            }
+
+        if (label.name == "InfoBarSystemLabel")
+        {
+            Type sector = label.GetType().Assembly.GetType("SectorManager");
+            object star = Get(Get(sector, "instance"), "currentStar");
+            if (star != null)
+                return ForName(text, star);
+        }
+
+        switch (label.name)
+        {
+            case "UnitDeactivateButtonLabel":
+                if (text == "ACTIVATE")
+                    return ComponentText("text.63b374e8d84d967e", text, label);
+                if (text == "DEACTIVATE")
+                    return ComponentText("text.4da1839c612154ca", text, label);
+                break;
+            case "UnitDisarmButtonLabel":
+                if (text == "ARM")
+                    return ComponentText("text.bd08ffebeaa89d56", text, label);
+                if (text == "DISARM")
+                    return ComponentText("text.791afba48d68c010", text, label);
+                break;
+            case "UnitStopResupplyButtonLabel":
+                if (text == "RESUPPLY")
+                    return ComponentText("text.1c1c796fc1ed36a6", text, label);
+                if (text == "STOP RESUPPLY")
+                    return ComponentText("text.5f4ba2c5bbe4a3d4", text, label);
+                break;
+            case "MapTitleLabel":
+                if (text.StartsWith("Arc Eternal : ", StringComparison.Ordinal))
+                    return ComponentText("text.b33c1c3e1a5be568", "Arc Eternal : ", label)
+                        + TitleNames(text.Substring(14));
+                break;
+        }
+
+        if (text == "Current")
+            for (Transform t = label.transform; t != null; t = t.parent)
+                if (t.name == "MenuWindowResList" || t.name == "Drop-down List")
+                    return ComponentText("text.8e506022a417b175", text, label);
+        return ForComponent(text, label, "label");
+    }
  static string TitleNames(string original){string[] parts=original.Split(new string[]{" : "},StringSplitOptions.None);for(int i=0;i<parts.Length;i++){List<Hashtable> list;if(sources.TryGetValue(parts[i],out list))foreach(var d in list)if(S(d,"kind")=="xml_text"&&d.ContainsKey("guid")){parts[i]=Text(S(d,"id"),parts[i]);break;}}return String.Join(" : ",parts);}
  // Borrow game-owned instances (SetColor keeps one). Track only instances this bridge creates.
  static void MeshFont(TextMesh mesh){
@@ -118,20 +253,61 @@ public static partial class CW3Runtime {
   }catch(Exception e){Debug.LogWarning("CW3Localization script conversation fallback: "+e.Message);}
  }
  public static string CaptureCrpl(string original,object core){Load();guiId=null;guiArguments=null;guiOriginal=original;guiContext="GameSpace/ShowMessage";try{guiId=ScriptTarget(core,"show",original,out guiContext);}catch(Exception e){Debug.LogWarning("CW3Localization CRPL context fallback: "+e.Message);}return original;}
- public static string ForGuiMessage(string original){Load();if(guiId==null||original!=guiOriginal){Observe(original,"crpl",guiContext,"unbound_script_literal","");return original;}Hashtable d=definitions[guiId];if(S(d,"kind")=="crpl_output"){string target;if(!translations.TryGetValue(guiId,out target)){Observe(S(d,"source"),"crpl_output",guiContext,"missing_translation",guiId);return original;}return ScriptBindings.Format(target,guiArguments)??original;}return Text(guiId,S(d,"source")).Replace("\\n","\n").Replace("\\t","\t");}
+    public static string ForGuiMessage(string original)
+    {
+        Load();
+        if (guiId == null || original != guiOriginal)
+        {
+            Observe(original, "crpl", guiContext, "unbound_script_literal", "");
+            return original;
+        }
+        Hashtable d = definitions[guiId];
+        if (S(d, "kind") == "crpl_output")
+        {
+            string target;
+            if (!translations.TryGetValue(guiId, out target))
+            {
+                Observe(S(d, "source"), "crpl_output", guiContext, "missing_translation", guiId);
+                return original;
+            }
+            return ScriptBindings.Format(target, guiArguments) ?? original;
+        }
+        return Text(guiId, S(d, "source")).Replace("\\n", "\n").Replace("\\t", "\t");
+    }
  public static void StyleDiagnostics(bool enabled){TextStyles.Diagnostics(enabled);}
  public static Hashtable StyleReport(Component component){Load();return TextStyles.Report(component);}
  public static Hashtable StyleStatus(){Load();return TextStyles.Status();}
- static void RefreshSizedMesh(TextMesh mesh){
-  if(PathOf(mesh).StartsWith("EntryPoints/",StringComparison.Ordinal)&&mesh.transform.parent!=null){var collider=mesh.transform.parent.GetComponent<Collider>();var renderer=mesh.GetComponent<Renderer>();
-   if(collider!=null&&renderer!=null){int unit=Math.Max(1,TextStyles.MeshPixelUnit(mesh));string display=mesh.text;
-    // Keep the original clickable region. Pixel fonts step only in whole baseline units.
-    while(mesh.fontSize>Math.Max(4,unit)&&(renderer.bounds.size.x>collider.bounds.size.x||renderer.bounds.size.y>collider.bounds.size.y)){mesh.fontSize=Math.Max(Math.Max(4,unit),mesh.fontSize-unit);mesh.text=display;}
-    TextStyles.FittedMesh(mesh);
-   }
-  }MeshFont(mesh);
- }
- internal static Hashtable ApplySizes(TextStylePolicy saved){Load();return TextStyles.ApplySizes(saved,label=>PrepareStyledLabel(label),mesh=>RefreshSizedMesh(mesh));}
+    static void RefreshSizedMesh(TextMesh mesh)
+    {
+        if (PathOf(mesh).StartsWith("EntryPoints/", StringComparison.Ordinal)
+            && mesh.transform.parent != null)
+        {
+            var collider = mesh.transform.parent.GetComponent<Collider>();
+            var renderer = mesh.GetComponent<Renderer>();
+            if (collider != null && renderer != null)
+            {
+                int unit = Math.Max(1, TextStyles.MeshPixelUnit(mesh));
+                string display = mesh.text;
+                // Keep the original clickable region. Pixel fonts step only in whole baseline units.
+                while (mesh.fontSize > Math.Max(4, unit)
+                    && (renderer.bounds.size.x > collider.bounds.size.x
+                        || renderer.bounds.size.y > collider.bounds.size.y))
+                {
+                    mesh.fontSize = Math.Max(Math.Max(4, unit), mesh.fontSize - unit);
+                    mesh.text = display;
+                }
+                TextStyles.FittedMesh(mesh);
+            }
+        }
+        MeshFont(mesh);
+    }
+
+    internal static Hashtable ApplySizes(TextStylePolicy saved)
+    {
+        Load();
+        return TextStyles.ApplySizes(saved,
+            label => PrepareStyledLabel(label), mesh => RefreshSizedMesh(mesh));
+    }
  static void FontRebuilt(Font f){if(!TextStyles.Owns(f)||rebuildingFont)return;rebuildingFont=true;try{TextStyles.Rebuilt(f,PrepareStyledLabel,(mesh,refit)=>{if(refit)RefreshSizedMesh(mesh);else MeshFont(mesh);mesh.text=mesh.text;});}finally{rebuildingFont=false;}}
  internal static void Scan(){Load();Scene();FontSettingsView.Bind();foreach(TextMesh mesh in Resources.FindObjectsOfTypeAll(typeof(TextMesh))){if(mesh==null)continue;int id=mesh.GetInstanceID();if(!meshes.ContainsKey(id))SetMesh(mesh,mesh.text);}}
  internal static void Scene(){messageBindings.Cleanup(owner=>owner is UnityEngine.Object&&(UnityEngine.Object)owner==null);var dead=new List<int>();foreach(var pair in meshes)if(pair.Value.Mesh==null)dead.Add(pair.Key);foreach(int id in dead)ReleaseMesh(id);TextStyles.Cleanup();}
