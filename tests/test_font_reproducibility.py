@@ -21,10 +21,10 @@ class FontReproducibility(unittest.TestCase):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name); (root/'fonts').mkdir(); (root/'tools').mkdir()
             builder = FontBuilder(1000, isTTF=True)
-            builder.setupGlyphOrder(['.notdef', 'A'])
-            builder.setupCharacterMap({65:'A'})
+            builder.setupGlyphOrder(['.notdef', 'A', 'B'])
+            builder.setupCharacterMap({65:'A',66:'B'})
             glyphs = {}
-            for glyph in ['.notdef', 'A']:
+            for glyph in ['.notdef', 'A', 'B']:
                 pen = TTGlyphPen(None)
                 pen.moveTo((0,0));pen.lineTo((100,0));pen.lineTo((100,100));pen.closePath()
                 glyphs[glyph] = pen.glyph()
@@ -55,7 +55,7 @@ class FontReproducibility(unittest.TestCase):
                         with TTFont(output,recalcTimestamp=False) as font:
                             self.assertEqual(font['head'].modified,timestamp)
                             self.assertNotIn('fvar',font)
-                            self.assertIn(65,font.getBestCmap())
+                            self.assertEqual(set(font.getBestCmap()),{65,66} if flags else {65})
                     self.assertEqual(results[0],results[1])
 
 
