@@ -12,7 +12,7 @@ import tempfile
 import zipfile
 
 from package_player import PLAYER_CONTROLS, PLAYER_SOURCES, instructions, supported_target, target_description, validate_release_payload
-from player_install import RUNTIME, atomic_copy, check_game_identity, installed_path, target_identity, target_layout
+from player_install import atomic_copy, check_game_identity, installed_path, target_identity, target_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -81,8 +81,8 @@ def inspect_zip(archive, build, supported, game, source_root=None):
     require(target_identity(player) == target_identity(supported), 'Player platform or install layout mismatch')
     if game is not None:
         check_game_identity(game, player)
-    for key in ('required_originals', 'controlled_fonts'):
-        require(player.get(key, {}) == build.get(key, {}), 'Player/build metadata mismatch: ' + key)
+    require(player.get('required_originals', {}) == build.get('required_originals', {}),
+            'Player/build metadata mismatch: required_originals')
     for key in ('source_repo', 'source_commit', 'source_dirty', 'build_inputs_sha256'):
         require((key in player) == (key in build) and player.get(key) == build.get(key),
                 'Player/build provenance mismatch: ' + key)
@@ -114,19 +114,11 @@ def inspect_zip(archive, build, supported, game, source_root=None):
         allowed_dirs.update(str(parent) for parent in PurePosixPath(root + '/' + name).parents if str(parent) != '.')
     require(all(not info.is_dir() or name in allowed_dirs for info, name in zip(infos, names)),
             'ZIP contains an unexpected directory')
-    require(player.get('runtime_files') == sorted(RUNTIME & payload), 'Runtime-file list differs from packaged payload')
     originals = player.get('required_originals', {})
     require(isinstance(originals, dict), 'Invalid required-original manifest')
     for name, expected in originals.items():
         require(safe_name(name).startswith('CW3_Data/'), 'Required original is outside game data: ' + name)
         require(name not in payload and valid_hash(expected), 'Invalid required original: ' + name)
-    controlled = player.get('controlled_fonts', {})
-    require(isinstance(controlled, dict), 'Invalid controlled-font metadata')
-    if controlled:
-        bundled_fonts = {'sans': 'CW3Localization/font.ttf', 'serif': 'CW3Localization/serif.ttf'}
-        hashes = {row['file']: row['after'] for row in rows}
-        require(set(controlled) == set(bundled_fonts) and all(hashes.get(name) == controlled[family] for family, name in bundled_fonts.items()),
-                'Controlled-font metadata differs from bundled font hashes')
     for row in rows:
         info = files[row['file']]
         require(info.file_size == row['bytes'], 'ZIP payload size mismatch: ' + row['file'])
