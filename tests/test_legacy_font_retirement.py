@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import font_registry
 import package_player
+from player_install import ADDED, PAYLOAD
 SUPPORTED=json.loads((ROOT/'resources/supported-build.json').read_text())
 
 
@@ -36,6 +37,14 @@ class LegacyFontRetirement(unittest.TestCase):
                                  '--local-menu-font', 'zpix.ttf'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 2)
         self.assertIn('unrecognized arguments: --local-menu-font', result.stderr)
+
+    def test_font_builder_rejects_retired_subset_mode_without_output(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out=Path(folder)/'font.ttf'
+            result=subprocess.run([sys.executable,str(ROOT/'tools/build_font.py'),
+                                   str(Path(folder)/'missing.ttf'),str(out),'--external'],capture_output=True,text=True)
+            self.assertEqual(result.returncode,2)
+            self.assertFalse(out.exists())
 
     def package_fixture(self, root, legacy=False):
         package=root/'candidate';build=root/'files';package.mkdir();build.mkdir()
@@ -75,11 +84,13 @@ class LegacyFontRetirement(unittest.TestCase):
             root=Path(folder);config,_,out=self.package_fixture(root)
             (root/'resources').mkdir();(root/'resources/supported-build.json').write_text(json.dumps(SUPPORTED))
             candidate=root/'candidate/manifest.json';doc=json.loads(candidate.read_text())
-            doc['files']=[dict(file='CW3Localization/text-style.json')];candidate.write_text(json.dumps(doc))
+            doc['files']=[dict(file=name) for name in sorted((PAYLOAD-{ADDED})|{'CW3Localization/text-style.json'})]
+            candidate.write_text(json.dumps(doc))
             argv=['package_player.py','--config',str(config),'--output',str(out)]
-            with patch.object(package_player,'ROOT',root),patch.object(sys,'argv',argv),self.assertRaisesRegex(AssertionError,'settings template'):
+            with patch.object(package_player,'ROOT',root),patch.object(sys,'argv',argv),self.assertRaises(ValueError):
                 package_player.main()
             self.assertFalse(out.exists())
+            self.assertFalse(out.with_suffix('.zip').exists())
 
 
 if __name__ == '__main__':

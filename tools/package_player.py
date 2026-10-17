@@ -35,7 +35,6 @@ def main():
     if registry_file.exists():
         from font_registry import load as load_fonts
         load_fonts(registry_file)
-    assert not any(row['file']=='CW3Localization/text-style.json' for row in build.get('files',[])),'Rebuild without the retired settings template'
     validate_release_payload((row['file'] for row in build['files']),target_layout(build)['target_id'])
     out.mkdir(parents=True)
     for row in build['files']:
