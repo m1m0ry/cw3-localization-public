@@ -127,7 +127,6 @@ def _build(config,out,final_out):
     payload=base64.b64encode(json.dumps(defs,ensure_ascii=False,separators=(',',':')).encode()).decode()
     (generated/'Definitions.cs').write_text('internal static class CW3Definitions { internal const string Data="'+payload+'"; }\n')
     (generated/'BuildInfo.cs').write_text('internal static class CW3BuildInfo { internal const string Version='+json.dumps(config.get('patch_version','v12.3'),ensure_ascii=True)+'; internal const bool NativeMac='+str(layout['platform']==2).lower()+'; internal const string TargetId='+json.dumps(layout['id'])+'; }\n')
-    font_hashes={'sans':workflow.sha(sans.read_bytes()),'serif':workflow.sha(serif.read_bytes())}
     rows=[]
     for e in entries:
         t=e['target']
@@ -171,7 +170,7 @@ def _build(config,out,final_out):
     validate_release_payload((row['file'] for row in rows),layout['id'])
     game_target.verify_inputs(original,layout)
     workflow.save(out/'install-config.json',dict(config,package=str(final_out),build=str(final_out/'files')))
-    workflow.save(out/'manifest.json',{'source_dirty':bool(subprocess.check_output(['git','status','--porcelain','--untracked-files=normal'],cwd=ROOT,text=True).strip()),'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'format':1,'revision':'independent-v12-candidate','patch_version':config.get('patch_version','v12.3'),'steam_build':supported['steam_build'],'version':supported['version'],'required_originals':required_originals,'controlled_fonts':font_hashes,'files':rows,**game_target.manifest_fields(layout)})
+    workflow.save(out/'manifest.json',{'source_dirty':bool(subprocess.check_output(['git','status','--porcelain','--untracked-files=normal'],cwd=ROOT,text=True).strip()),'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'format':1,'revision':'independent-v12-candidate','patch_version':config.get('patch_version','v12.3'),'steam_build':supported['steam_build'],'version':supported['version'],'required_originals':required_originals,'files':rows,**game_target.manifest_fields(layout)})
     print('Prepared',len(defs),'fixed runtime targets;',len(rows),'candidate files; original texts/scripts preserved. Game unchanged.')
 
 if __name__=='__main__':

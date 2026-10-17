@@ -75,7 +75,7 @@ class PinnedBuild(unittest.TestCase):
             supported=json.loads((root/'resources/supported-build.json').read_text())
             manifest=dict(provenance,format=1,revision='independent-v12-candidate',patch_version='v12.6',
                           steam_build=supported['steam_build'],version=supported['version'],
-                          files=rows)
+                          controlled_fonts={'sans':'legacy'},runtime_files=['legacy'],files=rows)
             manifest.update(installer.target_identity(supported))
             (build/'manifest.json').write_text(json.dumps(manifest))
             config=root/'config.json';config.write_text(json.dumps(dict(package=str(build),build=str(build),original=str(original),game=str(original))))
@@ -85,6 +85,8 @@ class PinnedBuild(unittest.TestCase):
                 player=json.loads(z.read('package/manifest.json'))
                 for key,value in provenance.items():self.assertEqual(player[key],value)
                 self.assertEqual(player['files'],manifest['files'])
+                self.assertNotIn('runtime_files',player)
+                self.assertNotIn('controlled_fonts',player)
                 self.assertEqual(sha(z.read('package/'+payload)),player['files'][0]['after'])
                 self.assertEqual({name.split('/',1)[1] for name in z.namelist()},{r['file'] for r in rows}|{'manifest.json','install.py','安装汉化.command','安装汉化.cmd','使用说明.txt','OFL.txt','LICENSE','NOTICE.md','字体设置.md'})
                 with patch.object(verify_package,'ROOT',root):
@@ -99,6 +101,19 @@ class PinnedBuild(unittest.TestCase):
             # Even a self-consistent producer/player manifest cannot authorize
             # development payloads. Exercise both independent release gates.
             clean_archive=Path(str(output)+'.zip').read_bytes()
+            # Historical extra fields do not override the canonical files list.
+            legacy=io.BytesIO()
+            with zipfile.ZipFile(io.BytesIO(clean_archive)) as clean,zipfile.ZipFile(legacy,'w') as z:
+                for name in clean.namelist():
+                    data=clean.read(name)
+                    if name=='package/manifest.json':
+                        player=json.loads(data);player.update(runtime_files=['obsolete'],controlled_fonts={'sans':'obsolete'})
+                        data=json.dumps(player).encode()
+                    z.writestr(name,data)
+            legacy.seek(0)
+            with zipfile.ZipFile(legacy) as z,patch.object(verify_package,'ROOT',root):
+                _,player=verify_package.inspect_zip(z,manifest,supported,None)
+                self.assertEqual(player['files'],rows)
             for extra in ('CW3_Data/Managed/CW3Debug.dll','CW3_Data/output_log.txt'):
                 polluted=copy.deepcopy(manifest);content=b'PRIVATE DEBUG OR LOG'
                 row=dict(file=extra,before=None,after=sha(content),bytes=len(content));polluted['files'].append(row)

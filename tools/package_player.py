@@ -43,10 +43,8 @@ def main():
         assert sha(source)==row['after'] and source.stat().st_size==row['bytes'],name
         target=out/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
         assert sha(target)==row['after'],name
-    from player_install import RUNTIME
-    manifest=dict(format=2,name='CW3 简体中文补丁',version=build['patch_version'],runtime_files=sorted(RUNTIME & {r['file'] for r in build['files']}),exe_sha256=supported['exe_sha256'],target=target_description(supported),required_originals=build.get('required_originals',{}),files=build['files'])
+    manifest=dict(format=2,name='CW3 简体中文补丁',version=build['patch_version'],exe_sha256=supported['exe_sha256'],target=target_description(supported),required_originals=build.get('required_originals',{}),files=build['files'])
     manifest.update(target_identity(supported))
-    if 'controlled_fonts' in build:manifest['controlled_fonts']=build['controlled_fonts']
     for key in ('source_repo','source_commit','source_dirty','build_inputs_sha256'):
         if key in build:manifest[key]=build[key]
     (out/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')

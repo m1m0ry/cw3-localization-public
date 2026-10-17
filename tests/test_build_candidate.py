@@ -14,7 +14,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from package_player import INSTRUCTION_SOURCES, PLAYER_SOURCES, instructions, target_description
-from player_install import ADDED, PAYLOAD, RUNTIME, target_identity
+from player_install import ADDED, PAYLOAD, target_identity
 
 VERSION = 'v12.14'
 FAKE_GH = '''import base64,json,os,shutil,sys
@@ -106,7 +106,7 @@ class CandidateCommand(unittest.TestCase):
         if corruption == 'target_id':identity['target_id'] = 'other-steam-22453699'
         if corruption == 'platform':identity['platform'] = 99
         manifest = json.dumps(dict(provenance, **identity, format=2, target=target_description(supported),
-                                   runtime_files=sorted(RUNTIME & payload), files=rows)).encode()
+                                   files=rows)).encode()
         controls = {dest: (ROOT / source).read_bytes() for dest, source in PLAYER_SOURCES.items()}
         controls['使用说明.txt'] = instructions(supported, VERSION).encode()
         controls['manifest.json'] = manifest
