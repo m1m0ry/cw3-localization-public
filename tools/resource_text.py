@@ -22,20 +22,13 @@ def _mask(code,strings=False):
 def show_calls(code):
  return list(re.finditer(r'\bShowMessage(?:Dismissible)?\b',_mask(code,strings=True)))
 
-def display_calls(code,include_comments=False):
+def display_calls(code):
  """Yield display sites with unchanged raw literal indexes and source offsets."""
  clean=_mask(code)
  for index,hit in enumerate(crpl_literals(code)):
-  visible=clean
-  if clean[hit.start()]!='"':
-   if not include_comments:continue
-   # One adopted Tutorial target is commented out. The builder retains its
-   # declared position; coverage/output ordinals still inspect active calls only.
-   comment=next((m for m in TOKENS.finditer(code) if m[0].startswith('#') and m.start()<=hit.start()<m.end()),None)
-   if comment is None or hit.end()>comment.end():continue
-   visible=clean[:comment.start()]+comment[0]+clean[comment.end():]
-  function=re.search(r'(AddConversationMessage|ShowMessage(?:Dismissible)?)\(\s*[^"()\n]*$',visible[:hit.start()])
-  postfix=re.match(r'\s*(?:-?\d+\s+|(?:Screen\w+\s+|\d+\s+sub\s+))*(AddConversationMessage|ShowMessage(?:Dismissible)?)\b',visible[hit.end():])
+  if clean[hit.start()]!='"':continue
+  function=re.search(r'(AddConversationMessage|ShowMessage(?:Dismissible)?)\(\s*[^"()\n]*$',clean[:hit.start()])
+  postfix=re.match(r'\s*(?:-?\d+\s+|(?:Screen\w+\s+|\d+\s+sub\s+))*(AddConversationMessage|ShowMessage(?:Dismissible)?)\b',clean[hit.end():])
   if function or postfix:
    call=function.group(1) if function else postfix.group(1)
    offset=function.start() if function else hit.end()+postfix.start(1)

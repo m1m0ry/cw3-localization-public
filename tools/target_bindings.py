@@ -135,7 +135,7 @@ class _Resources:
                 from script_outputs import output_definition
                 output_definition(code, target, entry['source'])
             else:
-                sites = {site.literal_index: site for site in display_calls(code, include_comments=True)}
+                sites = {site.literal_index: site for site in display_calls(code)}
                 site = sites[target['literal_index']]
                 require(site.source == entry['source'], 'Shared script source drift: ' + entry['id'])
                 require(site.family == ('conversation' if target['kind'] == 'crpl_conversation' else 'show'), 'Shared script display family drift')

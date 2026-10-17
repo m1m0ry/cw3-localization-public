@@ -43,7 +43,7 @@ def definitions(entries,original,expected_platform=5):
                 d.update(output_definition(code,t,e['source']))
             elif t['kind'] in ('crpl','crpl_display','crpl_conversation'):
                 code=base64.b64decode(scripts(node.text)[t['script']]).decode('utf-16le')
-                sites={site.literal_index:site for site in display_calls(code,include_comments=True)}
+                sites={site.literal_index:site for site in display_calls(code)}
                 assert t['literal_index'] in sites, 'No declared script display call'
                 site=sites[t['literal_index']]
                 assert site.source==e['source']

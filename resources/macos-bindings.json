@@ -2,7 +2,7 @@
   "format": 1,
   "profile": "macos-steam-22453699",
   "platform": 2,
-  "canonical_lock_sha256": "98314c4bf8799c05c193b741bbfa3bdd590c17be54fb1ffe2d2f698d84c72322",
+  "canonical_lock_sha256": "aeec39dddd9eb0e19356d4ac293e6a7aa3b7e10a6e0214f9d15a0d1242c1cc5a",
   "original_hashes": {
     "CW3_Data/Managed/Assembly-CSharp.dll": "4b27007ccfcab83f17a0eee24fbef69500e48951c0d2fcf0e3c18723e09beade",
     "CW3_Data/Managed/System.Core.dll": "b091dad33002f03cc6c1747d8c5f7a901cbf8a60ca0d286088162143a28b57a3",
@@ -12985,14 +12985,6 @@
     "text.e899206405a060fe": {
       "canonical_sha256": "76cf9bd38c79ed5c97be28d8e1ea2949a8d183f8e12225d135cd33ba457cad3d",
       "source_sha256": "15da925248009bce9cffca690be1faf4ac765b79c5956f1a473f7411d01ce495",
-      "binding": "shared",
-      "anchor": {
-        "object_sha256": "0a854da681fcd766c4f619a444e13be4000a9c91324b710d24aab33298d1aac5"
-      }
-    },
-    "text.2e72af982685ca69": {
-      "canonical_sha256": "801a1e67d77a415f55ad5f463476b3402d0f80529c60c6e80eed301ec7a09ad3",
-      "source_sha256": "d96fa52b86f39aad35ef558440a1913370a26d835cf48397ffbe1037849a0a55",
       "binding": "shared",
       "anchor": {
         "object_sha256": "0a854da681fcd766c4f619a444e13be4000a9c91324b710d24aab33298d1aac5"
