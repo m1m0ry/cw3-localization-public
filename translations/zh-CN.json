@@ -7601,7 +7601,7 @@
       "id": "text.24ea42d84f162a99",
       "source": "Nothing intrinsic, perhaps there is something that has been added to each item.  I'll conduct careful scans of every item we have collected.  It will take some time to complete, however.",
       "context": "Chanson / /Game/Info[1]/Messages[1]/Message[7]/m[1]",
-      "translation": "本身并无异常，也许是有什么东西附着在了各个物品上。我会仔细扫描我们收集到的每一样物品。不过，这需要一些时间。",
+      "translation": "本身并无共同点，也许是有什么东西附着在了各个物品上。我会仔细扫描我们收集到的每一样物品。不过，这需要一些时间。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -9895,7 +9895,7 @@
       "id": "text.77b0cce230b51705",
       "source": "This world has been uninhabited for over a billion years, so the artifacts must have been dropped here more recently.",
       "context": "Crosslaw / /Game/Info[1]/Messages[1]/Message[3]/m[1]",
-      "translation": "这个世界已经荒废了十亿多年，所以这些神器肯定是最近才被遗落在这里的。",
+      "translation": "这个世界已经荒废了十亿多年，所以这些神器肯定是在那之后才被放到这里的。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -10219,7 +10219,7 @@
       "id": "text.3e69a83bf809d8f4",
       "source": "What now?",
       "context": "Tiplex / /Game/Info[1]/Messages[1]/Message[2]/m[1]",
-      "translation": "现在怎么办？",
+      "translation": "又怎么了？",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11491,7 +11491,7 @@
       "id": "text.d78f604752033f90",
       "source": "Toward the end of its final occupation, the surviving humans scorched the planet with orbital mass drivers. It was an effort to... I suppose it doesn't matter now.",
       "context": "Far York / /Game/Info[1]/Messages[1]/Message[4]/m[1]",
-      "translation": "在其最后一次被占领的末期，幸存的人类动用轨道质量加速器将这颗星球夷为焦土。他们试图……我想现在这也不重要了。",
+      "translation": "在最后一个定居时代的末期，幸存的人类动用轨道质量加速器将这颗星球夷为焦土。他们试图……我想现在这也不重要了。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -11551,7 +11551,7 @@
       "id": "text.80f18b96095f0efd",
       "source": "Mortars damage creeper that is deep.\\nMove several mortars around each crater\\nand they will suppress the creeper.",
       "context": "Far York / Tutorial.crpl / ShowMessage",
-      "translation": "迫击炮可以对较深层的爬行体造成伤害。\\n将几门迫击炮部署到弹坑周围，\\n它们就能压制爬行体。",
+      "translation": "迫击炮可以对堆积较深的爬行体造成伤害。\\n将几门迫击炮部署到弹坑周围，\\n它们就能压制爬行体。",
       "target": {
         "kind": "crpl",
         "file": "CW3_Data/resources.assets",
@@ -11771,7 +11771,7 @@
       "id": "text.f86beb3986117232",
       "source": "If that Prism Ship is allowed to launch and create an Aether Beam over the enhanced Totem in the north east... if that happens... the resulting Aether back-blast will destroy this entire star system.",
       "context": "Farbor / /Game/Info[1]/Messages[1]/Message[17]/m[1]",
-      "translation": "如果任由那艘棱镜飞船发射，并在东北方向的强化图腾上方射出以太光束……要是真发生这种事……随之而来的以太反冲将摧毁整个恒星系。",
+      "translation": "如果任由那艘棱镜飞船升空，并在东北方向的强化图腾上方射出以太光束……要是真发生这种事……随之而来的以太反冲将摧毁整个恒星系。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12559,7 +12559,7 @@
       "id": "text.bd976cd0351728d6",
       "source": "You mentioned 'Varro' in passing earlier.",
       "context": "Mistet / /Game/Units[1]/MessageArtifact[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "你刚才顺口提到了“瓦罗”。",
+      "translation": "你先前顺口提到过“瓦罗”。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12787,7 +12787,7 @@
       "id": "text.4e44873c6b61b53a",
       "source": "Yes, from all that I have learned I see this as well.  But I still don't fully understand the purpose of the Arc.",
       "context": "Arca / /Game/Info[1]/Messages[1]/Message[8]/m[1]",
-      "translation": "是的，根据我所了解的一切，我也看到了这一点。但我仍然不完全理解这巨弧的目的。",
+      "translation": "是的，根据我所了解的一切，我也看到了这一点。但我仍然不完全理解永恒之弧的目的。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -12799,7 +12799,7 @@
       "id": "text.a412b91d3b04fb39",
       "source": "The Arc is a universal singleton, Lia.  Something of which only one may exist.  There can be no other, and once made it cannot be unmade.  The Arc forms an absolute reference point across all of space, time, and alternate eventualities.",
       "context": "Arca / /Game/Info[1]/Messages[1]/Message[9]/m[1]",
-      "translation": "永恒之弧是全宇宙唯一的特异存在，莉娅。独一无二。它无可替代，且一旦造就便不可逆转。巨弧构成了横跨所有时空与可能性的绝对参照点。",
+      "translation": "永恒之弧是全宇宙唯一的特异存在，莉娅。独一无二。它无可替代，且一旦造就便不可逆转。永恒之弧构成了横跨所有时空与可能性的绝对参照点。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -15963,7 +15963,7 @@
       "id": "text.739ddba551df2f7f",
       "source": "Mortars fire shells that damage deep Creeper.\nMortars do not require line of sight.",
       "context": "Managed display v10 / method 100670848 / instruction 47",
-      "translation": "迫击炮发射炮弹打击高浓度爬行体。\n迫击炮不需要直视视线。",
+      "translation": "迫击炮发射炮弹打击堆积较深的爬行体。\n迫击炮无需直视目标。",
       "target": {
         "kind": "managed",
         "method_token": 100670469,
@@ -16298,7 +16298,7 @@
       "id": "text.7537651d1ee72586",
       "source": "Patience, Commander. You'll know it all when you need to, or when she remembers. For now, you're better off charging a Nexus, right? For your own sake, trust me once. These Coordinates lead to the only gate to it's Realm.",
       "context": "alpha_4.2 an old friend / /Game/Info[1]/Messages[1]/Message[9]/m[1]",
-      "translation": "耐心点，指挥官。等时机到了，或者等她想起来时，你自然会知道一切。眼下，你最好还是去给枢纽充能，对吧？为了你自己着想，就相信我一次吧。这些坐标通往进入其领域的唯一大门。",
+      "translation": "耐心点，指挥官。等时机到了，或者等她想起来时，你自然会知道一切。眼下，你最好还是先去进攻枢纽，对吧？为了你自己着想，就相信我一次吧。这些坐标通往进入其领域的唯一大门。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -16334,7 +16334,7 @@
       "id": "text.8fec6c54379bb1f5",
       "source": "I want to hope you're right. We did never yet find a way to charge that Nexus, so I'm willing to do anything. If this is a trap, be sure we will hunt you down.",
       "context": "alpha_4.2 an old friend / /Game/Info[1]/Messages[1]/Message[12]/m[1]",
-      "translation": "希望你是对的。我们迄今还没找到给那个枢纽充能的方法，所以我愿意做任何尝试。如果这是个陷阱，你大可确信我们会追杀你到底。",
+      "translation": "希望你是对的。我们迄今还没找到进攻那个枢纽的方法，所以我愿意做任何尝试。如果这是个陷阱，你大可确信我们会追杀你到底。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17102,7 +17102,7 @@
       "id": "text.4b6fb3518ca1bf12",
       "source": "Something's wrong - we're coming down right in the pa...",
       "context": "alpha_the bardel redemption / /Game/Info[1]/Messages[1]/Message[1]/m[1]",
-      "translation": "不对劲——我们正降落在那群……",
+      "translation": "不对劲——我们正好降落在……",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -17138,7 +17138,7 @@
       "id": "text.edac5810dc68594d",
       "source": "Records indicate that this world was based off of a privatly owned planet build to defend against the creeper, unforutonly it failed and proved very hard to take back.",
       "context": "alpha_the name / /Game/Info[1]/Messages[1]/Message[3]/m[1]",
-      "translation": "记录显示，这个世界原本是一颗为抵御爬行体而建的私人星球，遗憾的是它陷落了，而且事实证明极难夺回。",
+      "translation": "记录显示，这个世界以一颗为抵御爬行体而建的私人星球为原型。遗憾的是，那颗星球最终陷落，而且事实证明极难夺回。",
       "target": {
         "kind": "xml_text",
         "file": "CW3_Data/resources.assets",
@@ -19676,7 +19676,7 @@
       "id": "text.d6eb22860c23d89c",
       "source": "No, father.  I remember the life of Skarsgard Abraxis and won't choose to forget.",
       "context": "arca / RingBuilder.crpl / conversation / line 359",
-      "translation": "不，父亲。我记得作为斯卡斯加德·阿布拉克西斯的那一生，我绝不会选择遗忘。",
+      "translation": "不，父亲。我记得斯卡斯加德·阿布拉克西斯的一生，我绝不会选择遗忘。",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
@@ -19732,7 +19732,7 @@
       "id": "text.e438990aa560fc46",
       "source": "Lia, we failed!  The Prism Ship has been completed and is launching. Nothing can stop it now...",
       "context": "farbor / MotherShip.crpl / conversation / line 96",
-      "translation": "莉娅，我们失败了！棱镜飞船已经完工并且正在发射。现在谁也阻止不了它了……",
+      "translation": "莉娅，我们失败了！棱镜飞船已经完工并且正在升空。现在谁也阻止不了它了……",
       "target": {
         "kind": "crpl_conversation",
         "file": "CW3_Data/resources.assets",
