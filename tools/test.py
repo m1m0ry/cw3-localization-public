@@ -16,7 +16,7 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts')
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts')
 STANDALONE=('CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
             'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts')
@@ -68,6 +68,11 @@ class Contracts:
             patched=o/'PanelFillContract.patched.exe'
             self.execute('PatchPanelFill',[ROOT/'src/rendering/PatchPanelFill.cs'],[w(fixture),w(patched),w(m.location('original')/'CW3_Data/Managed')],[m.prepare_cecil(o),'-r:System.Core'])
             m.run(patched,[])
+        elif name=='EnumeratorDisposeContracts':
+            fixture=m.compile(o,'EnumeratorDisposeFixture.exe',[test/'EnumeratorDisposeFixture.cs'])
+            patched=o/'EnumeratorDisposeFixture.patched.exe'
+            self.execute(name,[ROOT/'src/performance/EnumeratorDisposePatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(fixture),w(patched)],[m.prepare_cecil(o),'-r:System.Core'])
+            m.run(fixture,['original']);m.run(patched,['patched'])
         elif name=='CustomSavePathContracts':
             fixture=m.compile(o,'CustomSavePathFixture.exe',[test/'CustomSavePathFixture.cs']);patched=o/'CustomSavePathFixture.patched.exe'
             flags=[m.prepare_cecil(o),'-r:System.Core']

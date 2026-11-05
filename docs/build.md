@@ -65,6 +65,8 @@ python3 tools/build_candidate.py --ref feature/example --version v12.14 --target
 
 `--target` 可改为 `macos`，产物保存在 `local-only/candidate-运行ID/`。
 
+原版集合遍历的分配优化与验证边界见[运行开销说明](performance.md)。
+
 ## 开发检查
 
 无需游戏文件的检查：

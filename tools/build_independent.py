@@ -19,8 +19,9 @@ def exe(name,source,*args):
  files=[source]
  if name in ('RuntimePatch','RuntimeVerify'):files += [ROOT/'src/runtime/MissionScopePatch.cs',ROOT/'src/runtime/MainMenuClickPatch.cs']
  if name in ('CustomSavePathPatch','CustomSavePathVerify'):files += [ROOT/'src/runtime/CustomSavePathPatch.cs']
+ if name in ('EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts'):files += [ROOT/'src/performance/EnumeratorDisposePatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -47,3 +48,14 @@ if target['platform']==2:
  exe('CustomSavePathPatch',ROOT/'src/runtime/PatchCustomSavePath.cs',final,adjusted,g)
  exe('CustomSavePathVerify',ROOT/'src/runtime/VerifyCustomSavePath.cs',final,adjusted)
  shutil.copy2(adjusted,final)
+
+# Replace old compiler disposal boxes with stack copies, not collection/algorithm
+# rewrites. This is audited independently after all display and save-path stages.
+disposal_fixture=compile('EnumeratorDisposeFixture',[ROOT/'tests/EnumeratorDisposeFixture.cs'])
+disposal_patched=out/'EnumeratorDisposeFixture.patched.exe'
+exe('EnumeratorDisposeContracts',ROOT/'tests/EnumeratorDisposeContracts.cs',disposal_fixture,disposal_patched)
+run(disposal_fixture,['original']);run(disposal_patched,['patched'])
+allocation_optimized=out/'Assembly-CSharp.enumerator-dispose.dll'
+exe('EnumeratorDisposePatch',ROOT/'src/performance/PatchEnumeratorDispose.cs',final,allocation_optimized,g)
+exe('EnumeratorDisposeVerify',ROOT/'src/performance/VerifyEnumeratorDispose.cs',final,allocation_optimized)
+shutil.copy2(allocation_optimized,final)
