@@ -62,3 +62,5 @@ python3 -c 'import sys; sys.path.insert(0,"tools"); import mac_runtime_debug; pr
 ```
 
 常用能力包括 `runtime_probe`（场景与运行时）、`display_probe`（实际文字控件）、`style_probe` / `fonts_probe`、`settings_native_open` / `settings_probe`、`screenshot` 和主菜单中的 `quit`。截图命令返回排队结果后还需要等待文件写完。设置改变和场景预览使用原有固定命令，不需要任意代码执行或外部窗口自动化。
+
+`runtime_probe` 同时报告外置渲染的 V1 绑定、实现程序集及位置。`rendering_cached_materials` 是当前缓存中的材质副本数，用于对比场景进入与退出后的清理情况，不是进程内存字节数；查询不触发渲染缓存清理，也不改变游戏状态。

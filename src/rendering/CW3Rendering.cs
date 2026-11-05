@@ -19,6 +19,10 @@ public static class CW3Rendering {
  }
  static readonly Dictionary<Type,Dictionary<string,FieldInfo>> fields=new Dictionary<Type,Dictionary<string,FieldInfo>>();
  static Dictionary<MaterialKey,Entry> entries=new Dictionary<MaterialKey,Entry>();static Dictionary<int,Material> originals=new Dictionary<int,Material>();static bool subscribed;
+#if CW3_RENDER_EXTERNAL
+ // Read only on explicit diagnostics requests, never per frame.
+ internal static int CachedMaterialCount {get{return entries.Count;}}
+#endif
  // Cache metadata only, never field values: panel/depth/material changes must
  // remain visible on the next query. Runtime type preserves hidden-field lookup.
  static object Field(object o,string n){

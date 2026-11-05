@@ -8,10 +8,12 @@ class RenderingBridgeContracts {
  static int checks;
  static void Need(bool ok,string text){if(!ok)throw new Exception(text);checks++;}
  static void Main(){
+  Need(CW3RenderingImplementation.CachedMaterialCount==0,"empty renderer diagnostic count");
   var panel=new GameObject("panel").AddComponent<UIPanel>();
   var label=new GameObject("label").AddComponent<UILabel>();label.mPanel=panel;label.mDepth=3;label.transform.parent=panel.transform;
   var source=new Material{name="font"};var result=CW3Rendering.Ordered(source,label);
   Need(result!=source,"external renderer owns a copy");
+  Need(CW3RenderingImplementation.CachedMaterialCount==1,"one cached material");
   Need(result==CW3RenderingImplementation.Ordered(source,label),"facade and implementation share one material state");
   var draw=new GameObject("draw").AddComponent<UIDrawCall>();draw.mSharedMat=result;draw.mClippedMat=new Material();
   CW3Rendering.SyncDrawCall(draw);Need(draw.mClippedMat.renderQueue==result.renderQueue,"clipped queue through facade");
@@ -20,6 +22,7 @@ class RenderingBridgeContracts {
   for(int i=0;i<1000;i++)Need(CW3Rendering.Ordered(source,label)==result,"stable material");
   var lifetime=panel.GetComponent<CW3RenderingLifetime>();Need(lifetime!=null,"external lifetime component attached");
   UnityEngine.Object.Destroy(lifetime);Need(result==null&&source!=null,"lifetime releases own copy not source");
+  Need(CW3RenderingImplementation.CachedMaterialCount==0,"released material no longer counted");
   Need(CW3Rendering.Ordered(source,label)!=result,"new lifecycle can recreate copy");
   if(Environment.GetEnvironmentVariable("CW3_BENCH_RENDER_BRIDGE")=="1"){
    Func<Material> direct=()=>CW3RenderingImplementation.Ordered(source,label),facade=()=>CW3Rendering.Ordered(source,label);
