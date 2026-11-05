@@ -30,7 +30,7 @@ namespace UnityEngine {
  public class Font:Object{public static event Action<Font> textureRebuilt;public static void Rebuild(Font f){if(textureRebuilt!=null)textureRebuilt(f);}}
 }
 public class UIPanel:UnityEngine.Component{}
-public class UIWidget:UnityEngine.Component{public UIPanel mPanel;public int mDepth;}
+public class UIWidget:UnityEngine.Component{public UIPanel mPanel;public int mDepth;public int depth{get{return mDepth;}}}
 public class UIFont{public UnityEngine.Font dynamicFont{get;set;}}
 public class UILabel:UIWidget{public UIFont mFont;public int Changed;public void MarkAsChanged(){Changed++;}}
 public class UIDrawCall:UnityEngine.Component{public UnityEngine.Material mSharedMat,mClippedMat;}

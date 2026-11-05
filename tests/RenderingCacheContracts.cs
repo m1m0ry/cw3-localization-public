@@ -8,11 +8,38 @@ class RenderingCacheContracts {
  class Base {private int hidden=1;public int Mutable=2;public int Use(){return hidden;}}
  class BareWidget:Component {public int mDepth;}
  class DerivedLabel:UILabel {}
+ class HiddenDepth:UIWidget {private new int mDepth=11;public void Change(){mDepth=12;}public int Observe(){return mDepth;}}
+ class HiddenGetter:UIWidget {public new int depth{get{throw new Exception("must not call hidden getter");}}}
+ class ComputedDepth:Component {public int mDepth=13;public int depth{get{return mDepth+1;}}}
+ class OtherDepth:Component {public int mDepth=14,other=90;public int depth{get{return other;}}}
+ class VirtualDepth:Component {public int mDepth=15;public virtual int depth{get{return mDepth;}}}
+ class ThrowingDepth:Component {public int mDepth=16;public int depth{get{throw new Exception("must not invoke computed getter");}}}
+ class SynchronizedDepth:Component {public int mDepth=18;public int depth{[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]get{return mDepth;}}}
+ class MissingDepth:Component {public int depth{get{throw new Exception("must not invoke getter without field");}}}
+ class WrongDepth:Component {public long mDepth=17;public int depth{get{return 17;}}}
+ static object Metadata(object value){return typeof(CW3Rendering).GetMethod("Metadata",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{value.GetType()});}
+ static int Depth(object value){return (int)typeof(CW3Rendering).GetMethod("ReadDepth",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{value,Metadata(value)});}
+ static bool FastDepth(object value){object metadata=Metadata(value);return metadata.GetType().GetField("DepthGetter",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(metadata)!=null;}
+ static void DepthContracts(){
+  var normal=new UIWidget{mDepth=5};Need(Depth(normal)==5&&FastDepth(normal),"verified field getter bound");normal.mDepth=-8;Need(Depth(normal)==-8,"typed getter reads live depth");
+  var inherited=new DerivedLabel{mDepth=6};Need(Depth(inherited)==6&&FastDepth(inherited),"inherited exact getter bound");
+  var hidden=new HiddenDepth();Need(Depth(hidden)==11&&!FastDepth(hidden),"hidden field retains reflection");hidden.Change();Need(Depth(hidden)==12,"hidden field mutation observed");
+  var hiddenGetter=new HiddenGetter{mDepth=7};Need(Depth(hiddenGetter)==7&&FastDepth(hiddenGetter),"field declaring getter ignores hidden property");
+  var computed=new ComputedDepth();Need(Depth(computed)==13&&!FastDepth(computed),"computed getter falls back");computed.mDepth=20;Need(Depth(computed)==20,"fallback reads live field");
+  var other=new OtherDepth();Need(Depth(other)==14&&!FastDepth(other),"different field getter rejected");
+  var virtualDepth=new VirtualDepth();Need(Depth(virtualDepth)==15&&!FastDepth(virtualDepth),"virtual dispatch rejected");
+  var throwing=new ThrowingDepth();Need(Depth(throwing)==16&&!FastDepth(throwing),"side effecting getter never invoked");
+  var synchronized=new SynchronizedDepth();Need(Depth(synchronized)==18&&!FastDepth(synchronized),"synchronized getter rejected");
+  var bare=new BareWidget{mDepth=9};Need(Depth(bare)==9&&!FastDepth(bare),"getter absent falls back");
+  bool missing=false;try{Depth(new MissingDepth());}catch(TargetInvocationException e){missing=e.InnerException is NullReferenceException;}Need(missing,"missing field preserves original null unbox failure");
+  bool wrong=false;try{Depth(new WrongDepth());}catch(TargetInvocationException e){wrong=e.InnerException is InvalidCastException;}Need(wrong,"wrong field type preserves original cast failure");
+ }
  class Derived:Base {private int hidden=3;public int UseDerived(){return hidden;}}
  static object Field(object o,string n){return typeof(CW3Rendering).GetMethod("Field",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new[]{o,(object)n});}
  static Transform Layer(Component w,Component p){return (Transform)typeof(CW3Rendering).GetMethod("Layer",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{w,p});}
  static T Widget<T>(UIPanel panel,string name,int depth)where T:UIWidget,new(){var g=new GameObject(name);g.transform.parent=panel.transform;var w=g.AddComponent<T>();w.mPanel=panel;w.mDepth=depth;return w;}
  static void Main(string[] args){
+  DepthContracts();
   var b=new Base();var d=new Derived();Need((int)Field(b,"hidden")==1,"private base field");Need((int)Field(d,"hidden")==3,"hidden derived field");Need((int)Field(d,"Mutable")==2,"inherited field");d.Mutable=7;Need((int)Field(d,"Mutable")==7,"cache metadata, not values");Need(Field(d,"absent")==null&&Field(d,"absent")==null,"negative lookup");Need(Field(null,"absent")==null,"null receiver");
   var panel=new GameObject("panel").AddComponent<UIPanel>();var source=new Material{name="atlas",mainTexture=new Texture()};var a=Widget<UIWidget>(panel,"a",2);var same=Widget<UIWidget>(panel,"same",2);same.transform.parent=a.transform;var label=Widget<UILabel>(panel,"label",2);label.transform.parent=a.transform;
   #if !BASELINE

@@ -19,6 +19,7 @@ public static class CW3Rendering {
  }
  sealed class TypeFields {
   internal readonly Type Type;internal readonly bool IsLabel;
+  internal bool DepthPrepared;internal Func<object,int> DepthGetter;
   internal readonly Dictionary<string,FieldInfo> Fields=new Dictionary<string,FieldInfo>();
   internal TypeFields(Type type){Type=type;IsLabel=type.Name=="UILabel";}
  }
@@ -34,12 +35,38 @@ public static class CW3Rendering {
  static object Field(object o,string n){
   return o==null?null:ReadField(o,n,Metadata(o.GetType()));
  }
- static object ReadField(object o,string n,TypeFields metadata){
+ static FieldInfo ResolveField(string n,TypeFields metadata){
   FieldInfo field;if(!metadata.Fields.TryGetValue(n,out field)){
    for(Type t=metadata.Type;t!=null;t=t.BaseType){field=t.GetField(n,flags|BindingFlags.DeclaredOnly);if(field!=null)break;}
    metadata.Fields.Add(n,field);
   }
-  return field==null?null:field.GetValue(o);
+  return field;
+ }
+ static object ReadField(object o,string n,TypeFields metadata){FieldInfo field=ResolveField(n,metadata);return field==null?null:field.GetValue(o);}
+ // Bind the existing getter only after proving its IL is exactly the same field
+ // read. This avoids boxing without caching depth or depending on a game type.
+ // Unknown layouts and runtimes keep the original reflection path.
+ static int ReadDepth(object value,TypeFields metadata){
+  if(!metadata.DepthPrepared){metadata.DepthGetter=TryDepthGetter(ResolveField("mDepth",metadata));metadata.DepthPrepared=true;}
+  return metadata.DepthGetter==null?(int)ReadField(value,"mDepth",metadata):metadata.DepthGetter(value);
+ }
+ sealed class DepthGetter<T> {
+  public static Func<object,int> Bind(MethodInfo method){var getter=(Func<T,int>)Delegate.CreateDelegate(typeof(Func<T,int>),method);return delegate(object value){return getter((T)value);};}
+ }
+ static Func<object,int> TryDepthGetter(FieldInfo field){
+  if(field==null||field.IsStatic||field.FieldType!=typeof(int)||field.DeclaringType.IsValueType)return null;
+  try{
+   MethodInfo getter=field.DeclaringType.GetMethod("get_depth",flags|BindingFlags.DeclaredOnly,null,Type.EmptyTypes,null);
+   if(getter==null||getter.IsStatic||getter.IsVirtual||getter.IsGenericMethod||getter.ReturnType!=typeof(int)||(getter.Attributes&MethodAttributes.HasSecurity)!=0)return null;
+   MethodImplAttributes implementation=getter.GetMethodImplementationFlags();if((implementation&MethodImplAttributes.CodeTypeMask)!=MethodImplAttributes.IL||(implementation&MethodImplAttributes.Synchronized)!=0)return null;
+   MethodBody body=getter.GetMethodBody();if(body==null||body.ExceptionHandlingClauses.Count!=0)return null;byte[] il=body.GetILAsByteArray();
+   // ldarg.0; ldfld <this exact mDepth>; ret. Do not accept a computed, virtual,
+   // hidden-field or side-effecting getter based merely on its name.
+   if(il==null||il.Length!=7||il[0]!=0x02||il[1]!=0x7b||il[6]!=0x2a||getter.Module!=field.Module||BitConverter.ToInt32(il,2)!=field.MetadataToken)return null;
+   return (Func<object,int>)typeof(DepthGetter<>).MakeGenericType(field.DeclaringType).GetMethod("Bind").Invoke(null,new object[]{getter});
+  }catch(AmbiguousMatchException){return null;}catch(ArgumentException){return null;}catch(NotSupportedException){return null;}catch(NotImplementedException){return null;}
+  catch(MemberAccessException){return null;}catch(TargetInvocationException){return null;}catch(InvalidOperationException){return null;}
+  catch(TypeLoadException){return null;}catch(System.Security.SecurityException){return null;}
  }
  static Component Panel(Component w,TypeFields metadata){Component p=ReadField(w,"mPanel",metadata) as Component;if(p!=null)return p;for(Transform t=w.transform;t!=null;t=t.parent)foreach(Component c in t.GetComponents<Component>())if(c!=null&&c.GetType().Name=="UIPanel")return c;return null;}
  // A dialog can sit in front of its panel through its direct child transform.
@@ -59,7 +86,7 @@ public static class CW3Rendering {
   // every query; resolve once without retaining or caching mutable widget state.
   TypeFields metadata=Metadata(w.GetType());Component panel=Panel(w,metadata);if(panel==null)return source;
   Material original;if(originals.TryGetValue(source.GetInstanceID(),out original))source=original;
-  int depth=(int)ReadField(w,"mDepth",metadata);int tie=metadata.IsLabel?1:0;Transform layer=Layer(w,panel);
+  int depth=ReadDepth(w,metadata);int tie=metadata.IsLabel?1:0;Transform layer=Layer(w,panel);
   var key=new MaterialKey(source.GetInstanceID(),panel.GetInstanceID(),layer.GetInstanceID(),depth,tie);Entry e;
   if(!entries.TryGetValue(key,out e)){e=new Entry{source=source,copy=new Material(source),panel=panel,layer=layer,panelId=panel.GetInstanceID(),z=layer.position.z,depth=depth,tie=tie};e.copy.name=source.name+" [CW3 depth "+depth+"]";e.copy.hideFlags=HideFlags.DontSave;entries.Add(key,e);originals[e.copy.GetInstanceID()]=source;var lifetime=panel.GetComponent<CW3RenderingLifetime>();if(lifetime==null)lifetime=panel.gameObject.AddComponent<CW3RenderingLifetime>();lifetime.PanelId=panel.GetInstanceID();Reorder();}
   else if(e.z!=layer.position.z)Reorder();
