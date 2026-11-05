@@ -1,0 +1,2 @@
+using System;using Mono.Cecil;
+class VerifyPathDistance{static void Main(string[] a){var r=new DefaultAssemblyResolver();r.AddSearchDirectory(a[2]);using(var x=AssemblyDefinition.ReadAssembly(a[0],new ReaderParameters{AssemblyResolver=r}))using(var y=AssemblyDefinition.ReadAssembly(a[1])){int n=PathDistancePatch.Reverse(x,y),m,i;AssemblyStructure.RequireSame(x,y,out m,out i);Console.WriteLine("Verified "+n+" endpoint-position reuse sites and exact restoration of "+m+" methods / "+i+" instructions.");}}}

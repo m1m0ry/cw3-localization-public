@@ -86,3 +86,15 @@ python3 tools/test.py --config /path/to/build-config.json --suite PathWorkspaceC
 ```sh
 python3 tools/test.py --config /path/to/build-config.json --suite UnitSortCapacityContracts
 ```
+
+## 能量包寻路的端点坐标
+
+原版 `Path.GetDistance` 分别为 x、y 读取端点的 `transform.localPosition`。普通连线每次跨入 Unity 原生层读取四次位置，单端点连线读取两次；能量包选择发送节点、计算路径和移动时会反复执行这个方法。
+
+`PathDistancePatch` 在同一次调用内复用每个端点首次取得的 Vector3，分别降为两次和一次位置读取。原版同步方法中这些读取之间没有移动、回调或其他状态写入。优化保留首次读取端点的顺序、原有 float 局部变量、减法、平方和开方，以及固定坐标模式；不跨调用缓存坐标，不调整寻路、平局选择或模拟步进。下次调用仍会重新读取移动后的坐标。
+
+构建锁定完整方法的指令、局部变量和引用作用域，再逐项逆向恢复并比较整程序集。契约覆盖三种模式、移动和更换端点、空引用与首次读取失败，以及 NaN、Infinity 和极端浮点输入；同一行为夹具也在游戏附带旧 Mono 上运行。在同一原生 Mac 进程中，以 32 条真实普通连线作为输入，按 ABBA 顺序进行四轮、每轮 32,000 次距离查询，平均耗时从 11.937 ms 降至 9.822 ms，约减少 17.72%；32 条连线的结果逐位相同，测试未推进模拟，GC0 计数未增加。这只测量普通连线距离方法，不代表整局帧率收益。未知原版布局会拒绝构建；这项修改位于游戏程序集，原生 Mac 安装需要重签。
+
+```sh
+python3 tools/test.py --config /path/to/build-config.json --suite PathDistanceContracts
+```

@@ -23,8 +23,9 @@ def exe(name,source,*args):
  if name in ('ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts'):files += [ROOT/'src/performance/ManagerSnapshotPatch.cs']
  if name in ('PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts'):files += [ROOT/'src/performance/PathWorkspacePatch.cs']
  if name in ('UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts'):files += [ROOT/'src/performance/UnitSortCapacityPatch.cs']
+ if name in ('PathDistancePatch','PathDistanceVerify','PathDistanceContracts'):files += [ROOT/'src/performance/PathDistancePatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -102,3 +103,13 @@ exe('UnitSortCapacityContracts',ROOT/'tests/UnitSortCapacityContracts.cs',unit_f
 run(unit_fixture,[]);run(unit_patched,[])
 exe('UnitSortCapacityVerify',ROOT/'src/performance/VerifyUnitSortCapacity.cs',final,unit_optimized,g)
 shutil.copy2(unit_optimized,final)
+
+# Reuse only same-call endpoint Vector3 values across x/y distance components.
+distance_dir=out/'path-distance-fixture';distance_dir.mkdir(exist_ok=True)
+distance_engine=m.compile(distance_dir,'UnityEngine.dll',[ROOT/'tests/PathDistanceUnity.cs'],['-target:library'])
+distance_fixture=m.compile(distance_dir,'PathDistanceFixture.exe',[ROOT/'tests/PathDistanceFixture.cs'],['-r:'+win(distance_engine)])
+distance_patched=distance_dir/'PathDistanceFixture.patched.exe';distance_optimized=out/'Assembly-CSharp.path-distance.dll'
+exe('PathDistanceContracts',ROOT/'tests/PathDistanceContracts.cs',distance_fixture,distance_patched,final,g,distance_optimized)
+run(distance_fixture,['original']);run(distance_patched,['patched'])
+exe('PathDistanceVerify',ROOT/'src/performance/VerifyPathDistance.cs',final,distance_optimized,g)
+shutil.copy2(distance_optimized,final)

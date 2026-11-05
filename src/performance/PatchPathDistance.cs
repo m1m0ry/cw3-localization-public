@@ -1,0 +1,2 @@
+using System;using Mono.Cecil;
+class PatchPathDistance{static void Main(string[] a){var r=new DefaultAssemblyResolver();r.AddSearchDirectory(a[2]);using(var x=AssemblyDefinition.ReadAssembly(a[0],new ReaderParameters{AssemblyResolver=r})){int n=PathDistancePatch.Apply(x.MainModule);x.Write(a[1]);Console.WriteLine("Reused "+n+" endpoint positions within each Path.GetDistance call; routing and floating arithmetic preserved.");}}}
