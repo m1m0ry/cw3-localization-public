@@ -33,9 +33,9 @@ internal static class LocalFonts {
  }
  static Font LoadBundle(string root,LocalFontFile source,bool point){
   string cache=Path.Combine(root,"font-bundles");if(Directory.Exists(cache))NoLink(cache);else Directory.CreateDirectory(cache);
-  string target=Path.Combine(cache,source.Hash+"-"+NativeFontTemplate.Key.Substring(0,16)+(point?"-point":"")+".bundle");byte[] data=NativeFontBundle.Build(source,point);
+  string target=Path.Combine(cache,source.Hash+"-"+NativeFontTemplate.Key.Substring(0,16)+(point?"-point":"")+".bundle");
   if(File.Exists(target))NoLink(target);
-  if(NativeFontBundle.Cached(target,data))hits++;else{NativeFontBundle.Save(target,data);builds++;}
+  if(NativeFontBundle.EnsureCached(target,source,point))hits++;else builds++;
   AssetBundle bundle=null;
   try{
    bundle=AssetBundle.CreateFromFile(target);if(bundle==null)throw new FormatException("native bundle rejected");
