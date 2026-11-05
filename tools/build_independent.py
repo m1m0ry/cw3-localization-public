@@ -22,8 +22,9 @@ def exe(name,source,*args):
  if name in ('EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts'):files += [ROOT/'src/performance/EnumeratorDisposePatch.cs']
  if name in ('ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts'):files += [ROOT/'src/performance/ManagerSnapshotPatch.cs']
  if name in ('PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts'):files += [ROOT/'src/performance/PathWorkspacePatch.cs']
+ if name in ('UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts'):files += [ROOT/'src/performance/UnitSortCapacityPatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -90,3 +91,14 @@ path_actual=run(path_probe,[win(path_after),win(g/'UnityEngine.dll')],capture=Tr
 if path_expected!=path_actual:raise RuntimeError('Path workspace changed original search results')
 print(path_actual.splitlines()[-1])
 shutil.copy2(path_optimized,final)
+
+# One exact capacity reservation replaces repeated per-step sorted-table growth.
+# Keep the fixture's mock Unity assembly isolated from real game resolution.
+unit_fixture_dir=out/'unit-capacity-fixture';unit_fixture_dir.mkdir(exist_ok=True)
+unit_engine=m.compile(unit_fixture_dir,'UnityEngine.dll',[ROOT/'tests/UnitSortCapacityUnity.cs'],['-target:library'])
+unit_fixture=m.compile(unit_fixture_dir,'UnitSortCapacityFixture.exe',[ROOT/'tests/UnitSortCapacityFixture.cs'],['-r:'+win(unit_engine)])
+unit_patched=unit_fixture_dir/'UnitSortCapacityFixture.patched.exe';unit_optimized=out/'Assembly-CSharp.unit-capacity.dll'
+exe('UnitSortCapacityContracts',ROOT/'tests/UnitSortCapacityContracts.cs',unit_fixture,unit_patched,final,g,unit_optimized)
+run(unit_fixture,[]);run(unit_patched,[])
+exe('UnitSortCapacityVerify',ROOT/'src/performance/VerifyUnitSortCapacity.cs',final,unit_optimized,g)
+shutil.copy2(unit_optimized,final)

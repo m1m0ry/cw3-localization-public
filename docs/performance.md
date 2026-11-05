@@ -71,3 +71,18 @@ python3 tools/test.py --config /path/to/build-config.json --suite PathWorkspaceC
 ```
 
 `tools/old_mono_probe.c` 可选地在独立进程加载已有游戏 libmono，并使用其 Managed 目录，不修改游戏或系统设置。使用本机已有 clang 编译为游戏架构，运行参数为 libmono 路径、Managed 目录、测试程序集及测试参数。它适合受控的纯托管 IL 对照；不能执行依赖未初始化 Unity 原生服务的方法，也不能代替真实场景验收。此路径不下载运行时、不附加其他进程、不申请 Developer Tools 权限。
+
+
+## 单位更新排序表的容量
+
+原版 UnitsUpdate 每个模拟步先取得带 UnitTag 的对象数组，再逐项加入新建的 SortedList<int,UnitManager>，供当步的两次遍历使用。大型地图中，默认容量会反复增长，产生多份短命数组和扩容复制。
+
+`UnitSortCapacityPatch` 只把默认构造改为按刚捕获的对象数量预留容量。仍执行每一次原 GetComponent 和 Add，保持 UID 排序、重复 UID 与缺组件的报错、两个循环的名单及对象状态变化；不跨帧缓存，也不改变模拟速度。空数组只需零容量。分配发生得更集中，因此资源耗尽时不承诺相同的 OOM 时序。
+
+以实际加载的 695 单位地图为例，游戏附带旧 Mono 的槽位分配从累计 2,272 个降到 695 个，约少 25 KiB 临时内容及六个数组头每步。相同单位序列的独立旧运行时对照只省约 8 微秒每步，主要收益是减少分配，不能据此承诺整局帧率或卡顿改善。仍保留每步新表、发现数组、排序查找和必要的插入移动。
+
+构建锁定完整原方法的指令、局部、异常边界和引用作用域，拒绝未知布局。契约覆盖容量边界、乱序、UID/成员变更、重入及异常；独立验证器只撤销新增的三条指令及构造参数，再核对整程序集。这项改动位于游戏程序集，原生 Mac 安装需要重签。
+
+```sh
+python3 tools/test.py --config /path/to/build-config.json --suite UnitSortCapacityContracts
+```

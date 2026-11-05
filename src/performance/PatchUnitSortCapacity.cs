@@ -1,0 +1,2 @@
+using System;using Mono.Cecil;
+class PatchUnitSortCapacity{static void Main(string[] a){var r=new DefaultAssemblyResolver();r.AddSearchDirectory(a[2]);using(var x=AssemblyDefinition.ReadAssembly(a[0],new ReaderParameters{AssemblyResolver=r})){int n=UnitSortCapacityPatch.Apply(x.MainModule);x.Write(a[1]);Console.WriteLine("Reserved exact captured unit count at "+n+" sorted-table constructor; original Add/consumers preserved.");}}}
