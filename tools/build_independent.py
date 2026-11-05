@@ -20,8 +20,9 @@ def exe(name,source,*args):
  if name in ('RuntimePatch','RuntimeVerify'):files += [ROOT/'src/runtime/MissionScopePatch.cs',ROOT/'src/runtime/MainMenuClickPatch.cs']
  if name in ('CustomSavePathPatch','CustomSavePathVerify'):files += [ROOT/'src/runtime/CustomSavePathPatch.cs']
  if name in ('EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts'):files += [ROOT/'src/performance/EnumeratorDisposePatch.cs']
+ if name in ('ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts'):files += [ROOT/'src/performance/ManagerSnapshotPatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -59,3 +60,13 @@ allocation_optimized=out/'Assembly-CSharp.enumerator-dispose.dll'
 exe('EnumeratorDisposePatch',ROOT/'src/performance/PatchEnumeratorDispose.cs',final,allocation_optimized,g)
 exe('EnumeratorDisposeVerify',ROOT/'src/performance/VerifyEnumeratorDispose.cs',final,allocation_optimized)
 shutil.copy2(allocation_optimized,final)
+
+# Preserve public fresh snapshots; only five audited synchronous loops borrow.
+snapshot_fixture=compile('ManagerSnapshotFixture',[ROOT/'tests/ManagerSnapshotFixture.cs'])
+snapshot_patched=out/'ManagerSnapshotFixture.patched.exe';snapshot_fault=out/'ManagerSnapshotFixture.copyfault.exe'
+exe('ManagerSnapshotContracts',ROOT/'tests/ManagerSnapshotContracts.cs',snapshot_fixture,snapshot_patched,snapshot_fault)
+run(snapshot_fixture,['original']);run(snapshot_patched,['patched']);run(snapshot_fault,['copyfault'])
+snapshot_optimized=out/'Assembly-CSharp.snapshots.dll'
+exe('ManagerSnapshotPatch',ROOT/'src/performance/PatchManagerSnapshots.cs',final,snapshot_optimized,g)
+exe('ManagerSnapshotVerify',ROOT/'src/performance/VerifyManagerSnapshots.cs',final,snapshot_optimized,g)
+shutil.copy2(snapshot_optimized,final)

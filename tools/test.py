@@ -17,7 +17,7 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ScriptContextRuntimeContracts')
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ManagerSnapshotContracts','ScriptContextRuntimeContracts')
 STANDALONE=('ScriptContextCacheContracts','ScriptContextRuntimeContracts','CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
             'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts')
@@ -74,6 +74,11 @@ class Contracts:
             patched=o/'EnumeratorDisposeFixture.patched.exe'
             self.execute(name,[ROOT/'src/performance/EnumeratorDisposePatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(fixture),w(patched)],[m.prepare_cecil(o),'-r:System.Core'])
             m.run(fixture,['original']);m.run(patched,['patched'])
+        elif name=='ManagerSnapshotContracts':
+            fixture=m.compile(o,'ManagerSnapshotFixture.exe',[test/'ManagerSnapshotFixture.cs'])
+            patched=o/'ManagerSnapshotFixture.patched.exe';fault=o/'ManagerSnapshotFixture.copyfault.exe'
+            self.execute(name,[ROOT/'src/performance/ManagerSnapshotPatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(fixture),w(patched),w(fault)],[m.prepare_cecil(o),'-r:System.Core'])
+            m.run(fixture,['original']);m.run(patched,['patched']);m.run(fault,['copyfault'])
         elif name=='CustomSavePathContracts':
             fixture=m.compile(o,'CustomSavePathFixture.exe',[test/'CustomSavePathFixture.cs']);patched=o/'CustomSavePathFixture.patched.exe'
             flags=[m.prepare_cecil(o),'-r:System.Core']

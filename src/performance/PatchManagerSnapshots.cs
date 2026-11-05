@@ -1,0 +1,2 @@
+using System;using System.IO;using Mono.Cecil;
+class PatchManagerSnapshots {static void Main(string[] args){var resolver=new DefaultAssemblyResolver();resolver.AddSearchDirectory(args.Length>2?args[2]:Path.GetDirectoryName(args[0]));using(var a=AssemblyDefinition.ReadAssembly(args[0],new ReaderParameters{AssemblyResolver=resolver})){int count=ManagerSnapshotPatch.Apply(a.MainModule);a.Write(args[1]);Console.WriteLine("Bounded snapshot leases at "+count+" update sites; public snapshots unchanged.");}}}
