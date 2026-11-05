@@ -24,8 +24,9 @@ def exe(name,source,*args):
  if name in ('PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts'):files += [ROOT/'src/performance/PathWorkspacePatch.cs']
  if name in ('UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts'):files += [ROOT/'src/performance/UnitSortCapacityPatch.cs']
  if name in ('PathDistancePatch','PathDistanceVerify','PathDistanceContracts'):files += [ROOT/'src/performance/PathDistancePatch.cs']
+ if name in ('CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts'):files += [ROOT/'src/performance/CreeperDynamicPatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts','CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -113,3 +114,14 @@ exe('PathDistanceContracts',ROOT/'tests/PathDistanceContracts.cs',distance_fixtu
 run(distance_fixture,['original']);run(distance_patched,['patched'])
 exe('PathDistanceVerify',ROOT/'src/performance/VerifyPathDistance.cs',final,distance_optimized,g)
 shutil.copy2(distance_optimized,final)
+
+# Measured native Mac graphics-backend efficiency hint. Windows stays unchanged.
+if target['platform']==2:
+ dynamic_dir=out/'creeper-dynamic-fixture';dynamic_dir.mkdir(exist_ok=True)
+ dynamic_engine=m.compile(dynamic_dir,'UnityEngine.dll',[ROOT/'tests/CreeperDynamicUnity.cs'],['-target:library'])
+ dynamic_fixture=m.compile(dynamic_dir,'CreeperDynamicFixture.exe',[ROOT/'tests/CreeperDynamicFixture.cs'],['-r:'+win(dynamic_engine)])
+ dynamic_patched=dynamic_dir/'CreeperDynamicFixture.patched.exe';dynamic_optimized=out/'Assembly-CSharp.creeper-dynamic.dll'
+ exe('CreeperDynamicContracts',ROOT/'tests/CreeperDynamicContracts.cs',dynamic_fixture,dynamic_patched,final,g,dynamic_optimized)
+ run(dynamic_fixture,['original']);run(dynamic_patched,['patched'])
+ exe('CreeperDynamicVerify',ROOT/'src/performance/VerifyCreeperDynamic.cs',final,dynamic_optimized,g)
+ shutil.copy2(dynamic_optimized,final)

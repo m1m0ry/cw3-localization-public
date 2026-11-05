@@ -98,3 +98,36 @@ python3 tools/test.py --config /path/to/build-config.json --suite UnitSortCapaci
 ```sh
 python3 tools/test.py --config /path/to/build-config.json --suite PathDistanceContracts
 ```
+
+## Native Mac Creeper mesh upload hint
+
+Creeper meshes receive new UV arrays on each simulation update, but the original
+Unity 5.2 initialization never calls `Mesh.MarkDynamic`. The Mac build now adds
+one dynamic-buffer hint immediately after `MeshFilter.mesh` returns each actual
+Creeper section mesh in `CreeperSimulation.Start`. It does not change vertices,
+UV values, upload frequency, simulation, frame limit, or power-overlay meshes.
+The hint is applied after section cloning, so it does not depend on a prototype
+mesh passing the flag to its copies. No retained cache or runtime polling is added.
+
+This is specific to the measured native Mac graphics backend. Windows builds do
+not apply it. Unity 5.2 documents the hint for frequently updated meshes:
+https://docs.unity.cn/520/Documentation/ScriptReference/Mesh.MarkDynamic.html
+The documentation recommends hinting before vertex assignment. The actual late
+initialization position used here was therefore measured separately rather than
+assuming it has the same effect.
+
+On the 695-unit, 256×256 Alpha FiringRangeB map, paused background tests used two
+owned sets of 16 rendered mesh copies, the same captured UV payload (2 MiB per
+frame), and the unchanged 30-FPS setting. Positive and reverse-order comparisons
+reduced total process CPU per wall-second by approximately 23% and 28%. A third
+reverse-order test using the actual late-hint timing reduced it by approximately
+17%, while the main-thread UV setter cost increased by about 0.09 ms per frame.
+These are upload/render microbenchmarks, not whole-battle speedups or foreground
+latency measurements. Do not claim lower memory use: driver buffer residency may
+change. Stop or revert if visual/lifecycle errors or reproducible foreground
+frame-time regressions appear.
+
+The patch accepts only the supported complete Start-method fingerprint and adds
+two IL instructions at one initialization site. Its verifier reverses that exact
+change and compares the full assembly. An executable fixture checks mesh identity,
+one hint per Creeper mesh, untouched power meshes and unchanged operation order.

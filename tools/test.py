@@ -17,7 +17,7 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ManagerSnapshotContracts','PathWorkspaceContracts','UnitSortCapacityContracts','PathDistanceContracts','ScriptContextRuntimeContracts')
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ManagerSnapshotContracts','PathWorkspaceContracts','UnitSortCapacityContracts','PathDistanceContracts','CreeperDynamicContracts','ScriptContextRuntimeContracts')
 STANDALONE=('ScriptContextCacheContracts','ScriptContextRuntimeContracts','CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
             'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts')
@@ -97,6 +97,13 @@ class Contracts:
             fixture=m.compile(d,'PathDistanceFixture.exe',[test/'PathDistanceFixture.cs'],['-r:'+w(engine)])
             patched=d/'PathDistanceFixture.patched.exe'
             self.execute(name,[ROOT/'src/performance/PathDistancePatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(fixture),w(patched)],[m.prepare_cecil(o),'-r:System.Core'])
+            m.run(fixture,['original']);m.run(patched,['patched'])
+        elif name=='CreeperDynamicContracts':
+            d=o/'creeper-dynamic-fixture';d.mkdir()
+            engine=m.compile(d,'UnityEngine.dll',[test/'CreeperDynamicUnity.cs'],['-target:library'])
+            fixture=m.compile(d,'CreeperDynamicFixture.exe',[test/'CreeperDynamicFixture.cs'],['-r:'+w(engine)])
+            patched=d/'CreeperDynamicFixture.patched.exe'
+            self.execute(name,[ROOT/'src/performance/CreeperDynamicPatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(fixture),w(patched)],[m.prepare_cecil(o),'-r:System.Core'])
             m.run(fixture,['original']);m.run(patched,['patched'])
         elif name=='CustomSavePathContracts':
             fixture=m.compile(o,'CustomSavePathFixture.exe',[test/'CustomSavePathFixture.cs']);patched=o/'CustomSavePathFixture.patched.exe'
