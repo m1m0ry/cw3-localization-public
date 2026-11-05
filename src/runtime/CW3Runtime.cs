@@ -8,7 +8,7 @@ public static partial class CW3Runtime {
  static Candidates candidates=new Candidates(false,null);static readonly HashSet<string> translated=new HashSet<string>();static string guiContext;
  static readonly MessageBindings messageBindings=new MessageBindings();
  static readonly ScriptBindings scriptBindings=new ScriptBindings();
- static string[] guiArguments;static string lastScript,lastHash;static WeakReference ordinalCommands;static int[] outputOrdinals;
+ static string[] guiArguments;static readonly ScriptContextCache scriptContexts=new ScriptContextCache(Hash,ScriptStatement);
  static readonly List<Hashtable> displayLabels=new List<Hashtable>();
  sealed class MeshMaterial {internal Material Current;internal readonly List<Material> Created=new List<Material>();}
  sealed class MeshState {internal TextMesh Mesh;internal string Original;internal MeshMaterial Material;}
@@ -228,19 +228,18 @@ public static partial class CW3Runtime {
  public static string ForMessage(string original,object message){Load();string status;MessageBindings.Binding binding=messageBindings.Get(message);string value=messageBindings.Display(original,message,definitions,translations,out status);if(status!="translated")Observe(original,"xml_message",binding==null?"unknown resource":binding.Context,status,binding==null?"":binding.Id??"");return value;}
  public static Hashtable MessageReport(string original,object message){Load();return messageBindings.Report(original,message,definitions,translations);}
  public static Hashtable RuntimeReport(){Load();return new Hashtable{{"bound_xml",messageBindings.BoundCount},{"tracked_xml",messageBindings.Count},{"targets",definitions.Count},{"translations",translations.Count},{"font",external},{"crpl_id",guiId}};}
+ static int ScriptStatement(object command){object value=Get(command,"statement");return value==null?-1:Convert.ToInt32(value);}
+ internal static void ClearScriptContexts(){scriptContexts.Clear();}
  static string ScriptTarget(object core,string kind,string original,out string context){
   context="unknown script";if(core==null)return null;
   Type game=core.GetType().Assembly.GetType("GameSpace");object manager=Get(Get(game,"instance"),"scriptManager");string name=Get(core,"scriptName") as string;
   if(manager==null||name==null)return null;string code=(string)manager.GetType().GetMethod("GetScript",Flags).Invoke(manager,new object[]{name});
   var commands=Get(core,"commands") as IList;object at=Get(core,"currentCommandIndex");if(commands==null||!(at is int)||(int)at<0||(int)at>=commands.Count)return null;
-  object line=Get(commands[(int)at],"lineNumber");if(!(line is int))return null;string hash;if(code==lastScript)hash=lastHash;else{lastScript=code;lastHash=hash=Hash(code);}context="script:"+name+":"+hash+":"+line;
+  object line=Get(commands[(int)at],"lineNumber");if(!(line is int))return null;string hash=scriptContexts.Hash(code);context="script:"+name+":"+hash+":"+line;
   string id=scriptBindings.Find(kind,name,hash,(int)line,original);
   if(id==null&&kind=="show"&&scriptBindings.HasOutputs(name,hash)){
-   if(commands.Count>16384)return null;
-   if(ordinalCommands==null||outputOrdinals.Length!=commands.Count||!System.Object.ReferenceEquals(ordinalCommands.Target,commands)){
-    ordinalCommands=new WeakReference(commands);outputOrdinals=new int[commands.Count];int ordinal=-1;
-    for(int i=0;i<commands.Count;i++){object statement=Get(commands[i],"statement");int type=statement==null?-1:Convert.ToInt32(statement);if(type==291||type==292)ordinal++;outputOrdinals[i]=(type==291||type==292)?ordinal:-1;}
-   }
+   if(commands.Count>ScriptContextCache.MaxCommands)return null;
+   int[] outputOrdinals=scriptContexts.Ordinals(commands,hash);
    id=scriptBindings.FindOutput(name,hash,(int)line,outputOrdinals[(int)at],original,out guiArguments);
   }
   return id;
@@ -313,7 +312,7 @@ public static partial class CW3Runtime {
  internal static void Scene(){messageBindings.Cleanup(owner=>owner is UnityEngine.Object&&(UnityEngine.Object)owner==null);var dead=new List<int>();foreach(var pair in meshes)if(pair.Value.Mesh==null)dead.Add(pair.Key);foreach(int id in dead)ReleaseMesh(id);TextStyles.Cleanup();}
 }
 public sealed class CW3RuntimePump:MonoBehaviour {
- int frames=4;void OnLevelWasLoaded(int level){FontSettingsView.Scene();CW3Runtime.Scene();frames=4;}void LateUpdate(){if(frames>0){frames--;CW3Runtime.Scan();}FontSettingsView.Tick();CW3Runtime.DiscoveryTick();}void OnGUI(){FontSettingsView.Draw();}void OnApplicationQuit(){CW3Runtime.DiscoveryFlush();TextStyles.Shutdown();}void OnDestroy(){FontSettingsView.Scene();CW3Runtime.Scene();}
+ int frames=4;void OnLevelWasLoaded(int level){CW3Runtime.ClearScriptContexts();FontSettingsView.Scene();CW3Runtime.Scene();frames=4;}void LateUpdate(){if(frames>0){frames--;CW3Runtime.Scan();}FontSettingsView.Tick();CW3Runtime.DiscoveryTick();}void OnGUI(){FontSettingsView.Draw();}void OnApplicationQuit(){CW3Runtime.DiscoveryFlush();TextStyles.Shutdown();}void OnDestroy(){CW3Runtime.ClearScriptContexts();FontSettingsView.Scene();CW3Runtime.Scene();}
 }
 // Release sidecar data at the native object's lifetime, including destruction within one scene.
 public sealed class CW3MessageLifetime:MonoBehaviour {internal object Manager;void OnDestroy(){CW3Runtime.ClearMessages(Manager);}}

@@ -4,6 +4,7 @@ import argparse,json,shutil,subprocess,sys,tempfile,time
 from mono_tools import MonoTools, runtime_sources
 ROOT=Path(__file__).resolve().parents[1]
 POLICY={
+    'ScriptContextCacheContracts':['ScriptContextCache.cs'],
     'CandidateContracts':['Candidates.cs','Json.cs'],
     'RuntimeContracts':['Json.cs','FontFile.cs'],
     'TranslationFileContracts':['Json.cs','TranslationFiles.cs'],
@@ -16,8 +17,8 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts')
-STANDALONE=('CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ScriptContextRuntimeContracts')
+STANDALONE=('ScriptContextCacheContracts','ScriptContextRuntimeContracts','CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
             'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts')
 class Contracts:
@@ -32,7 +33,7 @@ class Contracts:
             if name=='FontSettingsViewContracts':sources.append(test/'UnityFixture.cs')
             args=[]
             if name in ('CandidateContracts','RuntimePathsContracts','TranslationFileContracts'):args=[w(o)]
-            elif name in ('TextStyleContracts','FontSettingsContracts','FontSettingsViewContracts'):pass
+            elif name in ('TextStyleContracts','FontSettingsContracts','FontSettingsViewContracts','ScriptContextCacheContracts'):pass
             elif name=='NativeFontBundleContracts':
                 import native_font_template
                 import game_target
@@ -54,7 +55,7 @@ class Contracts:
             if name=='TextStyleContracts':
                 for mode in ('native','native-state-unavailable','registry-missing','registry-invalid','registry-runtime','registry-resource'):m.run(o/(name+'.exe'),[mode,w(o)])
             if name=='MessageCandidateContracts':subprocess.run([sys.executable,str(test/'check_candidate_pipeline.py'),str(o/'message-candidates.json'),str(o)],check=True)
-        elif name=='MeshLifetimeContracts':
+        elif name in ('MeshLifetimeContracts','ScriptContextRuntimeContracts'):
             # This fixture injects its bindings/fonts; production build metadata is unused.
             sources=[p for p in runtime_sources(o) if p.parent!=o]
             self.execute(name,sources+[test/'UnityFixture.cs',test/(name+'.cs')],flags=['-r:System.Xml'])

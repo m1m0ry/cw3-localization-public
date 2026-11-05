@@ -19,3 +19,21 @@ python3 tools/test.py --config /path/to/build-config.json --suite EnumeratorDisp
 ```
 
 该测试只需 Mono 和 Cecil，不需要游戏或字体文件。分配量检查在宿主提供 `GC.GetAllocatedBytesForCurrentThread` 时运行；它证明此模式的临时分配被移除，不代表整局游戏的 CPU、帧率或输入延迟收益。实机收益还取决于地图、单位数量、脚本负载及游戏内 Mono 的 GC 行为。若新的受支持原版不再使用此模式，或类型/结构审计不通过，应停止应用并重新检查，而非放松校验。
+
+## 多脚本显示上下文
+
+汉化显示需要核对 CRPL 原文哈希，并为数字输出找到原始命令序号。原实现分别只记住上一份脚本和上一组命令，多个脚本交替显示时会重复计算 SHA-256、分配序号数组并反射扫描全部命令。
+
+`ScriptContextCache` 只缓存这两类纯派生结果。原版 `ScriptManager.GetScript` 返回字典中已有的不可变字符串；编译缓存命中时复用命令列表，重新编译时创建新列表。因此哈希以源字符串身份为键，序号以命令列表身份、长度与源哈希共同为键，不能仅凭脚本名复用。相同名称的不同脚本、原文替换、命令替换及源码漂移仍经过原来的绑定检查。原有 16,384 条命令限制不变。
+
+哈希缓存最多 16 项，序号缓存最多 8 项，序号数组总计不超过 32,768 个整数（128 KiB，另有少量索引开销）。源字符串和命令列表都使用弱引用；场景切换或运行时对象销毁时清空。超过容量时淘汰最久未用项，计算异常不会发布不完整缓存。这是以少量有界驻留空间换取更少的反复扫描与临时数组，并不承诺常驻内存必然下降。
+
+现有 27 条数字输出绑定涉及 Message.crpl、Train_Scores.crpl 和 timer.crpl。收益取决于实际地图是否让多个相关脚本交替输出；单脚本原本已能命中缓存，不应据此推断整局帧率提升。
+
+两个不依赖游戏文件的契约覆盖缓存容量、弱生命周期、重编译失效、异常恢复，以及真正的 CaptureCrpl/ForGuiMessage 翻译与场景回调：
+
+```sh
+python3 tools/test.py --standalone --suite ScriptContextCacheContracts --suite ScriptContextRuntimeContracts
+```
+
+它们也进入默认源码检查。原生 Mac 的实现位于外置 CW3ExternalRuntime.dll，配套 fonts.json 哈希需要一起更新；这项实现变化不会改变稳定薄桥或游戏程序集。
