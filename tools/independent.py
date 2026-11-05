@@ -8,6 +8,9 @@ def definitions(entries,original,expected_platform=5):
     from unity15_metadata import read_unity15_metadata
     from resource_text import unpack_script, paths, scripts, display_calls
     files={}; docs={}; result=[]
+    # These inputs are immutable within one definitions pass. Never reuse this
+    # cache across builds: source/hash/structure guards below still run per row.
+    object_paths={}; script_containers={}; script_codes={}; script_sites={}; script_hashes={}; message_indices={}
     scenes={0:'Splash',1:'MainMenu',2:'Gal',3:'Game',4:'Results',5:'Prelude',6:'Epilogue'}
     def resource(name):
         if name not in files:files[name]=read_unity15_metadata((original/name).read_bytes(),expected_platform)[0]
@@ -18,17 +21,25 @@ def definitions(entries,original,expected_platform=5):
     for key,ref in rm[0].parse_as_dict()['m_Container']:
         file='CW3_Data/'+manager.externals[ref['m_FileID']-1].path if ref['m_FileID'] else 'CW3_Data/mainData'
         resource_keys[(file,ref['m_PathID'])].append(key)
-    def object_path(f,gid):
-        go=f.objects[gid].parse_as_dict();tid=next(v['m_PathID'] for k,v in go['m_Component'] if k==4)
-        t=f.objects[tid].parse_as_dict();parent=t['m_Father']['m_PathID']
-        return (object_path(f,f.objects[parent].parse_as_dict()['m_GameObject']['m_PathID'])+'/' if parent else '')+go['m_Name']
+    def object_path(name,f,gid):
+        key=(name,gid)
+        if key not in object_paths:
+            go=f.objects[gid].parse_as_dict();tid=next(v['m_PathID'] for k,v in go['m_Component'] if k==4)
+            t=f.objects[tid].parse_as_dict();parent=t['m_Father']['m_PathID']
+            object_paths[key]=(object_path(name,f,f.objects[parent].parse_as_dict()['m_GameObject']['m_PathID'])+'/' if parent else '')+go['m_Name']
+        return object_paths[key]
+    def script_code(node,name):
+        if node not in script_containers:script_containers[node]=scripts(node.text)
+        key=(node,name)
+        if key not in script_codes:script_codes[key]=base64.b64decode(script_containers[node][name]).decode('utf-16le')
+        return key,script_codes[key]
     for e in entries:
         t=e['target'];d={k:e[k] for k in ('id','source')};d['kind']=t['kind']
         if t['kind']=='managed':d.update(site=str(t['method_token'])+':'+str(t['instruction_index']))
         if t['kind'] in ('label','textmesh'):
             f=resource(t['file']);o=f.objects[t['object_id']]
             gid=struct.unpack_from('<q',o.get_raw_data(),4)[0] if t['kind']=='label' else o.parse_as_dict()['m_GameObject']['m_PathID']
-            d['path']=object_path(f,gid);name=Path(t['file']).name
+            d['path']=object_path(t['file'],f,gid);name=Path(t['file']).name
             d['scene']=scenes[int(name[5:])] if name.startswith('level') else 'Splash' if name=='mainData' else '*'
             # This prefab is instantiated in Epilogue; Prelude has its own scene object.
             if name=='sharedassets6.assets':d['scene']='Epilogue'
@@ -39,20 +50,25 @@ def definitions(entries,original,expected_platform=5):
             root,nodes,parents,resource_hash=docs[key];node=nodes[t['xml_path']]
             if t['kind']=='crpl_output':
                 from script_outputs import output_definition
-                code=base64.b64decode(scripts(node.text)[t['script']]).decode('utf-16le')
+                script_key,code=script_code(node,t['script'])
                 d.update(output_definition(code,t,e['source']))
             elif t['kind'] in ('crpl','crpl_display','crpl_conversation'):
-                code=base64.b64decode(scripts(node.text)[t['script']]).decode('utf-16le')
-                sites={site.literal_index:site for site in display_calls(code)}
+                script_key,code=script_code(node,t['script'])
+                if script_key not in script_sites:script_sites[script_key]={site.literal_index:site for site in display_calls(code)}
+                sites=script_sites[script_key]
                 assert t['literal_index'] in sites, 'No declared script display call'
                 site=sites[t['literal_index']]
                 assert site.source==e['source']
                 assert site.family==('conversation' if t['kind']=='crpl_conversation' else 'show'), 'Script display family drift'
                 # The literal's line is part of candidate context, not the call line.
-                d.update(script=t['script'],script_hash=digest(code),line=code[:site.literal_offset].count('\n')+1,
+                if script_key not in script_hashes:script_hashes[script_key]=digest(code)
+                d.update(script=t['script'],script_hash=script_hashes[script_key],line=code[:site.literal_offset].count('\n')+1,
                          literal_index=t['literal_index'],call_line=code[:site.call_offset].count('\n')+1)
             elif node.tag=='m':
-                group=parents[parents[node]];messages=[m.find('m') for m in group if m.tag=='Message'];assert all(n is not None for n in messages)
+                group=parents[parents[node]]
+                if group not in message_indices:
+                    messages=[m.find('m') for m in group if m.tag=='Message'];assert all(n is not None for n in messages)
+                    message_indices[group]={message:i for i,message in enumerate(messages)}
                 owner=parents[group]
                 if owner.tag=='System':
                     assert owner is root;message_list='system'
@@ -63,9 +79,12 @@ def definitions(entries,original,expected_platform=5):
                     assert parents[owner].tag=='Units' and parents[parents[owner]] is root
                     message_list='artifact:'+str(int(owner.findtext('uid')))
                 keys=resource_keys[(t['file'],t['object_id'])];assert len(keys)==1, 'Ambiguous native resource key'
+                # Preserve the previous list.index rejection for a non-primary <m>.
+                try:message_index=message_indices[group][node]
+                except KeyError:raise ValueError('Message node is not in the declared message list') from None
                 d.update(resource=t['file']+':'+str(t['object_id']),resource_key=keys[0],
                          resource_sha256=resource_hash,
-                         message_list=message_list,index=messages.index(node))
+                         message_list=message_list,index=message_index)
             else:
                 owner=parents[node];guid=owner.findtext('u' if owner.tag=='ShieldKey' else 'g');assert guid
                 assert owner.tag in ('Planet','Star','Wormhole','ShieldKey'), 'Declared display name owner'
