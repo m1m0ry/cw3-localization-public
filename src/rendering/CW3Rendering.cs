@@ -4,21 +4,41 @@ using System;using System.Reflection;using System.Collections.Generic;using Unit
 public static class CW3Rendering {
  static BindingFlags flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
  class Entry {public Material source,copy;public Component panel;public Transform layer;public float z;public int depth,tie,panelId;}
- static Dictionary<string,Entry> entries=new Dictionary<string,Entry>();static Dictionary<int,Material> originals=new Dictionary<int,Material>();static bool subscribed;
- static object Field(object o,string n){if(o==null)return null;for(Type t=o.GetType();t!=null;t=t.BaseType){var f=t.GetField(n,flags|BindingFlags.DeclaredOnly);if(f!=null)return f.GetValue(o);}return null;}
+ // Identity, not formatting: avoid allocating five decimal strings and a joined key
+ // on each material query. Equality retains every dimension of the old key.
+ internal struct MaterialKey:IEquatable<MaterialKey> {
+  readonly int source,panel,layer,depth,tie;
+  internal MaterialKey(int source,int panel,int layer,int depth,int tie){this.source=source;this.panel=panel;this.layer=layer;this.depth=depth;this.tie=tie;}
+  public bool Equals(MaterialKey other){return source==other.source&&panel==other.panel&&layer==other.layer&&depth==other.depth&&tie==other.tie;}
+  public override bool Equals(object value){return value is MaterialKey&&Equals((MaterialKey)value);}
+  public override int GetHashCode(){unchecked{int hash=source;hash=hash*397^panel;hash=hash*397^layer;hash=hash*397^depth;return hash*397^tie;}}
+ }
+ static readonly Dictionary<Type,Dictionary<string,FieldInfo>> fields=new Dictionary<Type,Dictionary<string,FieldInfo>>();
+ static Dictionary<MaterialKey,Entry> entries=new Dictionary<MaterialKey,Entry>();static Dictionary<int,Material> originals=new Dictionary<int,Material>();static bool subscribed;
+ // Cache metadata only, never field values: panel/depth/material changes must
+ // remain visible on the next query. Runtime type preserves hidden-field lookup.
+ static object Field(object o,string n){
+  if(o==null)return null;Type type=o.GetType();Dictionary<string,FieldInfo> byName;
+  if(!fields.TryGetValue(type,out byName)){byName=new Dictionary<string,FieldInfo>();fields.Add(type,byName);}
+  FieldInfo field;if(!byName.TryGetValue(n,out field)){
+   for(Type t=type;t!=null;t=t.BaseType){field=t.GetField(n,flags|BindingFlags.DeclaredOnly);if(field!=null)break;}
+   byName.Add(n,field);
+  }
+  return field==null?null:field.GetValue(o);
+ }
  static Component Panel(Component w){Component p=Field(w,"mPanel") as Component;if(p!=null)return p;for(Transform t=w.transform;t!=null;t=t.parent)foreach(Component c in t.GetComponents<Component>())if(c!=null&&c.GetType().Name=="UIPanel")return c;return null;}
  // A dialog can sit in front of its panel through its direct child transform.
  static Transform Layer(Component w,Component panel){Transform layer=w.transform;while(layer.parent!=null&&layer.parent!=panel.transform)layer=layer.parent;return layer.parent==panel.transform?layer:panel.transform;}
  internal static int CompareOrder(float az,float bz,int ad,int bd,int at,int bt){int z=bz.CompareTo(az);if(z!=0)return z;int d=ad.CompareTo(bd);return d!=0?d:at.CompareTo(bt);}
  static int Compare(Entry a,Entry b){return CompareOrder(a.z,b.z,a.depth,b.depth,a.tie,b.tie);}
  static void Release(Entry entry){if(entry.copy!=null){originals.Remove(entry.copy.GetInstanceID());UnityEngine.Object.Destroy(entry.copy);}}
- internal static void ReleasePanel(int panelId){var gone=new List<string>();foreach(var pair in entries)if(pair.Value.panelId==panelId){Release(pair.Value);gone.Add(pair.Key);}foreach(string key in gone)entries.Remove(key);Reorder();}
- static void Reorder(){var list=new List<Entry>();var dead=new List<string>();foreach(var pair in entries){var e=pair.Value;if(e.panel==null||e.layer==null||e.source==null){Release(e);dead.Add(pair.Key);}else{e.z=e.layer.position.z;list.Add(e);}}foreach(string k in dead)entries.Remove(k);list.Sort(Compare);int rank=0;Entry previous=null;foreach(var e in list){if(previous!=null&&Compare(previous,e)!=0)rank++;if(rank>1900)throw new InvalidOperationException("CW3 UI order exceeds bounded queue range");e.copy.renderQueue=3000+rank;previous=e;}}
+ internal static void ReleasePanel(int panelId){var gone=new List<MaterialKey>();foreach(var pair in entries)if(pair.Value.panelId==panelId){Release(pair.Value);gone.Add(pair.Key);}foreach(MaterialKey key in gone)entries.Remove(key);Reorder();}
+ static void Reorder(){var list=new List<Entry>();var dead=new List<MaterialKey>();foreach(var pair in entries){var e=pair.Value;if(e.panel==null||e.layer==null||e.source==null){Release(e);dead.Add(pair.Key);}else{e.z=e.layer.position.z;list.Add(e);}}foreach(MaterialKey k in dead)entries.Remove(k);list.Sort(Compare);int rank=0;Entry previous=null;foreach(var e in list){if(previous!=null&&Compare(previous,e)!=0)rank++;if(rank>1900)throw new InvalidOperationException("CW3 UI order exceeds bounded queue range");e.copy.renderQueue=3000+rank;previous=e;}}
  public static Material Ordered(Material source,object value){
   if(source==null)return null;Component w=value as Component;if(w==null)return source;Component panel=Panel(w);if(panel==null)return source;
   Material original;if(originals.TryGetValue(source.GetInstanceID(),out original))source=original;
   int depth=(int)Field(w,"mDepth");int tie=w.GetType().Name=="UILabel"?1:0;Transform layer=Layer(w,panel);
-  string key=source.GetInstanceID()+":"+panel.GetInstanceID()+":"+layer.GetInstanceID()+":"+depth+":"+tie;Entry e;
+  var key=new MaterialKey(source.GetInstanceID(),panel.GetInstanceID(),layer.GetInstanceID(),depth,tie);Entry e;
   if(!entries.TryGetValue(key,out e)){e=new Entry{source=source,copy=new Material(source),panel=panel,layer=layer,panelId=panel.GetInstanceID(),z=layer.position.z,depth=depth,tie=tie};e.copy.name=source.name+" [CW3 depth "+depth+"]";e.copy.hideFlags=HideFlags.DontSave;entries.Add(key,e);originals[e.copy.GetInstanceID()]=source;var lifetime=panel.GetComponent<CW3RenderingLifetime>();if(lifetime==null)lifetime=panel.gameObject.AddComponent<CW3RenderingLifetime>();lifetime.PanelId=panel.GetInstanceID();Reorder();}
   else if(e.z!=layer.position.z)Reorder();
   e.copy.mainTexture=source.mainTexture;
