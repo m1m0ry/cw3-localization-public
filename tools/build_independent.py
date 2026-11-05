@@ -17,8 +17,9 @@ def compile(name,files,library=False):
 def exe(name,source,*args):
  files=[source]
  if name in ('RuntimePatch','RuntimeVerify'):files += [ROOT/'src/runtime/MissionScopePatch.cs',ROOT/'src/runtime/MainMenuClickPatch.cs']
+ if name in ('CustomSavePathPatch','CustomSavePathVerify'):files += [ROOT/'src/runtime/CustomSavePathPatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 helper=compile('CW3Rendering',[ROOT/'src/rendering/CW3Rendering.cs'],True);exe('RenderingPatch',ROOT/'src/rendering/Patch.cs',original,helper,g,render);exe('RenderingVerify',ROOT/'src/rendering/Verify.cs',original,render)
@@ -36,3 +37,10 @@ optimized=out/'Assembly-CSharp.panel-fill.dll'
 exe('PanelFillPatch',ROOT/'src/rendering/PatchPanelFill.cs',final,optimized,g)
 exe('PanelFillVerify',ROOT/'src/rendering/VerifyPanelFill.cs',final,optimized)
 shutil.copy2(optimized,final)
+
+# The native game otherwise probes Documents before reading its custom path.
+if target['platform']==2:
+ adjusted=out/'Assembly-CSharp.custom-save-path.dll'
+ exe('CustomSavePathPatch',ROOT/'src/runtime/PatchCustomSavePath.cs',final,adjusted,g)
+ exe('CustomSavePathVerify',ROOT/'src/runtime/VerifyCustomSavePath.cs',final,adjusted)
+ shutil.copy2(adjusted,final)

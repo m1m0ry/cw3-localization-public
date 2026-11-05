@@ -16,7 +16,7 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts')
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts')
 STANDALONE=('CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
             'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts')
@@ -68,6 +68,12 @@ class Contracts:
             patched=o/'PanelFillContract.patched.exe'
             self.execute('PatchPanelFill',[ROOT/'src/rendering/PatchPanelFill.cs'],[w(fixture),w(patched),w(m.location('original')/'CW3_Data/Managed')],[m.prepare_cecil(o),'-r:System.Core'])
             m.run(patched,[])
+        elif name=='CustomSavePathContracts':
+            fixture=m.compile(o,'CustomSavePathFixture.exe',[test/'CustomSavePathFixture.cs']);patched=o/'CustomSavePathFixture.patched.exe'
+            flags=[m.prepare_cecil(o),'-r:System.Core']
+            self.execute('PatchCustomSavePath',[runtime/'CustomSavePathPatch.cs',runtime/'PatchCustomSavePath.cs'],[w(fixture),w(patched),w(o)],flags)
+            self.execute('VerifyCustomSavePath',[runtime/'CustomSavePathPatch.cs',runtime/'VerifyCustomSavePath.cs',ROOT/'src/verification/AssemblyStructure.cs'],[w(fixture),w(patched)],flags)
+            m.run(patched,[w(o)])
         elif name=='CaptionLayoutContracts':self.execute(name,[runtime/'CaptionLayout.cs',test/(name+'.cs')])
         elif name=='RenderingCacheContracts':
             self.execute(name,[ROOT/'src/rendering/CW3Rendering.cs',test/'RenderingFixture.cs',test/(name+'.cs')])
