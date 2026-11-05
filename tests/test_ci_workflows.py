@@ -73,10 +73,7 @@ class WorkflowBoundary(unittest.TestCase):
                 self.assertTrue(step['uses'].startswith(('actions/checkout@', 'actions/setup-python@')))
             for tokens in commands(step):
                 self.assertFalse(any(name in token for token in tokens for name in ('ci_inputs.py', 'ci_build.py', 'build_candidate.py')))
-        for prefix in (['python', 'tools/workflow.py', 'check'],
-                       ['python', '-m', 'unittest', 'discover', '-s', 'tests', '-v'],
-                       ['python', 'tools/test.py', '--standalone']):
-            command_step(job['steps'], prefix)
+        command_step(job['steps'], ['python', 'tools/dev.py', 'test'])
 
     def assert_build(self, value):
         self.assert_common(value)
@@ -100,7 +97,9 @@ class WorkflowBoundary(unittest.TestCase):
         authorize_at = command_step(steps, ['python3', 'tools/ci_source.py'])
         fetch_at = command_step(steps, ['python', 'tools/ci_inputs.py'])
         dependencies_at = command_step(steps, ['python', '-m', 'pip', 'install'])
+        checks_at = command_step(steps, ['python', 'tools/dev.py', '--config', 'local-only/ci-config.json', 'test'])
         build_at = command_step(steps, ['python', 'tools/ci_build.py'])
+        self.assertLess(dependencies_at, checks_at);self.assertLess(checks_at, build_at)
         self.assertLess(authorize_at, fetch_at);self.assertLess(fetch_at, dependencies_at);self.assertLess(dependencies_at, build_at)
         self.assertNotIn('if', steps[authorize_at]);self.assertNotIn('if', steps[fetch_at])
         self.assertEqual(steps[fetch_at]['id'], 'inputs')

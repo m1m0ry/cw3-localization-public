@@ -52,6 +52,10 @@ jobs:
             libmono-system-core4.0-cil=6.8.0.105+dfsg-3.6ubuntu2 \
             libmono-system-xml4.0-cil=6.8.0.105+dfsg-3.6ubuntu2
           python -m pip install -r requirements-build.txt
+      - name: Source and standalone behavior checks
+        run: |
+          python tools/dev.py --config local-only/ci-config.json test \
+            > local-only/ci-source-checks.log 2>&1 || { echo 'Source checks failed; raw log stays private.'; exit 1; }
       - name: Build and verify package
         id: package
         env:

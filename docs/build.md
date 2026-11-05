@@ -1,4 +1,4 @@
-# 本地构建与安装
+# 构建与安装
 
 支持版本：
 
@@ -11,7 +11,13 @@
 - 配置文件中指定的 Mono 工具链和 Cecil
 - 对应平台的原版游戏文件
 
-## 构建
+## 日常维护
+
+优先使用[维护入口](development.md)：源码测试复用已有环境，完整 Windows/macOS 包默认走固定输入的云构建，原生 Mac 的测试、增量安装、Steam 启动及诊断可由同一入口串联。无需为了每次改动在本机重新准备原版输入和工具链。
+
+下面的本地全量步骤用于已配置输入的独立重建，不是日常维护前置条件。
+
+## 本地全量构建
 
 1. 将 `config.example.json` 复制为 `config.local.json`，填写目标平台、游戏目录、原版输入和工具链路径。原生 macOS 配置使用 `target_id: macos-steam-22453699`，`game` 指向 `CW3.app` 所在父目录，并提供 Mac 原版文件。
 2. 按 [fonts/provenance.json](../fonts/provenance.json) 中的来源与 SHA 准备 Noto Sans SC 源字体。

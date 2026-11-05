@@ -55,4 +55,10 @@ python3 tools/debug.py --config CONFIG --state STATE enable
 # 启动后改为 command runtime_probe；退出后改为 disable。
 ```
 
-支持的查询命令：`runtime_probe`、`style_probe`、`display_probe`、`screenshot`。
+维护流程优先使用[维护入口](development.md)串联启动和限时验收。底层允许的命令以 `tools/mac_runtime_debug.py` 的 `COMMANDS` 为准，可直接列出：
+
+```sh
+python3 -c 'import sys; sys.path.insert(0,"tools"); import mac_runtime_debug; print("\n".join(sorted(mac_runtime_debug.COMMANDS)))'
+```
+
+常用能力包括 `runtime_probe`（场景与运行时）、`display_probe`（实际文字控件）、`style_probe` / `fonts_probe`、`settings_native_open` / `settings_probe`、`screenshot` 和主菜单中的 `quit`。截图命令返回排队结果后还需要等待文件写完。设置改变和场景预览使用原有固定命令，不需要任意代码执行或外部窗口自动化。
