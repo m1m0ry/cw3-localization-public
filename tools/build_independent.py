@@ -10,9 +10,10 @@ target=game_target.load(c);game_target.verify_inputs(path('original'),target,[n 
 g=path('original')/'CW3_Data/Managed';out=Path(a.output);out.mkdir(parents=True,exist_ok=True);shutil.copy2(m.cecil,out/'Mono.Cecil.dll')
 def compile(name,files,library=False):
  flags=[]
- if library:flags+=['-target:library','-nostdlib']+['-r:'+win(g/n) for n in ('mscorlib.dll','UnityEngine.dll','System.dll','System.Xml.dll','System.Core.dll')]
+ if library:flags+=['-target:library','-deterministic','-nostdlib']+['-r:'+win(g/n) for n in ('mscorlib.dll','UnityEngine.dll','System.dll','System.Xml.dll','System.Core.dll')]
  else:flags+=['-r:'+win(m.cecil),'-r:System.Core']
- if name=='CW3ExternalRuntime' and target['platform']==2:flags+=['-define:CW3_MAC']
+ if name=='CW3ExternalRuntime' and target['platform']==2:flags+=['-define:CW3_MAC,CW3_RENDER_EXTERNAL']
+ if name=='CW3Rendering' and target['platform']==2:flags+=['-r:'+win(out/'CW3Runtime.dll')]
  return m.compile(out,name+('.dll' if library else '.exe'),files,flags)
 def exe(name,source,*args):
  files=[source]
@@ -22,11 +23,13 @@ def exe(name,source,*args):
  if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
-helper=compile('CW3Rendering',[ROOT/'src/rendering/CW3Rendering.cs'],True);exe('RenderingPatch',ROOT/'src/rendering/Patch.cs',original,helper,g,render);exe('RenderingVerify',ROOT/'src/rendering/Verify.cs',original,render)
 if target['platform']==2:
- compile('CW3ExternalRuntime',runtime_sources(generated,True),True)
+ compile('CW3ExternalRuntime',runtime_sources(generated,native_mac=True),True)
  helper=compile('CW3Runtime',[ROOT/'src/runtime/CW3Bridge.cs'],True)
 else:helper=compile('CW3Runtime',runtime_sources(generated),True)
+render_source='CW3RenderingBridge.cs' if target['platform']==2 else 'CW3Rendering.cs'
+render_helper=compile('CW3Rendering',[ROOT/'src/rendering'/render_source],True)
+exe('RenderingPatch',ROOT/'src/rendering/Patch.cs',original,render_helper,g,render);exe('RenderingVerify',ROOT/'src/rendering/Verify.cs',original,render)
 exe('RuntimePatch',ROOT/'src/runtime/PatchRuntime.cs',render,helper,generated/'managed.tsv',final,g,generated/'audit.tsv',original)
 exe('RuntimeVerify',ROOT/'src/runtime/VerifyRuntime.cs',render,final,generated/'audit.tsv')
 

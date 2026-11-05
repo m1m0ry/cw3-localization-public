@@ -16,10 +16,10 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts')
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts')
 STANDALONE=('CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
-            'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts')
+            'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts')
 class Contracts:
     def __init__(self,mono,out):self.mono=mono;self.out=out
     def execute(self,name,sources,args=(),flags=()):
@@ -77,6 +77,21 @@ class Contracts:
         elif name=='CaptionLayoutContracts':self.execute(name,[runtime/'CaptionLayout.cs',test/(name+'.cs')])
         elif name=='RenderingCacheContracts':
             self.execute(name,[ROOT/'src/rendering/CW3Rendering.cs',test/'RenderingFixture.cs',test/(name+'.cs')])
+        elif name=='RenderingBridgeContracts':
+            self.execute(name,[ROOT/'src/rendering/CW3Rendering.cs',ROOT/'src/rendering/CW3RenderingBridge.cs',runtime/'RenderingBindings.cs',test/'RenderingFixture.cs',test/(name+'.cs')],flags=['-define:CW3_RENDER_EXTERNAL'])
+        elif name=='RenderingBindingContracts':
+            self.execute(name,[runtime/'CW3Bridge.cs',test/'UnityFixture.cs',test/(name+'.cs')],flags=['-r:System.Xml'])
+        elif name=='RenderingAssemblyContracts':
+            engine=m.compile(o,'UnityEngine.dll',[test/'RenderingFixture.cs',test/'RenderingBridgeUnityFixture.cs'],['-target:library','-deterministic'])
+            flags=['-target:library','-deterministic','-r:'+w(engine),'-r:System.Xml']
+            external=m.compile(o,'CW3ExternalRuntime.dll',[ROOT/'src/rendering/CW3Rendering.cs',runtime/'RenderingBindings.cs'],flags+['-define:CW3_RENDER_EXTERNAL'])
+            bridge=m.compile(o,'CW3Runtime.dll',[runtime/'CW3Bridge.cs'],flags)
+            facade=m.compile(o,'CW3Rendering.dll',[ROOT/'src/rendering/CW3RenderingBridge.cs'],flags+['-r:'+w(bridge)])
+            # An implementation-only change must not perturb either signed bridge.
+            again=o/'repeat';again.mkdir();bridge2=m.compile(again,'CW3Runtime.dll',[runtime/'CW3Bridge.cs'],flags)
+            facade2=m.compile(again,'CW3Rendering.dll',[ROOT/'src/rendering/CW3RenderingBridge.cs'],flags+['-r:'+w(bridge2)])
+            if bridge.read_bytes()!=bridge2.read_bytes() or facade.read_bytes()!=facade2.read_bytes():raise RuntimeError('Stable bridges are not reproducible with this compiler')
+            self.execute(name,[test/(name+'.cs')],[w(external)],['-r:'+w(engine),'-r:'+w(bridge),'-r:'+w(facade)])
         elif name=='RenderingOrderContracts':
             engine=o/'UnityEngine.dll';shutil.copy2(m.location('original')/'CW3_Data/Managed/UnityEngine.dll',engine)
             self.execute(name,[ROOT/'src/rendering/CW3Rendering.cs',test/(name+'.cs')],flags=['-r:'+w(engine)])

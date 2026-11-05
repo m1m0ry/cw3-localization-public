@@ -10,6 +10,7 @@ using UnityEngine;
 // fixed, user-owned local runtime may supply the implementation.
 public static class CW3Runtime {
  delegate int GridCall(int selected,GUIContent[] text,int columns,GUIStyle style,GUILayoutOption[] options);
+ delegate void RenderingBinding(out Func<Material,object,Material> ordered,out Action<object> sync);
  [DllImport("libc")]static extern int lstat(string path,byte[] info);
  [DllImport("libc",EntryPoint="lstat$INODE64")]static extern int lstat_inode64(string path,byte[] info);
  [DllImport("libc")]static extern uint geteuid();
@@ -83,6 +84,15 @@ public static class CW3Runtime {
   calls[name]=value;return value as T;
  }
  public static string BridgeStatus(){Resolve();return failure??"ready";}
+
+ // Called once by the stable rendering facade, never for each material query.
+ // Bind both operations together: a partial renderer must not look healthy.
+ public static void BindRenderingV1(out Func<Material,object,Material> ordered,out Action<object> sync){
+  ordered=null;sync=null;
+  var bind=Call<RenderingBinding>("BindRenderingV1");
+  if(bind!=null)try{bind(out ordered,out sync);}catch(Exception e){ordered=null;sync=null;Failed("Rendering V1: "+e.GetType().Name);}
+  if(ordered==null||sync==null){ordered=null;sync=null;Failed("Rendering V1 interface unavailable");ShowFailure();}
+ }
 
  public static void Boot(){var f=Call<Action>("Boot");if(f!=null)f();ShowFailure();}
  public static string Text(string id,string original){var f=Call<Func<string,string,string>>("Text");return f==null?original:f(id,original);}

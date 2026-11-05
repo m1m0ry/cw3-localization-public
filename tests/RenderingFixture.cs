@@ -7,6 +7,7 @@ namespace UnityEngine {
  public class Object {
   static int next;readonly int id=++next;public string name;public bool Destroyed;public HideFlags hideFlags;
   public int GetInstanceID(){return id;}
+  public static void DontDestroyOnLoad(Object o){}
   public static void Destroy(Object o){if(ReferenceEquals(o,null))return;o.Destroyed=true;var m=o.GetType().GetMethod("OnDestroy",BindingFlags.Instance|BindingFlags.NonPublic);if(m!=null)m.Invoke(o,null);}
   public static Object[] FindObjectsOfType(Type t){var result=new List<Object>();foreach(var c in Component.All)if(c!=null&&t.IsInstanceOfType(c))result.Add(c);return result.ToArray();}
   public static bool operator==(Object a,Object b){bool x=ReferenceEquals(a,null)||a.Destroyed,y=ReferenceEquals(b,null)||b.Destroyed;return x||y?x==y:ReferenceEquals(a,b);}

@@ -133,8 +133,14 @@ internal sealed class MacDiagnostics : MonoBehaviour {
   if(command=="runtime_probe"&&arg==""){
    var report=CW3Runtime.RuntimeReport();
    Type bridge=Type.GetType("CW3Runtime, CW3Runtime",true);
+   // Inspect the actual bound delegates, not only the expected source layout.
+   Type facade=Type.GetType("CW3Rendering, CW3Rendering",true);
+   var ordered=facade.GetField("ordered",BindingFlags.NonPublic|BindingFlags.Static).GetValue(null) as Delegate;
+   var sync=facade.GetField("sync",BindingFlags.NonPublic|BindingFlags.Static).GetValue(null) as Delegate;
+   var own=typeof(CW3RenderingImplementation).Assembly;
+   bool renderingBound=ordered!=null&&sync!=null&&ordered.Method.DeclaringType.Assembly==own&&sync.Method.DeclaringType.Assembly==own;
    string status=(string)bridge.GetMethod("BridgeStatus",BindingFlags.Public|BindingFlags.Static).Invoke(null,null);
-   return Json(new Hashtable{{"scene",Application.loadedLevelName},{"bridge",status},{"version",CW3BuildInfo.Version},{"translations",report["translations"]},{"targets",report["targets"]},{"bound_xml",report["bound_xml"]},{"time",Time.realtimeSinceStartup.ToString(System.Globalization.CultureInfo.InvariantCulture)}});
+   return Json(new Hashtable{{"rendering_abi","v1"},{"renderer_assembly",own.GetName().Name},{"renderer_location",own.Location},{"rendering_bound",renderingBound},{"scene",Application.loadedLevelName},{"bridge",status},{"version",CW3BuildInfo.Version},{"translations",report["translations"]},{"targets",report["targets"]},{"bound_xml",report["bound_xml"]},{"time",Time.realtimeSinceStartup.ToString(System.Globalization.CultureInfo.InvariantCulture)}});
   }
   if(command=="style_probe"&&arg=="")return Json(CW3Runtime.StyleStatus());
   if(command=="display_probe"&&arg=="")return DisplayProbe();

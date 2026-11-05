@@ -1,7 +1,11 @@
 using System;using System.Reflection;using System.Collections.Generic;using UnityEngine;
 // Old NGUI batches an entire panel by material. A separate dynamic font material
 // therefore loses the interleaved widget depth order of its original atlas.
+#if CW3_RENDER_EXTERNAL
+internal static class CW3RenderingImplementation {
+#else
 public static class CW3Rendering {
+#endif
  static BindingFlags flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
  class Entry {public Material source,copy;public Component panel;public Transform layer;public float z;public int depth,tie,panelId;}
  // Identity, not formatting: avoid allocating five decimal strings and a joined key
@@ -51,4 +55,13 @@ public static class CW3Rendering {
  static void FontRebuilt(Font font){foreach(Component c in UnityEngine.Object.FindObjectsOfType(typeof(Component))){if(c==null||c.GetType().Name!="UILabel")continue;object uiFont=Field(c,"mFont");if(uiFont==null)continue;var property=uiFont.GetType().GetProperty("dynamicFont",flags);if(property==null||property.GetValue(uiFont,null) as Font!=font)continue;var method=c.GetType().GetMethod("MarkAsChanged",flags,null,Type.EmptyTypes,null);if(method!=null)method.Invoke(c,null);}}
 }
 // Lifetime is the UIPanel owning our copies; never destroy its borrowed atlas or clip material.
-public sealed class CW3RenderingLifetime:MonoBehaviour {internal int PanelId;void OnDestroy(){CW3Rendering.ReleasePanel(PanelId);}}
+public sealed class CW3RenderingLifetime:MonoBehaviour {
+ internal int PanelId;
+ void OnDestroy(){
+#if CW3_RENDER_EXTERNAL
+  CW3RenderingImplementation.ReleasePanel(PanelId);
+#else
+  CW3Rendering.ReleasePanel(PanelId);
+#endif
+ }
+}
