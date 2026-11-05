@@ -17,7 +17,13 @@ public static class CW3Rendering {
   public override bool Equals(object value){return value is MaterialKey&&Equals((MaterialKey)value);}
   public override int GetHashCode(){unchecked{int hash=source;hash=hash*397^panel;hash=hash*397^layer;hash=hash*397^depth;return hash*397^tie;}}
  }
- static readonly Dictionary<Type,Dictionary<string,FieldInfo>> fields=new Dictionary<Type,Dictionary<string,FieldInfo>>();
+ sealed class TypeFields {
+  internal readonly Type Type;internal readonly bool IsLabel;
+  internal readonly Dictionary<string,FieldInfo> Fields=new Dictionary<string,FieldInfo>();
+  internal TypeFields(Type type){Type=type;IsLabel=type.Name=="UILabel";}
+ }
+ static readonly Dictionary<Type,TypeFields> fields=new Dictionary<Type,TypeFields>();
+ static TypeFields Metadata(Type type){TypeFields value;if(!fields.TryGetValue(type,out value)){value=new TypeFields(type);fields.Add(type,value);}return value;}
  static Dictionary<MaterialKey,Entry> entries=new Dictionary<MaterialKey,Entry>();static Dictionary<int,Material> originals=new Dictionary<int,Material>();static bool subscribed;
 #if CW3_RENDER_EXTERNAL
  // Read only on explicit diagnostics requests, never per frame.
@@ -26,15 +32,16 @@ public static class CW3Rendering {
  // Cache metadata only, never field values: panel/depth/material changes must
  // remain visible on the next query. Runtime type preserves hidden-field lookup.
  static object Field(object o,string n){
-  if(o==null)return null;Type type=o.GetType();Dictionary<string,FieldInfo> byName;
-  if(!fields.TryGetValue(type,out byName)){byName=new Dictionary<string,FieldInfo>();fields.Add(type,byName);}
-  FieldInfo field;if(!byName.TryGetValue(n,out field)){
-   for(Type t=type;t!=null;t=t.BaseType){field=t.GetField(n,flags|BindingFlags.DeclaredOnly);if(field!=null)break;}
-   byName.Add(n,field);
+  return o==null?null:ReadField(o,n,Metadata(o.GetType()));
+ }
+ static object ReadField(object o,string n,TypeFields metadata){
+  FieldInfo field;if(!metadata.Fields.TryGetValue(n,out field)){
+   for(Type t=metadata.Type;t!=null;t=t.BaseType){field=t.GetField(n,flags|BindingFlags.DeclaredOnly);if(field!=null)break;}
+   metadata.Fields.Add(n,field);
   }
   return field==null?null:field.GetValue(o);
  }
- static Component Panel(Component w){Component p=Field(w,"mPanel") as Component;if(p!=null)return p;for(Transform t=w.transform;t!=null;t=t.parent)foreach(Component c in t.GetComponents<Component>())if(c!=null&&c.GetType().Name=="UIPanel")return c;return null;}
+ static Component Panel(Component w,TypeFields metadata){Component p=ReadField(w,"mPanel",metadata) as Component;if(p!=null)return p;for(Transform t=w.transform;t!=null;t=t.parent)foreach(Component c in t.GetComponents<Component>())if(c!=null&&c.GetType().Name=="UIPanel")return c;return null;}
  // A dialog can sit in front of its panel through its direct child transform.
  static Transform Layer(Component w,Component panel){
   // Resolve native properties once per visited node. This is call-local only:
@@ -48,9 +55,11 @@ public static class CW3Rendering {
  internal static void ReleasePanel(int panelId){var gone=new List<MaterialKey>();foreach(var pair in entries)if(pair.Value.panelId==panelId){Release(pair.Value);gone.Add(pair.Key);}foreach(MaterialKey key in gone)entries.Remove(key);Reorder();}
  static void Reorder(){var list=new List<Entry>();var dead=new List<MaterialKey>();foreach(var pair in entries){var e=pair.Value;if(e.panel==null||e.layer==null||e.source==null){Release(e);dead.Add(pair.Key);}else{e.z=e.layer.position.z;list.Add(e);}}foreach(MaterialKey k in dead)entries.Remove(k);list.Sort(Compare);int rank=0;Entry previous=null;foreach(var e in list){if(previous!=null&&Compare(previous,e)!=0)rank++;if(rank>1900)throw new InvalidOperationException("CW3 UI order exceeds bounded queue range");e.copy.renderQueue=3000+rank;previous=e;}}
  public static Material Ordered(Material source,object value){
-  if(source==null)return null;Component w=value as Component;if(w==null)return source;Component panel=Panel(w);if(panel==null)return source;
+  if(source==null)return null;Component w=value as Component;if(w==null)return source;// Type names are immutable metadata. Old Mono creates a string for Name on
+  // every query; resolve once without retaining or caching mutable widget state.
+  TypeFields metadata=Metadata(w.GetType());Component panel=Panel(w,metadata);if(panel==null)return source;
   Material original;if(originals.TryGetValue(source.GetInstanceID(),out original))source=original;
-  int depth=(int)Field(w,"mDepth");int tie=w.GetType().Name=="UILabel"?1:0;Transform layer=Layer(w,panel);
+  int depth=(int)ReadField(w,"mDepth",metadata);int tie=metadata.IsLabel?1:0;Transform layer=Layer(w,panel);
   var key=new MaterialKey(source.GetInstanceID(),panel.GetInstanceID(),layer.GetInstanceID(),depth,tie);Entry e;
   if(!entries.TryGetValue(key,out e)){e=new Entry{source=source,copy=new Material(source),panel=panel,layer=layer,panelId=panel.GetInstanceID(),z=layer.position.z,depth=depth,tie=tie};e.copy.name=source.name+" [CW3 depth "+depth+"]";e.copy.hideFlags=HideFlags.DontSave;entries.Add(key,e);originals[e.copy.GetInstanceID()]=source;var lifetime=panel.GetComponent<CW3RenderingLifetime>();if(lifetime==null)lifetime=panel.gameObject.AddComponent<CW3RenderingLifetime>();lifetime.PanelId=panel.GetInstanceID();Reorder();}
   else if(e.z!=layer.position.z)Reorder();

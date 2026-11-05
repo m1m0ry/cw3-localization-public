@@ -7,6 +7,7 @@ class RenderingCacheContracts {
  static void Need(bool value,string reason){assertions++;if(!value)throw new Exception(reason);}
  class Base {private int hidden=1;public int Mutable=2;public int Use(){return hidden;}}
  class BareWidget:Component {public int mDepth;}
+ class DerivedLabel:UILabel {}
  class Derived:Base {private int hidden=3;public int UseDerived(){return hidden;}}
  static object Field(object o,string n){return typeof(CW3Rendering).GetMethod("Field",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new[]{o,(object)n});}
  static Transform Layer(Component w,Component p){return (Transform)typeof(CW3Rendering).GetMethod("Layer",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{w,p});}
@@ -25,6 +26,8 @@ class RenderingCacheContracts {
   detached.transform.parent=a.transform;Need(Layer(detached,panel)==a.transform,"reparenting observed on next call");detached.transform.parent=panel.transform;Need(Layer(detached,panel)==detached.transform,"second reparenting observed");
   var first=CW3Rendering.Ordered(source,a);Need(first!=source,"owned material");Need(CW3Rendering.Ordered(source,a)==first,"repeat identity");Need(CW3Rendering.Ordered(first,a)==first,"unwrap own copy");Need(CW3Rendering.Ordered(source,same)==first,"same layer/depth batches");
   var text=CW3Rendering.Ordered(source,label);Need(text!=first&&text.renderQueue>first.renderQueue,"text tie follows atlas");
+  var derivedLabel=Widget<DerivedLabel>(panel,"derived label",2);derivedLabel.transform.parent=a.transform;
+  Need(CW3Rendering.Ordered(source,derivedLabel)==first,"label classification preserves exact runtime name, not inheritance");
   same.mDepth=3;var deeper=CW3Rendering.Ordered(source,same);Need(deeper!=first&&deeper.renderQueue>text.renderQueue,"depth change observed");same.mDepth=2;Need(CW3Rendering.Ordered(source,same)==first,"return to previous key");
   var other=Widget<UIWidget>(panel,"other",0);other.transform.position=new Vector3(-1);var front=CW3Rendering.Ordered(source,other);Need(front.renderQueue>deeper.renderQueue,"foreground layer");other.transform.position=new Vector3(1);CW3Rendering.Ordered(source,other);Need(front.renderQueue<first.renderQueue,"z move reorders");
   var alternateSource=new Material{name="other source"};Need(CW3Rendering.Ordered(alternateSource,a)!=first,"source identity isolation");
