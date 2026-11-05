@@ -27,7 +27,16 @@ def complete_capture(path):
 
 def retry_probe(record):
     pending = record.get('request')
-    if not pending:return
+    if not pending:
+        capture = record.get('evidence', {}).get('screenshot', {}).get('result')
+        if capture and not complete_capture(Path(capture['path'])):
+            request = Path(record['state']) / 'cw3-debug/request.txt'
+            if request.exists() or request.is_symlink():
+                raise RuntimeError('A different request is pending; it was not cancelled')
+            # A queued response ends the request, not the asynchronous PNG write.
+            # Retry only that incomplete capture; keep installation and other probes.
+            record['evidence'].pop('screenshot')
+        return
     if pending['command'] not in ('runtime_probe', 'display_probe', 'screenshot'):
         raise ValueError('Only fixed read-only smoke probes may be retried')
     request = Path(record['state']) / 'cw3-debug/request.txt'
@@ -128,13 +137,13 @@ class NativeMac:
     def enable(self):
         _, folder, expected = debug.context(self.game, self.state)
         marker = folder / 'enabled.txt'
+        request = folder / 'request.txt'
+        if request.exists() or request.is_symlink():
+            raise RuntimeError('An earlier diagnostics request is outstanding; inspect it before continuing')
         if marker.is_file() and not marker.is_symlink() and marker.read_text().strip() == expected:return
         if marker.exists() or marker.is_symlink():
             if marker.is_symlink() or not marker.is_file() or marker.read_text().strip() != self.previous_runtime:
                 raise RuntimeError('Diagnostics marker belongs to an unrelated runtime; inspect it before continuing')
-            request = folder / 'request.txt'
-            if request.exists() or request.is_symlink():
-                raise RuntimeError('An earlier diagnostics request is outstanding; inspect it before continuing')
             # The session captured this runtime before installation. Refresh its
             # old opt-in only after the game has stopped, not an unrelated marker.
             debug.action(self.game, self.state, ['disable'], ROOT / 'local-only/evidence')
@@ -200,7 +209,7 @@ class NativeMac:
             path = Path(result['result']['path'])
             if path.parent.resolve() != folder.resolve():raise ValueError('Capture path is outside diagnostics')
             wait_until(lambda: complete_capture(path), timeout,
-                       'Screenshot queued but not written yet; resume will check the same file')
+                       'Screenshot queued but not written yet; resume checks the same file, or resume --retry-probe requests a new capture')
         return result['result']
 
 
@@ -267,6 +276,6 @@ def advance(record, persist, backend, timeout=20):
             raise RuntimeError('Display probe did not observe MainMenu text controls; resume after returning to the menu')
         capture = record['evidence']['screenshot']['result']
         wait_until(lambda: complete_capture(Path(capture['path'])),
-                   timeout, 'Screenshot is still queued; resume checks the same file')
+                   timeout, 'Screenshot is still queued; resume checks the same file, or resume --retry-probe requests a new capture')
         phase('verified')
     return record

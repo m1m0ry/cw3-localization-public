@@ -130,6 +130,40 @@ class WorkflowTests(unittest.TestCase):
             session.advance(record,persist,b,.01)
             self.assertEqual(record['phase'],'verified')
 
+    def test_retry_unwritten_screenshot_keeps_install_launch_and_other_evidence(self):
+        for content in (None,b'partial PNG'):
+            with self.subTest(content=content),tempfile.TemporaryDirectory() as tmp:
+                record,b,persist=self.fixture(Path(tmp));session.advance(record,persist,b,.01)
+                b.capture.unlink()
+                if content is not None:b.capture.write_bytes(content)
+                record['phase']='checking';evidence=record['evidence'].copy()
+                session.retry_probe(record)
+                self.assertNotIn('screenshot',record['evidence'])
+                self.assertEqual(record['evidence']['runtime_probe'],evidence['runtime_probe'])
+                self.assertEqual(record['evidence']['display_probe'],evidence['display_probe'])
+                session.advance(record,persist,b,.01)
+                self.assertEqual(record['phase'],'verified')
+                self.assertEqual(b.events.count('screenshot'),2)
+                for event in ('quit','install','launch','runtime_probe','display_probe'):
+                    self.assertEqual(b.events.count(event),1)
+                session.retry_probe(record)
+                self.assertIn('screenshot',record['evidence'])
+
+    def test_matching_marker_with_old_command_blocks_launch(self):
+        for command in ('quit','settings_save'):
+            with self.subTest(command=command),tempfile.TemporaryDirectory() as tmp:
+                record,b,persist=self.fixture(Path(tmp))
+                folder=b.state/'cw3-debug';folder.mkdir(parents=True)
+                marker=folder/'enabled.txt';marker.write_text('current-hash')
+                request=folder/'request.txt';request.write_text('old-id\t'+command+'\n')
+                native=session.NativeMac(record)
+                with patch.object(session.debug,'context',return_value=(None,folder,'current-hash')),patch.object(b,'enable',side_effect=native.enable),patch.object(session.debug,'action') as action:
+                    with self.assertRaisesRegex(RuntimeError,'outstanding'):session.advance(record,persist,b,.01)
+                    action.assert_not_called()
+                self.assertNotIn('launch',b.events)
+                self.assertEqual(marker.read_text(),'current-hash')
+                self.assertEqual(request.read_text(),'old-id\t'+command+'\n')
+
     def test_scope_selects_only_supported_incremental_route(self):
         self.assertEqual(dev.classify([]),'none')
         self.assertEqual(dev.classify(['tools/independent.py','tests/test_any.py']),'source')
@@ -299,6 +333,43 @@ class DiagnosticExchangeTests(unittest.TestCase):
                 (folder/'response.json').write_text(json.dumps({'id':ident,'ok':True,'result':{'scene':'MainMenu'}}))
                 self.assertEqual(b.exchange(record,'runtime_probe',lambda:None,.01),{'scene':'MainMenu'})
                 self.assertFalse((folder/'request.txt').exists());self.assertNotIn('request',record)
+
+    def test_queued_screenshot_timeout_can_request_a_new_capture(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder,b,record=self.fixture(Path(tmp));record['state']=str(folder.parent)
+            capture=folder/'never-written.png'
+            def queued(predicate,timeout,message):
+                if not record.get('request'):raise TimeoutError('PNG was not written')
+                ident=record['request']['id'];(folder/'request.txt').unlink()
+                return {'id':ident,'ok':True,'result':{'queued':True,'path':str(capture)}}
+            with patch.object(session.debug,'context',return_value=(None,folder,'hash')),patch.object(session,'wait_until',side_effect=queued):
+                with self.assertRaises(TimeoutError):b.exchange(record,'screenshot',lambda:None,.001)
+            old_id=record['evidence']['screenshot']['id']
+            self.assertNotIn('request',record)
+            session.retry_probe(record)
+            self.assertNotIn('screenshot',record['evidence'])
+            def completed(predicate,timeout,message):
+                if record.get('request'):
+                    ident=record['request']['id'];(folder/'request.txt').unlink()
+                    capture.write_bytes(b'\x89PNG\r\n\x1a\n\x00\x00\x00\x00IEND\xaeB`\x82')
+                    return {'id':ident,'ok':True,'result':{'queued':True,'path':str(capture)}}
+                return predicate()
+            with patch.object(session.debug,'context',return_value=(None,folder,'hash')),patch.object(session,'wait_until',side_effect=completed):
+                b.exchange(record,'screenshot',lambda:None,.001)
+            self.assertNotEqual(record['evidence']['screenshot']['id'],old_id)
+            self.assertTrue(session.complete_capture(capture))
+
+    def test_capture_retry_preserves_foreign_pending_request(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder,b,record=self.fixture(Path(tmp));record['state']=str(folder.parent)
+            record['evidence']['screenshot']={'result':{'path':str(folder/'absent.png'),'queued':True}}
+            request=folder/'request.txt';request.write_text('other\tquit\n')
+            with self.assertRaisesRegex(RuntimeError,'different request'):session.retry_probe(record)
+            self.assertIn('screenshot',record['evidence'])
+            self.assertEqual(request.read_text(),'other\tquit\n')
+            request.unlink();request.symlink_to(folder/'absent-request')
+            with self.assertRaises(RuntimeError):session.retry_probe(record)
+            self.assertTrue(request.is_symlink())
 
     def test_retry_only_owned_readonly_probe(self):
         with tempfile.TemporaryDirectory() as tmp:
