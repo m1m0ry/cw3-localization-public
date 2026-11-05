@@ -13,7 +13,8 @@ import mac_runtime_debug as debug
 import player_install as player
 
 ROOT = Path(__file__).resolve().parents[1]
-LOGICAL = 'CW3_Data/Managed/CW3Rendering.dll'
+RUNTIME = 'CW3Localization/Runtime/CW3ExternalRuntime.dll'
+REGISTRY = 'CW3Localization/fonts.json'
 
 
 def complete_capture(path):
@@ -48,27 +49,26 @@ def save(path, value):
 def package_identity(package):
     manifest = player.read(package / 'manifest.json')
     if manifest.get('kind') == 'rendering_component':
-        if manifest.get('format') != 1 or manifest.get('target_id') != game_target.MACOS:
-            raise ValueError('Unsupported rendering component')
-        source = package / 'CW3Rendering.dll'
-        if player.digest(source) != manifest.get('sha256'):
-            raise ValueError('Rendering component hash differs')
-    else:
-        player.validate_manifest(manifest)
+        raise ValueError('Legacy rendering components cannot replace the stable bridge; use a complete package')
+    player.validate_manifest(manifest)
+    for row in manifest['files']:
+        source = player.safe(package, row['file'])
+        if player.digest(source) != row['after'] or source.stat().st_size != row['bytes']:
+            raise ValueError('Candidate payload changed: ' + row['file'])
+    if manifest['target_id'] == game_target.MACOS:
+        registry = player.read(player.safe(package, REGISTRY))
+        if registry.get('runtime_sha256') != player.digest(player.safe(package, RUNTIME)):
+            raise ValueError('External runtime and fonts.json must come from the same build')
     return manifest, player.digest(package / 'manifest.json')
 
 
 def installed_hashes(game, manifest):
-    if manifest.get('kind') == 'rendering_component':
-        layout = game_target.load({'target_id': manifest['target_id']})
-        return {LOGICAL: player.digest(player.installed_path(game, LOGICAL, layout))}
     return {row['file']: player.digest(player.installed_path(game, row['file'], manifest))
             for row in manifest['files']}
 
 
 def wanted_hashes(manifest):
-    return {LOGICAL: manifest['sha256']} if manifest.get('kind') == 'rendering_component' else {
-        row['file']: row['after'] for row in manifest['files']}
+    return {row['file']: row['after'] for row in manifest['files']}
 
 
 def process_rows(game):
@@ -106,6 +106,7 @@ def awake():
 
 class NativeMac:
     def __init__(self, config):
+        self.previous_runtime = config.get('previous_runtime_sha256')
         self.game = Path(config['game']).expanduser().resolve()
         self.state = Path(config['state']).expanduser().resolve()
         self.steam = Path(config.get('steam', '/Applications/Steam.app/Contents/MacOS/steam_osx')).expanduser()
@@ -122,30 +123,21 @@ class NativeMac:
         wait_until(lambda: not self.processes(), timeout, 'Normal Quit did not finish; game is unchanged')
 
     def install(self, package, manifest):
-        if manifest.get('kind') != 'rendering_component':
-            player.install(self.game, manifest, package)
-            return
-        target = game_target.load({'target_id': manifest['target_id']})
-        player.idle();player.check_game_identity(self.game, target)
-        destination = player.installed_path(self.game, LOGICAL, target)
-        source = package / 'CW3Rendering.dll'
-        if player.digest(source) != manifest['sha256']:raise ValueError('Component changed since build')
-        if player.digest(destination) != manifest['sha256']:
-            backup = self.game / '.cw3-zh-backup' / ('rendering-' + player.digest(destination))
-            backup.mkdir(parents=True, exist_ok=True)
-            # Keep one known previous helper. No automatic rollback on observation failure.
-            old = backup / 'CW3Rendering.dll'
-            if not old.exists():player.atomic_copy(destination, old)
-            player.write_existing(source, destination, player.metadata(destination))
-        verify = subprocess.run(['codesign', '--verify', '--deep', '--strict', str(self.game / 'CW3.app')],
-                                capture_output=True, text=True, timeout=60)
-        if verify.returncode:player.signing(self.game)
+        player.install(self.game, manifest, package)
 
     def enable(self):
         _, folder, expected = debug.context(self.game, self.state)
         marker = folder / 'enabled.txt'
         if marker.is_file() and not marker.is_symlink() and marker.read_text().strip() == expected:return
-        if marker.exists():raise RuntimeError('Diagnostics marker belongs to a different runtime; disable it first')
+        if marker.exists() or marker.is_symlink():
+            if marker.is_symlink() or not marker.is_file() or marker.read_text().strip() != self.previous_runtime:
+                raise RuntimeError('Diagnostics marker belongs to an unrelated runtime; inspect it before continuing')
+            request = folder / 'request.txt'
+            if request.exists() or request.is_symlink():
+                raise RuntimeError('An earlier diagnostics request is outstanding; inspect it before continuing')
+            # The session captured this runtime before installation. Refresh its
+            # old opt-in only after the game has stopped, not an unrelated marker.
+            debug.action(self.game, self.state, ['disable'], ROOT / 'local-only/evidence')
         debug.action(self.game, self.state, ['enable'], ROOT / 'local-only/evidence')
 
     def launch(self):
@@ -220,6 +212,7 @@ def new_session(config, package):
                 state=str(Path(config['state']).expanduser().resolve()),
                 steam=config.get('steam', '/Applications/Steam.app/Contents/MacOS/steam_osx'),
                 package=str(package.resolve()), package_sha256=digest,
+                previous_runtime_sha256=player.digest(Path(config['game']).expanduser().resolve() / RUNTIME),
                 evidence={}, history=[])
 
 
@@ -260,6 +253,9 @@ def advance(record, persist, backend, timeout=20):
         if runtime.get('scene') != 'MainMenu':
             record['evidence'].pop('runtime_probe', None);persist()
             raise RuntimeError('Runtime responds in ' + str(runtime.get('scene')) + '; reach MainMenu then resume')
+        if runtime.get('rendering_abi') != 'v1' or runtime.get('renderer_assembly') != 'CW3ExternalRuntime' or runtime.get('rendering_bound') is not True:
+            record['evidence'].pop('runtime_probe', None);persist()
+            raise RuntimeError('Runtime did not confirm the external rendering bridge; use a matching complete candidate')
         phase('checking')
         for command in ('display_probe', 'screenshot'):
             if command not in record['evidence']:

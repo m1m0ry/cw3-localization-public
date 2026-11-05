@@ -16,7 +16,6 @@ import zipfile
 
 import dev_environment as environment
 import dev_session as sessions
-import game_target
 import player_install as player
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,34 +41,6 @@ def changed_paths(base):
     tracked = subprocess.check_output(['git', 'diff', '--name-only', base], cwd=ROOT, text=True).splitlines()
     untracked = subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=ROOT, text=True).splitlines()
     return sorted(set(tracked + untracked))
-
-
-def build_rendering(config, output):
-    from mono_tools import MonoTools
-    target = game_target.load({'target_id': game_target.MACOS})
-    selected = environment.mono_config(config)
-    mono = MonoTools(selected) if selected.get('mono_runtime') else MonoTools()
-    references = ('mscorlib.dll', 'System.dll', 'System.Core.dll', 'System.Xml.dll', 'UnityEngine.dll')
-    game = Path(config['game']).expanduser().resolve()
-    managed = game / target['data_dir'] / 'Managed'
-    fingerprints = {}
-    for name in references:
-        actual = player.digest(managed / name)
-        expected = target['original_hashes']['CW3_Data/Managed/' + name]
-        if actual != expected:raise ValueError('Installed build reference differs: ' + name)
-        fingerprints[name] = actual
-    output = output.resolve()
-    if not output.is_relative_to((ROOT / 'local-only').resolve()) or output.exists():
-        raise ValueError('Choose a new component directory under local-only')
-    output.mkdir(parents=True)
-    source = ROOT / 'src/rendering/CW3Rendering.cs'
-    flags = ['-target:library', '-nostdlib'] + ['-r:' + mono.win(managed / name) for name in references]
-    artifact = mono.compile(output, 'CW3Rendering.dll', [source], flags)
-    sessions.save(output / 'manifest.json', dict(format=1, kind='rendering_component',
-                  target_id=game_target.MACOS, sha256=player.digest(artifact),
-                  source_sha256=player.digest(source), references=fingerprints,
-                  source_commit=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip()))
-    return output
 
 
 def cloud_build(ref, version, target):
@@ -144,7 +115,7 @@ def main():
     test = commands.add_parser('test');test.add_argument('--python-only', action='store_true')
     plan = commands.add_parser('plan');plan.add_argument('--base', default='HEAD')
     build = commands.add_parser('build');build.add_argument('--kind', choices=('rendering','package'), required=True)
-    build.add_argument('--output', type=Path);build.add_argument('--ref');build.add_argument('--version')
+    build.add_argument('--ref');build.add_argument('--version')
     build.add_argument('--target', choices=('windows','macos'), default='macos')
     apply = commands.add_parser('apply');apply.add_argument('--package', type=Path, required=True)
     apply.add_argument('--timeout', type=float, default=20)
@@ -177,14 +148,10 @@ def execute(args, parser):
     elif args.action == 'plan':
         paths = changed_paths(args.base)
         print(json.dumps(dict(kind=classify(paths), files=paths,
-                              note='Source-only changes need no game launch; package changes use the exact remote ref.'), indent=2))
+                              note='Source-only changes need no game launch; rendering/package use an exact remote ref and changed-only installation.'), indent=2))
     elif args.action == 'build':
-        if args.kind == 'rendering':
-            if args.output is None:parser.error('rendering requires --output local-only/NAME')
-            output = build_rendering(config, args.output)
-        else:
-            if not args.ref or not args.version:parser.error('package requires --ref and --version; this command never pushes source')
-            output = cloud_build(args.ref, args.version, args.target)
+        if not args.ref or not args.version:parser.error('rendering/package require --ref and --version; this command never pushes source')
+        output = cloud_build(args.ref, args.version, args.target)
         print('Built:', output)
     elif args.action == 'run':
         kind = classify(changed_paths(args.base)) if args.kind == 'auto' else args.kind
@@ -193,20 +160,17 @@ def execute(args, parser):
         if kind == 'none':
             print('No changes detected; choose a kind explicitly to verify an already committed change')
             return
-        if kind == 'package' and (not args.ref or not args.version):
-            parser.error('Package build needs an already-pushed --ref and --version; no source is pushed automatically')
+        if kind in ('rendering', 'package') and (not args.ref or not args.version):
+            parser.error('Rendering/package build needs an already-pushed --ref and --version; no source is pushed automatically')
         checks = environment.test_source(config, standalone=not args.python_only)
         sessions.save(ROOT / 'local-only/evidence/source-tests.json', checks)
         if kind == 'source':
             print(json.dumps(checks, indent=2));return
-        if kind == 'rendering':
-            package = build_rendering(config, ROOT / 'local-only' / ('rendering-' + str(time.time_ns())))
-        else:
-            downloaded = cloud_build(args.ref, args.version, args.target)
-            if args.target != 'macos':
-                print('Windows candidate verified:', downloaded, '; native Windows installation remains separate')
-                return
-            package = unpack_candidate(downloaded)
+        downloaded = cloud_build(args.ref, args.version, args.target)
+        if args.target != 'macos':
+            print('Windows candidate verified:', downloaded, '; native Windows installation remains separate')
+            return
+        package = unpack_candidate(downloaded)
         record = sessions.new_session(config, package)
         record['source_tests'] = checks
         sessions.save(args.session, record)
