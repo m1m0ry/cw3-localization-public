@@ -9,6 +9,7 @@ class RenderingCacheContracts {
  class BareWidget:Component {public int mDepth;}
  class Derived:Base {private int hidden=3;public int UseDerived(){return hidden;}}
  static object Field(object o,string n){return typeof(CW3Rendering).GetMethod("Field",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new[]{o,(object)n});}
+ static Transform Layer(Component w,Component p){return (Transform)typeof(CW3Rendering).GetMethod("Layer",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{w,p});}
  static T Widget<T>(UIPanel panel,string name,int depth)where T:UIWidget,new(){var g=new GameObject(name);g.transform.parent=panel.transform;var w=g.AddComponent<T>();w.mPanel=panel;w.mDepth=depth;return w;}
  static void Main(string[] args){
   var b=new Base();var d=new Derived();Need((int)Field(b,"hidden")==1,"private base field");Need((int)Field(d,"hidden")==3,"hidden derived field");Need((int)Field(d,"Mutable")==2,"inherited field");d.Mutable=7;Need((int)Field(d,"Mutable")==7,"cache metadata, not values");Need(Field(d,"absent")==null&&Field(d,"absent")==null,"negative lookup");Need(Field(null,"absent")==null,"null receiver");
@@ -18,6 +19,10 @@ class RenderingCacheContracts {
   Need(keyA.GetHashCode()==keyB.GetHashCode()&&!keyA.Equals(keyB),"collision retains identity");
   var keys=new System.Collections.Generic.Dictionary<CW3Rendering.MaterialKey,int>();keys.Add(keyA,1);keys.Add(keyB,2);Need(keys[keyA]==1&&keys[keyB]==2,"collision dictionary lookup");
 #endif
+  Need(Layer(a,panel)==a.transform,"direct child layer");Need(Layer(same,panel)==a.transform,"nested child layer");Need(Layer(panel,panel)==panel.transform,"panel itself falls back to panel");
+  var detached=new GameObject("detached").AddComponent<UIWidget>();Need(Layer(detached,panel)==panel.transform,"detached widget falls back to panel");
+  detached.transform.parent=new GameObject("unrelated").transform;Need(Layer(detached,panel)==panel.transform,"unrelated hierarchy falls back to panel");
+  detached.transform.parent=a.transform;Need(Layer(detached,panel)==a.transform,"reparenting observed on next call");detached.transform.parent=panel.transform;Need(Layer(detached,panel)==detached.transform,"second reparenting observed");
   var first=CW3Rendering.Ordered(source,a);Need(first!=source,"owned material");Need(CW3Rendering.Ordered(source,a)==first,"repeat identity");Need(CW3Rendering.Ordered(first,a)==first,"unwrap own copy");Need(CW3Rendering.Ordered(source,same)==first,"same layer/depth batches");
   var text=CW3Rendering.Ordered(source,label);Need(text!=first&&text.renderQueue>first.renderQueue,"text tie follows atlas");
   same.mDepth=3;var deeper=CW3Rendering.Ordered(source,same);Need(deeper!=first&&deeper.renderQueue>text.renderQueue,"depth change observed");same.mDepth=2;Need(CW3Rendering.Ordered(source,same)==first,"return to previous key");

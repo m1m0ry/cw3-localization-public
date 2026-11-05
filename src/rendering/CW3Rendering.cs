@@ -36,7 +36,12 @@ public static class CW3Rendering {
  }
  static Component Panel(Component w){Component p=Field(w,"mPanel") as Component;if(p!=null)return p;for(Transform t=w.transform;t!=null;t=t.parent)foreach(Component c in t.GetComponents<Component>())if(c!=null&&c.GetType().Name=="UIPanel")return c;return null;}
  // A dialog can sit in front of its panel through its direct child transform.
- static Transform Layer(Component w,Component panel){Transform layer=w.transform;while(layer.parent!=null&&layer.parent!=panel.transform)layer=layer.parent;return layer.parent==panel.transform?layer:panel.transform;}
+ static Transform Layer(Component w,Component panel){
+  // Resolve native properties once per visited node. This is call-local only:
+  // reparenting and panel changes remain visible on the very next material query.
+  Transform panelTransform=panel.transform,layer=w.transform;
+  while(true){Transform parent=layer.parent;if(parent==panelTransform)return layer;if(parent==null)return panelTransform;layer=parent;}
+ }
  internal static int CompareOrder(float az,float bz,int ad,int bd,int at,int bt){int z=bz.CompareTo(az);if(z!=0)return z;int d=ad.CompareTo(bd);return d!=0?d:at.CompareTo(bt);}
  static int Compare(Entry a,Entry b){return CompareOrder(a.z,b.z,a.depth,b.depth,a.tie,b.tie);}
  static void Release(Entry entry){if(entry.copy!=null){originals.Remove(entry.copy.GetInstanceID());UnityEngine.Object.Destroy(entry.copy);}}

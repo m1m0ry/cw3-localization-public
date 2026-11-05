@@ -32,6 +32,8 @@ Unity 5.2 不支持直接从字节加载动态字体，因此补丁将本地字�
 
 原版 NGUI 每处理一种变化材质都会重新查询全部控件，放大了汉化材质排序的开销。`UIPanel.LateUpdate` 改为在单次 `Fill` 阶段内复用控件材质查询结果，返回后丢弃，下一次更新重新查询；既保留了绘制顺序、可见性检查与字体图集刷新，又不做跨帧缓存。
 
+材质查询中的 `Layer` 会沿父节点查找面板的直接子层级。同一次查询只读取一次面板 Transform 和每个经过节点的 parent，减少托管代码与 Unity 原生属性之间的重复调用；不跨调用缓存层级，控件重挂父节点后立即重新解析。`RenderingCacheContracts` 覆盖直接子节点、多层节点、脱离面板和再次重挂的结果。若更换引擎后 Transform 属性出现查询期间可变的特殊行为，应重新验证此假设。
+
 ## macOS 渲染实现与更新边界
 
 macOS 的 `CW3Rendering.dll` 仅保留 `Ordered(Material, object)` 和 `SyncDrawCall(object)` 两个原调用入口。第一次调用通过包内 `CW3Runtime.dll` 的 `BindRenderingV1` 一次性取得委托，之后直接调用同一个外置 `CW3ExternalRuntime.dll`。材质缓存、字体图集事件和面板销毁清理都由外置实现持有，不复制状态，不按帧读取文件、反射查方法或重新绑定。Windows 沿用原来的直接实现。
