@@ -1,0 +1,2 @@
+using System;using System.IO;using Mono.Cecil;
+class PatchPathWorkspace {static void Main(string[] args){var resolver=new DefaultAssemblyResolver();resolver.AddSearchDirectory(args.Length>2?args[2]:Path.GetDirectoryName(args[0]));using(var a=AssemblyDefinition.ReadAssembly(args[0],new ReaderParameters{AssemblyResolver=resolver})){int count=PathWorkspacePatch.Apply(a.MainModule);a.Write(args[1]);Console.WriteLine("Reused "+count+" bounded scoring maps; original search and returned path map unchanged.");}}}

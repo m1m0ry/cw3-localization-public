@@ -21,8 +21,9 @@ def exe(name,source,*args):
  if name in ('CustomSavePathPatch','CustomSavePathVerify'):files += [ROOT/'src/runtime/CustomSavePathPatch.cs']
  if name in ('EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts'):files += [ROOT/'src/performance/EnumeratorDisposePatch.cs']
  if name in ('ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts'):files += [ROOT/'src/performance/ManagerSnapshotPatch.cs']
+ if name in ('PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts'):files += [ROOT/'src/performance/PathWorkspacePatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -70,3 +71,22 @@ snapshot_optimized=out/'Assembly-CSharp.snapshots.dll'
 exe('ManagerSnapshotPatch',ROOT/'src/performance/PatchManagerSnapshots.cs',final,snapshot_optimized,g)
 exe('ManagerSnapshotVerify',ROOT/'src/performance/VerifyManagerSnapshots.cs',final,snapshot_optimized,g)
 shutil.copy2(snapshot_optimized,final)
+
+# Reuse only internal path scores; never share the returned predecessor dictionary.
+path_fixture=compile('PathWorkspaceFixture',[ROOT/'tests/PathWorkspaceFixture.cs'])
+path_fixture_patched=out/'PathWorkspaceFixture.patched.exe';path_optimized=out/'Assembly-CSharp.path-workspace.dll'
+exe('PathWorkspaceContracts',ROOT/'tests/PathWorkspaceContracts.cs',path_fixture,path_fixture_patched,final,g,path_optimized)
+run(path_fixture_patched,[])
+exe('PathWorkspaceVerify',ROOT/'src/performance/VerifyPathWorkspace.cs',final,path_optimized,g)
+# Run exact original search IL over deterministic synthetic terrain. This is
+# behavior evidence on the host runtime, separate from real-game performance.
+prepare_path=compile('PreparePathWorkspaceProbe',[ROOT/'tests/PreparePathWorkspaceProbe.cs'])
+path_probe=compile('PathWorkspaceProbe',[ROOT/'tests/PathWorkspaceProbe.cs'])
+path_before=out/'PathWorkspace.before.dll';path_after=out/'PathWorkspace.after.dll'
+run(prepare_path,[win(final),win(path_before),win(g)])
+run(prepare_path,[win(path_optimized),win(path_after),win(g)])
+path_expected=run(path_probe,[win(path_before),win(g/'UnityEngine.dll')],capture=True).stdout
+path_actual=run(path_probe,[win(path_after),win(g/'UnityEngine.dll')],capture=True).stdout
+if path_expected!=path_actual:raise RuntimeError('Path workspace changed original search results')
+print(path_actual.splitlines()[-1])
+shutil.copy2(path_optimized,final)
