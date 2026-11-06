@@ -85,8 +85,12 @@ exe('PathWorkspaceVerify',ROOT/'src/performance/VerifyPathWorkspace.cs',final,pa
 # Run exact original search IL over deterministic synthetic terrain. This is
 # behavior evidence on the host runtime, separate from real-game performance.
 prepare_path=compile('PreparePathWorkspaceProbe',[ROOT/'tests/PreparePathWorkspaceProbe.cs'])
-path_probe=compile('PathWorkspaceProbe',[ROOT/'tests/PathWorkspaceProbe.cs'])
-path_before=out/'PathWorkspace.before.dll';path_after=out/'PathWorkspace.after.dll'
+path_probe_dir=out/'path-workspace-probe';path_probe_dir.mkdir(exist_ok=True)
+# Unused UI field types need identities during CLR object allocation, not real
+# firstpass behavior. Keep this source-built fixture out of production resolution.
+m.compile(path_probe_dir,'Assembly-CSharp-firstpass.dll',[ROOT/'tests/PathWorkspaceFirstpass.cs'],['-target:library'])
+path_probe=m.compile(path_probe_dir,'PathWorkspaceProbe.exe',[ROOT/'tests/PathWorkspaceProbe.cs'],['-r:System.Core','-r:System.Xml'])
+path_before=path_probe_dir/'PathWorkspace.before.dll';path_after=path_probe_dir/'PathWorkspace.after.dll'
 run(prepare_path,[win(final),win(path_before),win(g)])
 run(prepare_path,[win(path_optimized),win(path_after),win(g)])
 path_expected=run(path_probe,[win(path_before),win(g/'UnityEngine.dll')],capture=True).stdout

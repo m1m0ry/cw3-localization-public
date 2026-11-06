@@ -64,7 +64,7 @@ PathFindTerrain 每次创建一份返回给调用者的前驱字典，以及仅�
 
 本地的游戏附带 Mono3.0.40818 隔离 ABBA 对照中，简单路径、128×128 不可达搜索、大图后小图分别约快 30%、36%、31%；这是固定合成负载结果，不是整个 Unity Player 的帧率、输入延迟或真实场景 GC 测量。宿主运行时的同负载分配约减少 75%，因为返回的前驱字典仍独立创建。具体机器与阶段数据保留在本地交付报告，不把这些百分比作为普遍承诺。
 
-构建时执行帮助方法容量/忙碌/失效条件契约、完整变换与逆向结构检查，以及原版搜索 IL 在相同合成地图上的完整前驱映射对照。覆盖地形限制、占用/半格标志、返回字典持有、无路、同格、非法输入、异常恢复和被 NaN/Infinity 污染的复用数组。
+构建时执行帮助方法容量/忙碌/失效条件契约、完整变换与逆向结构检查，以及原版搜索 IL 在相同合成地图上的完整前驱映射对照。覆盖地形限制、占用/半格标志、返回字典持有、无路、同格、非法输入、异常恢复和被 NaN/Infinity 污染的复用数组。测试隔离仅跳过既有两个 Unity 静态初始化器，并在专用 probe 目录编译 `VectorLine`、`PackedSprite`、`UVAnimation` 三个无行为引用类型，满足 GameSpace/Terrain/UnitManager 未使用的 UI 字段布局；构造这些类型会抛错。它不修改搜索 IL、不加载未锁定的游戏 firstpass DLL，也不进入玩家包。旧配置的 System.Xml 签名与已有 BCL 映射一样绑定到测试宿主运行时。
 
 ```sh
 python3 tools/test.py --config /path/to/build-config.json --suite PathWorkspaceContracts
