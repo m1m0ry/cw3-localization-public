@@ -1,0 +1,2 @@
+using System;using Mono.Cecil;
+class PatchSprayerLos {static void Main(string[] a){var resolver=new DefaultAssemblyResolver();resolver.AddSearchDirectory(a[2]);using(var x=AssemblyDefinition.ReadAssembly(a[0],new ReaderParameters{AssemblyResolver=resolver})){SprayerLosPatch.Apply(x.MainModule);x.Write(a[1]);Console.WriteLine("Removed only redundant same-query Sprayer LOS traversals; target selection retained.");}}}

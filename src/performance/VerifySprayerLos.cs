@@ -1,0 +1,2 @@
+using System;using Mono.Cecil;
+class VerifySprayerLos {static void Main(string[] a){var resolver=new DefaultAssemblyResolver();resolver.AddSearchDirectory(a[2]);using(var x=AssemblyDefinition.ReadAssembly(a[0],new ReaderParameters{AssemblyResolver=resolver}))using(var y=AssemblyDefinition.ReadAssembly(a[1])){SprayerLosPatch.Reverse(x,y);int m,i;AssemblyStructure.RequireSame(x,y,out m,out i);Console.WriteLine("Verified only Sprayer LOS subsumption and exact restoration of "+m+" methods / "+i+" instructions.");}}}

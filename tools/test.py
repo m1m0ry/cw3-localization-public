@@ -17,7 +17,7 @@ POLICY={
     'MessageContracts':['Json.cs','MessageBindings.cs'],
     'ScriptContracts':['Json.cs','MessageBindings.cs','ScriptBindings.cs'],
     'MessageCandidateContracts':['Json.cs','MessageBindings.cs','Candidates.cs']}
-SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ManagerSnapshotContracts','PathWorkspaceContracts','UnitSortCapacityContracts','PathDistanceContracts','CreeperDynamicContracts','CreeperUVContracts','ScriptContextRuntimeContracts')
+SUITES=tuple(POLICY)+('MeshLifetimeContracts','AssemblyStructureContracts','CaptionLayoutContracts','RenderingOrderContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts','GuiCaptionContracts','NativeNoticeContracts','MainMenuClickContracts','MissionLoadContracts','ManagedDisplayContracts','PanelFillContracts','ScriptOutputCandidateContracts','CustomSavePathContracts','EnumeratorDisposeContracts','ManagerSnapshotContracts','PathWorkspaceContracts','UnitSortCapacityContracts','PathDistanceContracts','CreeperDynamicContracts','CreeperUVContracts','SprayerLosContracts','ScriptContextRuntimeContracts')
 STANDALONE=('ScriptContextCacheContracts','ScriptContextRuntimeContracts','CandidateContracts','TranslationFileContracts','RuntimePathsContracts',
             'FontSettingsContracts','FontSettingsViewContracts','TextStyleContracts',
             'CaptionLayoutContracts','MeshLifetimeContracts','RenderingCacheContracts','RenderingBridgeContracts','RenderingBindingContracts','RenderingAssemblyContracts')
@@ -112,6 +112,13 @@ class Contracts:
             patched=d/'CreeperUVFixture.patched.exe'
             self.execute(name,[ROOT/'src/performance/CreeperUVPatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(fixture),w(patched)],[m.prepare_cecil(o),'-r:System.Core'])
             m.run(fixture,[]);m.run(patched,[])
+        elif name=='SprayerLosContracts':
+            original=m.location('original')/'CW3_Data/Managed/Assembly-CSharp.dll';patched=o/'Assembly-CSharp.sprayer-los.dll'
+            self.execute(name,[ROOT/'src/performance/SprayerLosPatch.cs',ROOT/'src/verification/AssemblyStructure.cs',test/(name+'.cs')],[w(original),w(patched),w(original.parent)],[m.prepare_cecil(o),'-r:System.Core'])
+            skeleton=m.compile(o,'SprayerLosProbe.exe',[test/'SprayerLosProbe.cs'],['-r:System.Core'])
+            ready=o/'SprayerLosProbe.ready.exe'
+            self.execute('PrepareSprayerLosProbe',[test/'PrepareSprayerLosProbe.cs'],[w(original),w(patched),w(skeleton),w(ready)],[m.prepare_cecil(o),'-r:System.Core'])
+            m.run(ready,[])
         elif name=='CustomSavePathContracts':
             fixture=m.compile(o,'CustomSavePathFixture.exe',[test/'CustomSavePathFixture.cs']);patched=o/'CustomSavePathFixture.patched.exe'
             flags=[m.prepare_cecil(o),'-r:System.Core']

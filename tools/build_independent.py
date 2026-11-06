@@ -26,8 +26,9 @@ def exe(name,source,*args):
  if name in ('PathDistancePatch','PathDistanceVerify','PathDistanceContracts'):files += [ROOT/'src/performance/PathDistancePatch.cs']
  if name in ('CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts'):files += [ROOT/'src/performance/CreeperDynamicPatch.cs']
  if name in ('CreeperUVPatch','CreeperUVVerify','CreeperUVContracts'):files += [ROOT/'src/performance/CreeperUVPatch.cs']
+ if name in ('SprayerLosPatch','SprayerLosVerify','SprayerLosContracts'):files += [ROOT/'src/performance/SprayerLosPatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts','CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts','CreeperUVPatch','CreeperUVVerify','CreeperUVContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts','CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts','CreeperUVPatch','CreeperUVVerify','CreeperUVContracts','SprayerLosPatch','SprayerLosVerify','SprayerLosContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -141,3 +142,15 @@ if target['platform']==2:
  run(uv_fixture,[]);run(uv_patched,[])
  exe('CreeperUVVerify',ROOT/'src/performance/VerifyCreeperUV.cs',final,uv_optimized,g)
  shutil.copy2(uv_optimized,final)
+
+# Native Mac only: remove one redundant ray when Digitalis cannot improve.
+# Full original/patched query IL is replayed on synthetic maps, not game assets.
+if target['platform']==2:
+ sprayer_optimized=out/'Assembly-CSharp.sprayer-los.dll'
+ exe('SprayerLosContracts',ROOT/'tests/SprayerLosContracts.cs',final,sprayer_optimized,g)
+ sprayer_skeleton=compile('SprayerLosProbe',[ROOT/'tests/SprayerLosProbe.cs'])
+ sprayer_probe=out/'SprayerLosProbe.ready.exe'
+ exe('PrepareSprayerLosProbe',ROOT/'tests/PrepareSprayerLosProbe.cs',final,sprayer_optimized,sprayer_skeleton,sprayer_probe)
+ run(sprayer_probe,[])
+ exe('SprayerLosVerify',ROOT/'src/performance/VerifySprayerLos.cs',final,sprayer_optimized,g)
+ shutil.copy2(sprayer_optimized,final)
