@@ -4,7 +4,7 @@
 No publication, privilege escalation, security-setting changes or automatic rollback.
 """
 from pathlib import Path
-from contextlib import contextmanager, nullcontext
+from contextlib import nullcontext
 import argparse
 import json
 import os
@@ -14,6 +14,7 @@ import time
 import tempfile
 import zipfile
 
+from dev_lock import desktop_lock
 import dev_environment as environment
 import dev_session as sessions
 import player_install as player
@@ -90,20 +91,6 @@ def run_session(path, record, timeout):
         raise
     finally:persist()
     return record
-
-
-@contextmanager
-def desktop_lock():
-    # One desktop mutator for this fixed checkout; OS releases the lock if the
-    # client disconnects or dies. No stale lock-directory recovery machinery.
-    import fcntl
-    path = ROOT / 'local-only/evidence/dev-install.lock'
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('a') as handle:
-        try:fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:raise RuntimeError('Another maintenance session is controlling the install; use status')
-        try:yield
-        finally:fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def main():
