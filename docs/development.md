@@ -1,6 +1,6 @@
 # 维护入口
 
-日常开发使用 `tools/dev.py`，复用已有构建、安装和调试工具。源码检查可以在本地或云环境运行；固定输入的 Windows/macOS 完整包使用现有 GitHub Actions。原生 Mac 安装和实机诊断在 Mac 上执行。
+日常开发使用 `tools/dev.py`，复用已有构建、安装和调试工具。源码检查可以在本地或云环境运行；固定输入的 Windows/macOS 完整包默认使用现有 GitHub Actions；输入已就绪时可显式本地构建，无需先推送源码。原生 Mac 安装和实机诊断在 Mac 上执行。
 
 ## 一次配置环境
 
@@ -24,7 +24,7 @@ python3 tools/dev.py doctor
 python3 tools/dev.py test
 ```
 
-入口依次验证配置的 Python、当前虚拟环境、项目 `.venv`、当前解释器与 PATH；可用 `python_candidates` 添加已有环境。最后尝试 uv 的离线缓存，不自动下载或全局安装依赖。`doctor` 显示实际解释器和依赖版本。若维护者明确复用额外的纯 Python 依赖目录，可配置 `pythonpath` 数组，作用仅限所选解释器的子进程，不改变系统环境。固定版本发行构建仍由锁定依赖的 CI 完成。
+入口依次验证配置的 Python、当前虚拟环境、项目 `.venv`、当前解释器与 PATH；可用 `python_candidates` 添加已有环境。最后尝试 uv 的离线缓存，不自动下载或全局安装依赖。`doctor` 显示实际解释器和依赖版本。若维护者明确复用额外的纯 Python 依赖目录，可配置 `pythonpath` 数组，作用仅限所选解释器的子进程，不改变系统环境。正式发行仍优先使用锁定依赖的 CI；本地候选会记录实际 Python 版本、依赖版本及输入摘要，不宣称与 CI 字节一致。
 
 默认 `test` 执行译文检查、完整 Python 测试和不需要游戏文件的 C# 契约。仅修改 Python 时可用 `test --python-only`，结果明确记录 C# 未运行。Mono 可在 PATH 上，或使用上述已有工具链配置；不需要复制 CW3 原版输入。
 
@@ -35,12 +35,25 @@ python3 tools/dev.py plan --base HEAD
 python3 tools/dev.py run --kind source --python-only
 python3 tools/dev.py run --kind rendering --ref feature/example --version v12.15
 python3 tools/dev.py run --kind package --ref feature/example --version v12.14 --target macos
+# 已准备本地输入时，不需要 --ref 或推送
+python3 tools/dev.py build --kind package --local --version v12.15 --target macos
+python3 tools/dev.py run --kind rendering --local --version v12.15 --target macos
 ```
 
 - `source`：构建脚本、测试和文档只执行源码检查，不启动游戏。
-- `rendering`：测试后构建精确远程 ref 的完整候选，再按文件哈希差分安装。Mac 的实际渲染实现位于包外 `CW3Localization/Runtime/CW3ExternalRuntime.dll`，`fonts.json` 必须携带配套运行时哈希。包内 `CW3Rendering.dll` 是稳定薄桥，不再单独编译完整 renderer 覆盖它。当前复用完整云构建，不声称是增量编译。
+- `rendering`：测试后构建精确远程 ref 的完整候选，再按文件哈希差分安装。Mac 的实际渲染实现位于包外 `CW3Localization/Runtime/CW3ExternalRuntime.dll`，`fonts.json` 必须携带配套运行时哈希。包内 `CW3Rendering.dll` 是稳定薄桥，不再单独编译完整 renderer 覆盖它。默认复用完整云构建，指定 `--local` 则复用本地全量构建；都不声称是增量编译。
 - `package`：复用 `build_candidate.py` 触发精确远程 ref，下载并验证对应产物，再安装和验收。入口不提交或推送源码；远程 ref 必须事先存在且匹配干净 HEAD。Windows 目标只生成已验证候选，不在 Mac 上安装 Windows 包。
-- `auto`（默认）：根据相对 `--base` 的改动选择以上范围。已经提交的改动要给出比较基线，或明确指定 `--kind`。原版 IL、字体、运行时、薄桥或译文改动归入 `package`；`rendering` 和 `package` 都要求 `--ref` / `--version`，不会自动推送源码。
+- `auto`（默认）：根据相对 `--base` 的改动选择以上范围。已经提交的改动要给出比较基线，或明确指定 `--kind`。原版 IL、字体、运行时、薄桥或译文改动归入 `package`；`rendering` 和 `package` 都要求 `--version`；云构建还要求 `--ref`，显式 `--local` 不接受 `--ref`。入口不会自动推送源码。
+
+### 使用现有本地输入
+
+一次性按[本地全量构建](build.md#本地全量构建)准备被忽略的 `config.local.json`、原版输入和 `local-only/independent-font/font.ttf`。本地入口要求配置明确的 `target_id`、`original`、`mono_runtime`、`mono_compiler`、`cecil`；缺少的 Mono 字段可复用 `local-only/dev.json` 中已配置的工具链。`--build-config` 可选择其他构建配置；全局 `--config` 仍只选择维护环境。相对路径以仓库根目录为基准。
+
+- 要求干净本地 HEAD（包括非忽略的未跟踪文件），但提交无需存在于远程。构建前后都核对源码、平台和原件哈希；不会把已打补丁的游戏文件当原件，不自动下载、安装依赖或补齐输入。
+- `build --local` 自动执行完整源码门禁，`run --local` 由同一本地构建入口执行一次门禁，并把固定提交的检查结果用于后续会话；完整候选不接受 `--python-only`。随后复用 `independent.py`、`package_player.py`、既有 ZIP 校验和外置运行时哈希配对守卫。
+- 默认输出为新的 `local-only/local-build-平台-版本-提交-随机后缀/`；`--output local-only/新目录` 可指定位置，不覆盖旧目录。只有验证通过才出现其中的 `candidate/`，含 ZIP、`build-info.json` 和 `SHA256SUMS.txt`。工作目录另保留源码检查与简短构建状态报告；临时配置、中间文件和重复的展开包在成功或失败后清理。固定原件和字体缓存保留复用。
+- `build-info.json` 的 `build_origin` 为 `local`。`local_inputs` 记录已校验原件、完整 OFL 字体、Mono/编译器/Cecil 的 SHA256，以及 Python/依赖版本；`build_inputs_sha256` 是该清单排序后的紧凑 JSON 的 SHA256，**不是 CI 输入压缩包的哈希**。源码身份表示本地提交，不表示已推送或发行。
+- `build` 只生成并校验候选，不退出游戏、不安装、不签名。`run` 才继续现有安装与验收流程；已有未完成安装会话仍必须先 `resume`。构建失败只保留简短阶段/错误报告，重试用新输出目录。已有候选可用 `unpack_candidate` 展开后交给 `apply`，无需重新构建。
 
 已有候选可跳过构建：
 
@@ -81,4 +94,4 @@ python3 tools/dev.py resume
 
 入口回归测试使用隔离的小型完整包和模拟进程；它们可以验证差分安装及重签边界，不能代替真实游戏中的验收。
 
-完整云候选构建与源码 CI 共用 `dev.py test`，候选打包前先过 Python 和 standalone C# 契约。依赖真实游戏输入的全部 IL/字体检查仍由对应构建验包及专项测试覆盖，不能仅凭源码检查替代。
+完整本地/云候选构建与源码 CI 共用 `dev.py test`，候选打包前先过 Python 和 standalone C# 契约。依赖真实游戏输入的全部 IL/字体检查仍由对应构建验包及专项测试覆盖，不能仅凭源码检查替代。

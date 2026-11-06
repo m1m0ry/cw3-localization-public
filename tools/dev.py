@@ -49,6 +49,31 @@ def cloud_build(ref, version, target):
     return build_candidate.build(ref, version, target=target)
 
 
+def build_options(command):
+    command.add_argument('--local', action='store_true', help='Build clean local HEAD with existing verified inputs; no remote ref')
+    command.add_argument('--build-config', type=Path, help='Local build input config (default: config.local.json)')
+    command.add_argument('--output', type=Path, help='New local build work directory under local-only')
+
+
+def check_build_options(args, parser):
+    if args.local:
+        if args.ref or not args.version:
+            parser.error('Local builds require --version and no --ref; commit source locally, no push required')
+        if getattr(args, 'python_only', False):
+            parser.error('Local candidates require standalone C# tests; omit --python-only')
+    elif args.build_config or args.output:
+        parser.error('--build-config and --output require --local')
+    elif not args.ref or not args.version:
+        parser.error('Cloud builds require an already-pushed --ref and --version; no source is pushed automatically')
+
+
+def build_selected(args, config):
+    if args.local:
+        import dev_local_build
+        return dev_local_build.build(args.version, args.target, config, args.build_config, args.output)
+    return cloud_build(args.ref, args.version, args.target)
+
+
 def unpack_candidate(folder):
     info = player.read(folder / 'build-info.json')
     name = info['archive']
@@ -104,6 +129,7 @@ def main():
     build = commands.add_parser('build');build.add_argument('--kind', choices=('rendering','package'), required=True)
     build.add_argument('--ref');build.add_argument('--version')
     build.add_argument('--target', choices=('windows','macos'), default='macos')
+    build_options(build)
     apply = commands.add_parser('apply');apply.add_argument('--package', type=Path, required=True)
     apply.add_argument('--timeout', type=float, default=20)
     resume = commands.add_parser('resume');resume.add_argument('--timeout', type=float, default=20)
@@ -114,6 +140,7 @@ def main():
     run.add_argument('--base', default='HEAD')
     run.add_argument('--ref');run.add_argument('--version')
     run.add_argument('--target', choices=('windows','macos'), default='macos')
+    build_options(run)
     run.add_argument('--timeout', type=float, default=20)
     run.add_argument('--python-only', action='store_true', help='Report C# suites as not run; intended for Python-only changes')
     args = parser.parse_args()
@@ -135,10 +162,10 @@ def execute(args, parser):
     elif args.action == 'plan':
         paths = changed_paths(args.base)
         print(json.dumps(dict(kind=classify(paths), files=paths,
-                              note='Source-only changes need no game launch; rendering/package use an exact remote ref and changed-only installation.'), indent=2))
+                              note='Source-only changes need no game launch; rendering/package use an exact remote ref or explicit --local clean HEAD, then changed-only installation.'), indent=2))
     elif args.action == 'build':
-        if not args.ref or not args.version:parser.error('rendering/package require --ref and --version; this command never pushes source')
-        output = cloud_build(args.ref, args.version, args.target)
+        check_build_options(args, parser)
+        output = build_selected(args, config)
         print('Built:', output)
     elif args.action == 'run':
         kind = classify(changed_paths(args.base)) if args.kind == 'auto' else args.kind
@@ -147,13 +174,20 @@ def execute(args, parser):
         if kind == 'none':
             print('No changes detected; choose a kind explicitly to verify an already committed change')
             return
-        if kind in ('rendering', 'package') and (not args.ref or not args.version):
-            parser.error('Rendering/package build needs an already-pushed --ref and --version; no source is pushed automatically')
-        checks = environment.test_source(config, standalone=not args.python_only)
-        sessions.save(ROOT / 'local-only/evidence/source-tests.json', checks)
-        if kind == 'source':
-            print(json.dumps(checks, indent=2));return
-        downloaded = cloud_build(args.ref, args.version, args.target)
+        if kind in ('rendering', 'package'):
+            check_build_options(args, parser)
+        if args.local and kind in ('rendering', 'package'):
+            # The local builder pins HEAD before its single source gate, then checks
+            # it again after compilation. Never reuse checks from an unpinned tree.
+            downloaded = build_selected(args, config)
+            checks = player.read(downloaded.parent / 'source-tests.json')
+            sessions.save(ROOT / 'local-only/evidence/source-tests.json', checks)
+        else:
+            checks = environment.test_source(config, standalone=not args.python_only)
+            sessions.save(ROOT / 'local-only/evidence/source-tests.json', checks)
+            if kind == 'source':
+                print(json.dumps(checks, indent=2));return
+            downloaded = build_selected(args, config)
         if args.target != 'macos':
             print('Windows candidate verified:', downloaded, '; native Windows installation remains separate')
             return
