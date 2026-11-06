@@ -131,3 +131,35 @@ The patch accepts only the supported complete Start-method fingerprint and adds
 two IL instructions at one initialization site. Its verifier reverses that exact
 change and compares the full assembly. An executable fixture checks mesh identity,
 one hint per Creeper mesh, untouched power meshes and unchanged operation order.
+
+
+## Native Mac Creeper UV coordinate stores
+
+The original `CreeperSimulation.setUVs` constructs and copies four `Vector2`
+values per cell, repeating the right/top edge additions. On the supported Mac
+Unity 5.2 engine, its Vector2 constructor only assigns its two fields. The
+Mac-only patch writes those same x/y fields in the same index order and reuses
+the two edge sums within the call. It adds no buffers, retained state, skipped
+cells or uploads; simulation order, animation and the 30-FPS target stay unchanged.
+Windows remains unchanged because its native JIT/backend was not measured.
+
+A same-process old-Mono/Unity comparison used the actual 256×256, 695-unit Alpha
+FiringRangeB state. It ran the complete original UV calculation plus native mesh
+uploads to two owned, unrendered mesh sets, changing only this helper. Four ABBA
+blocks of 20 updates averaged 4.051 ms per update before and 3.067 ms after,
+about 0.984 ms (24.3%) less in this isolated path. UV float bits and animation
+state matched; no simulation step or GC0 collection occurred during the call.
+This is not a whole-battle FPS, input-latency or GPU drawing result. No heap
+allocation reduction is claimed: Vector2 is a value type.
+
+The transform requires the exact supported method body and real Unity Vector2
+constructor/field contract. The reversal check restores the original body and
+compares the complete assembly. Tests include special float values, invalid
+array indices and partial writes before bounds errors. A short installed scene
+check covers loading and live uploaded coordinates. Revert if native output
+mismatches or repeatable frame-time regressions appear. This original-assembly
+change requires re-signing on native Mac.
+
+```sh
+python3 tools/test.py --config /path/to/build-config.json --suite CreeperUVContracts
+```

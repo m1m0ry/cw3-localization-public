@@ -25,8 +25,9 @@ def exe(name,source,*args):
  if name in ('UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts'):files += [ROOT/'src/performance/UnitSortCapacityPatch.cs']
  if name in ('PathDistancePatch','PathDistanceVerify','PathDistanceContracts'):files += [ROOT/'src/performance/PathDistancePatch.cs']
  if name in ('CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts'):files += [ROOT/'src/performance/CreeperDynamicPatch.cs']
+ if name in ('CreeperUVPatch','CreeperUVVerify','CreeperUVContracts'):files += [ROOT/'src/performance/CreeperUVPatch.cs']
  if name=='RuntimePatch':files += [ROOT/'src/runtime/GuiCaptionAudit.cs',ROOT/'src/runtime/NativeEventCaptionAudit.cs',ROOT/'src/verification/BindingAnchor.cs']
- if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts','CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
+ if name in ('RenderingVerify','RuntimeVerify','CustomSavePathVerify','EnumeratorDisposePatch','EnumeratorDisposeVerify','EnumeratorDisposeContracts','ManagerSnapshotPatch','ManagerSnapshotVerify','ManagerSnapshotContracts','PathWorkspacePatch','PathWorkspaceVerify','PathWorkspaceContracts','UnitSortCapacityPatch','UnitSortCapacityVerify','UnitSortCapacityContracts','PathDistancePatch','PathDistanceVerify','PathDistanceContracts','CreeperDynamicPatch','CreeperDynamicVerify','CreeperDynamicContracts','CreeperUVPatch','CreeperUVVerify','CreeperUVContracts'):files.append(ROOT/'src/verification/AssemblyStructure.cs')
  run(compile(name,files),[win(x) for x in args])
 original=path('original')/'CW3_Data/Managed/Assembly-CSharp.dll';render=out/'render.dll';final=out/'Assembly-CSharp.dll';generated=Path(a.generated)
 if target['platform']==2:
@@ -125,3 +126,14 @@ if target['platform']==2:
  run(dynamic_fixture,['original']);run(dynamic_patched,['patched'])
  exe('CreeperDynamicVerify',ROOT/'src/performance/VerifyCreeperDynamic.cs',final,dynamic_optimized,g)
  shutil.copy2(dynamic_optimized,final)
+
+# Native Mac only: exact direct Vector2 stores, no animation or upload skipping.
+if target['platform']==2:
+ uv_dir=out/'creeper-uv-fixture';uv_dir.mkdir(exist_ok=True)
+ uv_engine=m.compile(uv_dir,'UnityEngine.dll',[ROOT/'tests/CreeperUVUnity.cs'],['-target:library'])
+ uv_fixture=m.compile(uv_dir,'CreeperUVFixture.exe',[ROOT/'tests/CreeperUVFixture.cs'],['-r:'+win(uv_engine)])
+ uv_patched=uv_dir/'CreeperUVFixture.patched.exe';uv_optimized=out/'Assembly-CSharp.creeper-uv.dll'
+ exe('CreeperUVContracts',ROOT/'tests/CreeperUVContracts.cs',uv_fixture,uv_patched,final,g,uv_optimized)
+ run(uv_fixture,[]);run(uv_patched,[])
+ exe('CreeperUVVerify',ROOT/'src/performance/VerifyCreeperUV.cs',final,uv_optimized,g)
+ shutil.copy2(uv_optimized,final)
